@@ -9,6 +9,7 @@
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">   
+            <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Train+One&display=swap" rel="stylesheet">
 
             <!-- Less CSS pre-processor -->
             <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/4.2.2/less.min.js"
@@ -36,6 +37,10 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.10/typed.min.js"
             integrity="sha512-hIlMpy2enepx9maXZF1gn0hsvPLerXoLHdb095CmRY5HG3bZfN7XPBZ14g+TUDH1aGgfLyPHmY9/zuU53smuMw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+            <!-- Animate css -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
                 <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -118,62 +123,23 @@
     <body>
         {% block body %}
 
-        <!-- Navigation bar 
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
 
-                <a class="navbar-brand" href="#">
-                    <img src="fitverse.png" alt="Logo" width="150" class="d-inline-block align-text-top">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse " id="navbarNav">
-                    <ul class="navbar-nav mx-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fa-solid fa-cart-shopping"></i> Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fa-solid fa-dumbbell"></i> Programs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fa-solid fa-plate-wheat"></i> Nutrition</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fa-solid fa-location-dot"></i> Nearby gyms</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fa-solid fa-ticket"></i> Events</a>
-                        </li>
-                    </ul>
-
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <button class="btn btn-sm login-action-button"><a class="nav-link" href="#">Start using FITVERSE
-                                    <i class="fa-solid fa-right-to-bracket"></i></a></button>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        -->
 
 
 
         <!-- Home hero  -->
         <div class="landing-hero">
-
             <img src="{{asset('images/landing/fitverse.png')}}" alt="">
-            <div class="hero-content">
-                <h1>The all in one fitness hub</h1>
+            <div class="hero-content ">
+                <span>CRAFT YOUR</span>
+                <span>PHYSIQUE</span>
                 <h2>We are dedicated to helping you transform your body and mind</h2>
                 <button class="btn btn-cta-start">Start using fitverse</button>
+                
+            <div class="scroll-down-cta animate__animated animate__fadeInDown animate__delay-0_7s"><div><i class="fa-solid fa-computer-mouse"></i><i class="fa-solid fa-arrow-down"></i> </div>Scroll to learn more</div>
+
+
             </div>
-
-
 
         </div>
 
@@ -224,18 +190,12 @@
 
 
 
-        <!-- Gym Container -->
 
 
         <div class="landing-gym">
-
-
-
             <div class="search-function-promo">
                 <div class="text-content">
                     <img src="{{asset('images/landing/gyms.png')}}" class="hero-leading-icon" alt="">
-
-
 
                     <h2>Find, compare and manage nearby gyms</h2>
                     <h2>Keep track of your subscription </h2>
@@ -244,6 +204,7 @@
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <span id="gym-search-animation"></span>
                     </div>
+
                 </div>
 
 
@@ -279,86 +240,6 @@
 
 
 
-            <!-- Shop  hero  -->
-
-
-            <div class="landing-shop">
-
-                <div class="landing-shop-text">
-                    <h1 class="display-5">
-                        <img src="{{asset('images/landing/shop.png')}}" class="hero-leading-icon"><br>
-                        Get fit in style with a curated list of fitness gear
-                    </h1>
-                    <p class="display-6">
-        
-                        We believe that looking good and feeling good go hand in hand.
-                        Thats why we partner up with leading brands to offer products available for purchase exclusively for our
-                        gym
-                        members.
-                    </p>
-                </div>
-        
-                <div class="shop-swiper">
-                    <div class="swiper-wrapper">
-                        <!-- Slides -->
-        
-        
-                        <div class="swiper-slide landing-shop-card">
-                            <img src="{{asset('images/landing/clothing.png')}}" alt="">
-
-                            
-                            <span>Clothing</span>
-                        </div>
-        
-        
-        
-                        <div class="swiper-slide landing-shop-card">
-                            <img src="{{asset('images/landing/gloves.png')}}" alt="">
-                            <span>Equipment</span>
-                        </div>
-        
-        
-        
-                        <div class="swiper-slide landing-shop-card">
-                            <img src="{{asset('images/landing/water-bottle.png')}}" alt="">
-                            <span>Hydration</span>
-                        </div>
-        
-        
-        
-                        <div class="swiper-slide landing-shop-card">
-                            <img src="{{asset('images/landing/bag.png')}}" alt="">
-                            <span>Essentials</span>
-                        </div>
-        
-        
-                        <div class="swiper-slide landing-shop-card">
-                            <img src="{{asset('images/landing/buds.png')}}" alt="">
-                            <span>Sound</span>
-                        </div>
-        
-        
-        
-                        <div class="swiper-slide landing-shop-card">
-                            <img src="{{asset('images/landing/meditation.png')}}" alt="">
-                            <span>Meditation</span>
-                        </div>
-        
-        
-        
-        
-        
-        
-        
-                    </div>
-                </div>
-        
-        
-        
-            </div>
-
-
-
         <div class="landing-events">
             <div></div>
             <div class="landing-events-text">
@@ -369,6 +250,78 @@
                     you moving!</p>
             </div>
         </div>
+
+
+        
+        <div class="landing-shop">
+
+            <div class="landing-shop-text">
+                <h1 class="display-5">
+                    <img src="{{asset('images/landing/shop.png')}}" class="hero-leading-icon"><br>
+                    Get fit in style with a curated list of fitness gear
+                </h1>
+                <p class="display-6">
+    
+                    We believe that looking good and feeling good go hand in hand.
+                    Thats why we partner up with leading brands to offer products available for purchase exclusively for our
+                    gym
+                    members.
+                </p>
+            </div>
+    
+            <div class="shop-swiper">
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+    
+    
+                    <div class="swiper-slide landing-shop-card">
+                        <img src="{{asset('images/landing/clothing.png')}}" alt="">
+
+                        
+                        <span>Clothing</span>
+                    </div>
+    
+    
+    
+                    <div class="swiper-slide landing-shop-card">
+                        <img src="{{asset('images/landing/gloves.png')}}" alt="">
+                        <span>Equipment</span>
+                    </div>
+    
+    
+    
+                    <div class="swiper-slide landing-shop-card">
+                        <img src="{{asset('images/landing/water-bottle.png')}}" alt="">
+                        <span>Hydration</span>
+                    </div>
+    
+    
+    
+                    <div class="swiper-slide landing-shop-card">
+                        <img src="{{asset('images/landing/bag.png')}}" alt="">
+                        <span>Essentials</span>
+                    </div>
+    
+    
+                    <div class="swiper-slide landing-shop-card">
+                        <img src="{{asset('images/landing/buds.png')}}" alt="">
+                        <span>Sound</span>
+                    </div>
+    
+    
+    
+                    <div class="swiper-slide landing-shop-card">
+                        <img src="{{asset('images/landing/meditation.png')}}" alt="">
+                        <span>Meditation</span>
+                    </div>
+    
+                </div>
+            </div>
+    
+    
+    
+        </div>
+
 
 
 

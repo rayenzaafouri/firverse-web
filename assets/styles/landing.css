@@ -20,6 +20,7 @@ html {
   body{
     background:black;
     color: white;
+
   }
 
   html::-webkit-scrollbar {
@@ -60,19 +61,26 @@ html {
 .landing-hero{
 
     padding: 2rem 1rem;
-    background-image: url("../images/landing/hero-landing.png");
+    background-image: url("../images/landing/fitverse-hero.png");
 
 
-
-    
     background-size: cover;
     background-position: center;
-    height: 50lvh;
+    height: 100lvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
+
+
+    
+
+
+
     img{
         width: 12rem;
+        position: absolute;
+        top: 0;
+        margin: 2rem 0;
         
     }
     
@@ -84,14 +92,38 @@ html {
         justify-content: center;
         gap: 1rem;
 
-        h1{
+        span{ 
             font-size: 3rem;
-            color: #92ff44;
+            font-family: "Alfa Slab One", serif;
+            font-weight: 400;
+            font-style: normal;
+            line-height: 2rem;
+            font-size: 4rem;
+        }
+
+        span:nth-of-type(2){
+            font-family: "Train One", system-ui;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 2rem;
         }
 
         h2{
             font-size: 1.5rem;
+            font-weight: 100;
         }
+
+        .scroll-down-cta{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: .33rem;
+            position: relative;
+            top: 3rem;
+
+
+        }
+
 
         
     }
@@ -117,6 +149,7 @@ html {
 
 
 .landing-shop{
+
     padding: 2rem;
     background-color: black;
 
@@ -163,8 +196,7 @@ html {
 
 .landing-gym{
     height: 50lvh;
-    background-image: url("../images/landing/hero-gym.png");
-
+    font-weight: 100;
 
     backdrop-filter: blur(16px);
     background-repeat: no-repeat;
@@ -250,6 +282,7 @@ html {
 
 
 .landing-events{
+    font-weight: 100;
      height: 50lvh;
 
     
@@ -281,7 +314,7 @@ html {
 
 
 
-
+    font-weight: 100;
     height: 50lvh;
     background-image: url("../images/landing/hero-nutrition.png");
     min-height: 25rem;
@@ -308,7 +341,7 @@ html {
 
 
 
-
+    font-weight: 100;
 
     background-image: url("../images/landing/hero-exercise.png");
     min-height: 25rem;
