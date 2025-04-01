@@ -2,6 +2,13 @@
     CSS file for the landing page
 */
 
+
+
+button > a {
+    all: unset;
+}
+
+
 html {
     overflow: auto;
     overflow-x: hidden;
