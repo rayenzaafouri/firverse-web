@@ -2,15 +2,22 @@
 
 {% block title %}FIRVERSE Authentification{% endblock %}
 
+
+
+
+
 {% block javascripts %}
-    {{ parent() }} {# This includes the base stylesheets #}
+    {{ parent() }} 
+    {# This is necessary for login/register switch #}
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.min.js"></script>
+
 {% endblock %}
 
 
 
+
 {% block stylesheets %}
-    {{ parent() }} {# This includes the base stylesheets #}
-    <!-- Vue.js CDN -->
+    {{ parent() }} 
     <style>
 
         body{
@@ -56,10 +63,16 @@
         }
 
         .nav{
+
+            button{
+                border: unset;
+                cursor: pointer;
+                
+            }
+
             font-size: .75rem;
             width: fit-content;
-            border: 1px solid rgba(128, 128, 128, 0.238);
-            background-color: black ;   
+          
             border-radius: 0.375rem;
             background-color: #eeeeee;
             .nav-link.active.nav-link-right{
@@ -173,10 +186,12 @@
     
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.min.js"></script>
+
 
 
 <script>
+
+    //This is the script that switches between login/register DO NOT REMOVE IT!
     const { createApp } = Vue;
 
     createApp({
@@ -198,7 +213,7 @@
         methods: {
             handleLogin() {
                 console.log('Login attempt with:', this.login);
-
+                
             },
             handleRegister() {
                 console.log('Registration attempt with:', this.register);

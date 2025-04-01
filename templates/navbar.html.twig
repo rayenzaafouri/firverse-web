@@ -1,0 +1,103 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fitverse-navbar shadow">
+        <a class="navbar-brand" href="/"><img src="fitverse-white.png" ></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active" data-context="exercise">
+              <a class="nav-link" href="#"> <span class="material-symbols-outlined">sports_gymnastics</span> Train <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item" data-context="nutrition">  
+              <a class="nav-link" href="#"> <span class="material-symbols-outlined">ramen_dining</span> Meals <span class="sr-only">(current)</span></a>
+            </li>
+
+            <li class="nav-item" data-context="gym">
+              <a class="nav-link" href="#"> <span class="material-symbols-outlined">fitness_center</span> Gyms <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item" data-context="events">
+              <a class="nav-link" href="#"> <span class="material-symbols-outlined">local_activity</span> Events <span class="sr-only">(current)</span></a>
+            </li>
+
+            <li class="nav-item" data-context="shop">
+              <a class="nav-link" href="#"> <span class="material-symbols-outlined">shopping_cart</span> Shop <span class="sr-only">(current)</span></a>
+            </li>
+          </ul>
+          <div class="navbar-text user-menu">
+            <div class="user-display">
+              <span>Foulen el fleni</span>
+            </div>
+            <div class="user-badge">
+              <span>F</span>
+              <span>F</span>
+            </div>
+           
+          </div>
+        </div>
+  </nav>
+
+
+  <script>
+
+  const accentMap = {
+    "gym":"#3478F6",
+    "nutrition":"#AEC867",
+    "exercise":"#69D2C8",
+    "shop":"#F09A37",
+    "user":"#545454",
+    "events":"#EB4E3D",
+    "default":"black"
+  }
+
+
+
+  //Setting current context color in navbar
+
+  const currentContext = document.body.getAttribute("data-context")
+  if(accentMap[currentContext]){
+    updateAccentColor(accentMap[currentContext])
+  }
+  else{
+    updateAccentColor(accentMap["default"])
+  }
+
+
+
+  const items = Array.from(document.querySelectorAll(".fitverse-navbar .nav-item"))
+  items.forEach(item => {
+    item.addEventListener("mouseover", (event) => {
+      let newContext = item.getAttribute("data-context")
+      
+      console.log({newContext})
+
+      if( newContext && accentMap[newContext]){
+        updateAccentColor(accentMap[newContext])
+      }
+    })
+
+    item.addEventListener("mouseover", (event) => {
+      let newContext = item.getAttribute("data-context")
+      console.log({newContext})
+
+      if( newContext && accentMap[newContext]){
+        updateAccentColor(accentMap[newContext])
+      }
+    })
+
+  })
+
+
+  items.forEach(item =>{
+    item.addEventListener("mouseout",(event)=>{
+        updateAccentColor(accentMap[currentContext])
+    })
+  })
+
+
+
+  function updateAccentColor(hexValue){
+    document.querySelector("nav.fitverse-navbar").style.setProperty("border-color",hexValue)
+  }
+    
+  </script>
