@@ -63,6 +63,45 @@ symfony check:requirements
 
 
 ## Getting started 
+# Twig template for new pages
+ ```twig
 
 
 
+
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Your title goes here{% endblock %}
+
+{% block javascripts %}
+{{ parent() }} 
+{# Your javascript goes here #}
+<script>
+    
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }} 
+{# Your CSS goes here #}
+<style>
+
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+{% include 'navbar.html.twig' %} 
+
+<body data-context="gym">
+{# data-context value shoul be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
+{# you HTML goes here  #}
+
+</body>
+
+{% endblock %}
+ ```
