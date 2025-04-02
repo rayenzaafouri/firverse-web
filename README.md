@@ -63,7 +63,7 @@ symfony check:requirements
 
 
 ## Getting started 
-# Twig template for new pages
+### Twig template for new pages
  ```twig
 
 
@@ -98,9 +98,11 @@ symfony check:requirements
 {% include 'navbar.html.twig' %} 
 
 <body data-context="gym">
-{# data-context value shoul be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
+{# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
 {# you HTML goes here  #}
 
+
+<h2>Yeah it works you can procceed.</h2>
 </body>
 
 {% endblock %}
