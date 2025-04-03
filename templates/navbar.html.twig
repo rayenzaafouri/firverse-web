@@ -6,21 +6,21 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active" data-context="exercise">
+            <li class="nav-item exercise" data-context="exercise">
               <a class="nav-link" href="#"> <span class="material-symbols-outlined">sports_gymnastics</span> Train <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item" data-context="nutrition">  
+            <li class="nav-item nutrition" data-context="nutrition">  
               <a class="nav-link" href="#"> <span class="material-symbols-outlined">ramen_dining</span> Meals <span class="sr-only">(current)</span></a>
             </li>
 
-            <li class="nav-item" data-context="gym">
+            <li class="nav-item gym" data-context="gym">
               <a class="nav-link" href="#"> <span class="material-symbols-outlined">fitness_center</span> Gyms <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item" data-context="events">
+            <li class="nav-item events" data-context="events">
               <a class="nav-link" href="#"> <span class="material-symbols-outlined">local_activity</span> Events <span class="sr-only">(current)</span></a>
             </li>
 
-            <li class="nav-item" data-context="shop">
+            <li class="nav-item shop" data-context="shop">
               <a class="nav-link" href="#"> <span class="material-symbols-outlined">shopping_cart</span> Shop <span class="sr-only">(current)</span></a>
             </li>
           </ul>
@@ -52,24 +52,22 @@
 
 
 
+  document.addEventListener("DOMContentLoaded",()=>{
   //Setting current context color in navbar
-
   const currentContext = document.body.getAttribute("data-context")
   if(accentMap[currentContext]){
     updateAccentColor(accentMap[currentContext])
+    document.querySelector(".nav-item."+currentContext).classList.add("active")
   }
   else{
     updateAccentColor(accentMap["default"])
   }
 
 
-
   const items = Array.from(document.querySelectorAll(".fitverse-navbar .nav-item"))
   items.forEach(item => {
     item.addEventListener("mouseover", (event) => {
       let newContext = item.getAttribute("data-context")
-      
-      console.log({newContext})
 
       if( newContext && accentMap[newContext]){
         updateAccentColor(accentMap[newContext])
@@ -100,4 +98,5 @@
     document.querySelector("nav.fitverse-navbar").style.setProperty("border-color",hexValue)
   }
     
-  </script>
+})
+</script>

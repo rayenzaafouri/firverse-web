@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=all');
 
 
-body{
+body {
     padding-top: 6rem;
 }
 
 
 
-.fitverse-navbar{
+.fitverse-navbar {
     min-height: 6rem;
-    background-color : #222529   !important;
-    border-bottom: 4px solid #9FF856 ;
+    background-color: #222529 !important;
+    border-bottom: 4px solid #9FF856;
     transition: border .5s linear;
 
 
@@ -19,21 +19,22 @@ body{
     top: 0px;
     backdrop-filter: blur(15px);
 
-    .navbar-brand > img{
+    .navbar-brand>img {
         width: 10rem;
         margin: 0 2rem;
     }
 
-    .nav-link{
+    .nav-link {
         display: flex;
         justify-content: center;
         flex-direction: column;
-        span.material-symbols-outlined{
+
+        span.material-symbols-outlined {
             font-size: 1.7rem;
         }
     }
 
- .nav-item{
+    .nav-item {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -45,21 +46,65 @@ body{
         border-top-left-radius: 1rem;
         border-top-right-radius: 1rem;
 
+        * {
+            transition: color .5s linear;
+        }
+
     }
 
-    .nav-item:not(.active){
-        transition: all .33s linear;   
+    .nav-item.gym:hover, .nav-item.gym.active {
+
+        * {
+
+            color: #3478F6;
+        }
+
+    }
+
+    .nav-item.nutrition:hover, .nav-item.nutrition.active {
+
+        * {
+
+            color: #AEC867;
+        }
+    }
+
+    .nav-item.exercise:hover, .nav-item.exercise.active {
+
+        * {
+
+            color: #69D2C8;
+        }
+    }
+
+    .nav-item.shop:hover, .nav-item.shop.active {
+        * {
+
+            color: #F09A37;
+
+        }
+    }
+
+    .nav-item.events:hover, .nav-item.events.active {
+        * {
+
+            color: #EB4E3D;
+        }
+    }
+
+    .nav-item:not(.active) {
+        transition: all .33s linear;
         position: relative;
         scale: 0.8;
-    }    
+    }
 
-    .user-menu{
+    .user-menu {
         display: flex;
         flex-direction: row;
-        gap: .5rem; 
+        gap: .5rem;
         align-items: center;
 
-        .user-badge{
+        .user-badge {
             border: 2px solid grey;
             border-radius: 100%;
             padding: 1rem;
@@ -69,9 +114,7 @@ body{
 
 
 
-    .navbar-collapse.collapse.show{
+    .navbar-collapse.collapse.show {
         align-items: center;
     }
 }
-
-
