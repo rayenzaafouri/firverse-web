@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class NavigationExampleController extends AbstractController
 {
-    #[Route('/dbtest')]
+    #[Route('/diag')]
     public function index(UserRepository $userRepo): Response
     {
         dd($userRepo->findAll());
