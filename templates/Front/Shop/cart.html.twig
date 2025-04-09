@@ -5,43 +5,45 @@
 {% block body %}
 {% include 'navbar.html.twig' %}
 
-<body data-context="shop" class="bg-light py-5">
+<body data-context="shop">
+{# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
 
 <div class="container">
-    <h1 class="text-center mb-5">Your Shopping Cart</h1>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
 
     {% if cartItems is not empty %}
-        <div class="table-responsive shadow rounded bg-white p-4">
-            <table class="table table-bordered text-center">
+        <div class="table-responsive ">
+            <table class="table border-none">
                 <thead>
-    <tr>
-        <th class="text-center">Product</th>
-        <th class="text-center">Quantity</th>
-        <th class="text-center">Action</th>
-        <th class="text-center">Price</th> {# <-- NOW properly above Price column #}
-    </tr>
-</thead>
-
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for item in cartItems %}
                         <tr>
-                            <td class="align-middle">
-                                <img src="{{ item.product.imageUrl }}" class="img-thumbnail" style="width: 80px;">
-                                <div class="mt-2 font-weight-bold">{{ item.product.name }}</div>
-                            </td>
-                            <td class="align-middle">
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <a href="{{ path('cart_decrease', {'id': item.product.id}) }}" class="btn btn-sm btn-danger">-</a>
-                                    <span class="mx-2">{{ item.quantity }}</span>
-                                    <a href="{{ path('cart_increase', {'id': item.product.id}) }}" class="btn btn-sm btn-success">+</a>
+                            <td><img src="{{ item.product.imageUrl }}" alt="{{ item.product.name }}"  width="80"></td>
+                            <td>{{ item.product.name }}</td>
+                            <td class="d-flex align-items-center">
+                               <div class="d-inline-flex align-items-center border border-warning rounded-pill px-4 py-1" style="background-color: white; border-radius: 200rem !important;border-width: 3px !important;"> 
+                                    <a href="{{ path('cart_decrease', {'id': item.product.id}) }}" class="text-dark text-decoration-none font-weight-bold" style="font-size: 1rem; line-height: 1;">-</a>
+                                    <span class="mx-3 font-weight-bold" style="font-size: 1.3rem; line-height: 1;">{{ item.quantity }}</span>
+                                    <a href="{{ path('cart_increase', {'id': item.product.id}) }}" class="text-dark text-decoration-none font-weight-bold" style="font-size: 1rem; line-height: 1;">+</a>
                                 </div>
                             </td>
-                            <td class="align-middle">
-                                <a href="{{ path('cart_remove', {'id': item.product.id}) }}" class="btn btn-sm btn-outline-danger">Remove</a>
+                            <td>
+                                <a href="{{ path('cart_remove', {'id': item.product.id}) }}" >Remove</a>
                             </td>
-                            <td class="align-middle font-weight-bold">
-                                {{ (item.product.price * item.quantity)|number_format(2) }} USD
-                            </td>
+                            <td>{{ item.product.price }} TND</td>
+
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -49,15 +51,10 @@
         </div>
 
         <div class="text-right font-weight-bold mt-4">
-            <h4>Total: {{ total|number_format(2) }} USD</h4>
-        </div>
-        <div class="text-center mt-5">
-            <form action="{{ path('checkout_start') }}" method="POST">
-                <button type="submit" class="btn btn-success btn-lg">Proceed to Checkout</button>
-            </form>
+            Subtotal ({{ cartItems|length }} items): {{ total|number_format(2) }} TND
         </div>
     {% else %}
-        <p class="text-center text-muted mt-4">Your cart is empty.</p>
+        <p class="text-center text-muted">Your cart is empty.</p>
     {% endif %}
 </div>
 

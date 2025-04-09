@@ -41,24 +41,23 @@ class CartController extends AbstractController
     }
 
     #[Route('/shop/cart/add/{id}', name: 'cart_add')]
-public function add(Product $product, SessionInterface $session): Response
-{
-    $cart = $session->get('cart', []);
-    $id = $product->getId();
+    public function add(Product $product, SessionInterface $session): Response
+    {
+        $cart = $session->get('cart', []);
+        $id = $product->getId();
 
-    if (!isset($cart[$id])) {
-        $cart[$id] = 1;
-    } else {
-        $cart[$id]++;
+        if (!isset($cart[$id])) {
+            $cart[$id] = 1;
+        } else {
+            $cart[$id]++;
+        }
+
+        $session->set('cart', $cart);
+
+        $this->addFlash('success', $product->getName() . ' added to cart.');
+
+        return $this->redirectToRoute('shop_home'); // Redirect to your shop page
     }
-
-    $session->set('cart', $cart);
-
-    // Add flash message
-    $this->addFlash('add_success', $product->getName() . ' added to cart!');
-
-    return $this->redirectToRoute('shop_home'); // redirect to shop
-}
 
     #[Route('/shop/cart/remove/{id}', name: 'cart_remove')]
     public function remove(Product $product, SessionInterface $session): Response
