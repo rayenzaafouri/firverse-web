@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ProductDiscount{% endblock %}
+
+{% block javascripts %}
+{{ parent() }} 
+{# Your javascript goes here #}
+<script>
+   
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }} 
+{# Your CSS goes here #}
+<style>
+
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+{% include 'navbar.html.twig' %} 
+
+<body data-context="shop">
+{# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
+<h1>ProductDiscount </h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Discount_percentage</th>
+                <th>Valid_from</th>
+                <th>Valid_until</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product_discount in product_discounts %}
+            <tr>
+                <td>{{ product_discount.id }}</td>
+                <td>
+                    {% if product_discount.product %}
+                        {{ product_discount.product.name }}
+                    {% else %}
+                        No product linked
+                     {% endif %}
+                </td>
+                <td>{{ product_discount.discountPercentage }}</td>
+                <td>{{ product_discount.validFrom ? product_discount.validFrom|date('Y-m-d') : '' }}</td>
+                <td>{{ product_discount.validUntil ? product_discount.validUntil|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_product_discount_show', {'id': product_discount.id}) }}">show</a>
+                    <a href="{{ path('app_product_discount_edit', {'id': product_discount.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_product_discount_new') }}">Create new</a>
+</body>
+
+{% endblock %}

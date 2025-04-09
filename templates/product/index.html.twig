@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products{% endblock %}
+
+{% block javascripts %}
+{{ parent() }} 
+{# Your javascript goes here #}
+<script>
+   
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }} 
+{# Your CSS goes here #}
+<style>
+
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+{% include 'navbar.html.twig' %} 
+
+<body data-context="shop">
+{# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
+<h1>Products</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Brand</th>
+                <th>Description</th>
+                <th>Stock</th>
+                <th>ImageUrl</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.brand }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.stock }}</td>
+                <td><img src="{{ product.imageUrl }}" alt="Product Image" style="width: 150px; height: auto;"></td>
+                <td>
+                    <a href="{{ path('app_product_show', {'id': product.id}) }}">show</a>
+                    <a href="{{ path('app_product_edit', {'id': product.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_product_new') }}">Create new</a>
+</body>
+
+{% endblock %}

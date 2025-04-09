@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ProductDiscount{% endblock %}
+
+{% block javascripts %}
+{{ parent() }} 
+{# Your javascript goes here #}
+<script>
+   
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }} 
+{# Your CSS goes here #}
+<style>
+
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+{% include 'navbar.html.twig' %} 
+
+<body data-context="shop">
+{# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
+<h1>Create new ProductDiscount</h1>
+
+    {{ include('product_discount/_form.html.twig') }}
+
+    <a href="{{ path('app_product_discount_index') }}">back to list</a>
+</body>
+
+{% endblock %}

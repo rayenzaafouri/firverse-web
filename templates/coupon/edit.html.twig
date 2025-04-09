@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Coupons{% endblock %}
+
+{% block javascripts %}
+{{ parent() }} 
+{# Your javascript goes here #}
+<script>
+   
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }} 
+{# Your CSS goes here #}
+<style>
+
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+{% include 'navbar.html.twig' %} 
+
+<body data-context="shop">
+{# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
+<h1>Edit Coupon</h1>
+
+    {{ include('coupon/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_coupon_index') }}">back to list</a>
+
+    {{ include('coupon/_delete_form.html.twig') }}
+</body>
+
+{% endblock %}

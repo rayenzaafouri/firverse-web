@@ -46,12 +46,12 @@ class Product
     #[ORM\Column(type: 'decimal', nullable: false)]
     private ?float $price = null;
 
-    public function getPrice(): ?float
+    public function getPrice(): ?string
     {
         return $this->price;
     }
 
-    public function setPrice(float $price): self
+    public function setPrice(string $price): self
     {
         $this->price = $price;
         return $this;
@@ -196,11 +196,18 @@ class Product
     )]
     private Collection $users;
 
+    /**
+     * @var Collection<int, Wishlist>
+     */
+    #[ORM\OneToMany(targetEntity: Wishlist::class, mappedBy: 'product_id', orphanRemoval: true)]
+    private Collection $wishlists;
+
     public function __construct()
     {
         $this->orderDetails = new ArrayCollection();
         $this->productDiscounts = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->wishlists = new ArrayCollection();
     }
 
     /**
@@ -225,6 +232,36 @@ class Product
     public function removeUser(User $user): self
     {
         $this->getUsers()->removeElement($user);
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Wishlist>
+     */
+    public function getWishlists(): Collection
+    {
+        return $this->wishlists;
+    }
+
+    public function addWishlist(Wishlist $wishlist): static
+    {
+        if (!$this->wishlists->contains($wishlist)) {
+            $this->wishlists->add($wishlist);
+            $wishlist->setProductId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWishlist(Wishlist $wishlist): static
+    {
+        if ($this->wishlists->removeElement($wishlist)) {
+            // set the owning side to null (unless already changed)
+            if ($wishlist->getProductId() === $this) {
+                $wishlist->setProductId(null);
+            }
+        }
+
         return $this;
     }
 

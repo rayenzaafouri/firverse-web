@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block body %}
+<div class="container text-center py-5">
+    <h1 class="text-success mb-4">Payment Successful! 🎉</h1>
+    <p class="lead">Thank you for shopping at FitVerse!</p>
+    <a href="{{ path('shop_home') }}" class="btn btn-primary mt-4">Return to Shop</a>
+</div>
+{% endblock %}
