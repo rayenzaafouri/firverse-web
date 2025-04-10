@@ -23,14 +23,10 @@ class ProductType extends AbstractType
             ->add('imageUrl')
             ->add('category', EntityType::class, [
                 'class' => Category::class,
-'choice_label' => 'id',
-            ])
-            ->add('users', EntityType::class, [
-                'class' => User::class,
-'choice_label' => 'id',
-'multiple' => true,
-            ])
-        ;
+                'choice_label' => 'name', // <-- THIS MAKES IT SHOW NAME instead of ID
+                'placeholder' => 'Choose a Category',
+                'required' => true,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

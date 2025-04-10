@@ -3,12 +3,14 @@
 {% block title %}Admin - Products{% endblock %}
 
 {% block body %}
+{% include 'navbar.html.twig' %}
+
 <div class="container py-5">
 
     <h1 class="mb-4">Manage Products</h1>
 
     <div class="mb-3">
-        <a href="{{ path('admin_product_new') }}" class="btn btn-success">+ Add New Product</a>
+        <a href="{{ path('app_product_new') }}" class="btn btn-success">+ Add New Product</a>
     </div>
 
     <div class="table-responsive">
@@ -34,9 +36,9 @@
                     <td>{{ product.stock }}</td>
                     <td>{{ product.category.name }}</td>
                     <td class="d-flex justify-content-center">
-                        <a href="{{ path('admin_product_show', {'id': product.id}) }}" class="btn btn-sm btn-primary mr-1">View</a>
-                        <a href="{{ path('admin_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-warning mr-1">Edit</a>
-                        {{ include('admin/product/_delete_form.html.twig') }}
+                        <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-sm btn-primary mr-1">View</a>
+                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-warning mr-1">Edit</a>
+                        {{ include('Back/Shop/product/_delete_form.html.twig') }}
                     </td>
                 </tr>
             {% else %}

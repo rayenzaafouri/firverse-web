@@ -30,7 +30,7 @@ class OrderDetail
     }
 
     #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'orderDetails')]
-    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private ?Order $order = null;
 
     public function getOrder(): ?Order
@@ -45,7 +45,7 @@ class OrderDetail
     }
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'orderDetails')]
-    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private ?Product $product = null;
 
     public function getProduct(): ?Product

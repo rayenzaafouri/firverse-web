@@ -397,10 +397,10 @@ class User
     #[ORM\JoinTable(
         name: 'wishlist',
         joinColumns: [
-            new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'id', referencedColumnName: 'id')
         ],
         inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'id', referencedColumnName: 'id')
         ]
     )]
     private Collection $products;

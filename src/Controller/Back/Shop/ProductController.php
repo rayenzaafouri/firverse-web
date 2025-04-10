@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Back\Shop;
 
 use App\Entity\Product;
 use App\Form\ProductType;
@@ -11,12 +11,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/product')]
+#[Route('Admin/product')]
 final class ProductController extends AbstractController{
     #[Route(name: 'app_product_index', methods: ['GET'])]
     public function index(ProductRepository $productRepository): Response
     {
-        return $this->render('product/index.html.twig', [
+        return $this->render('Back/Shop/product/index.html.twig', [
             'products' => $productRepository->findAll(),
         ]);
     }
@@ -35,7 +35,7 @@ final class ProductController extends AbstractController{
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('product/new.html.twig', [
+        return $this->render('Back/Shop/product/new.html.twig', [
             'product' => $product,
             'form' => $form,
         ]);
@@ -50,7 +50,7 @@ final class ProductController extends AbstractController{
             throw $this->createNotFoundException('The product does not exist.');
         }
 
-        return $this->render('product/show.html.twig', [
+        return $this->render('Back/Shop/product/show.html.twig', [
             'product' => $product,
         ]);
     }
@@ -67,7 +67,7 @@ final class ProductController extends AbstractController{
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('product/edit.html.twig', [
+        return $this->render('Back/Shop/product/edit.html.twig', [
             'product' => $product,
             'form' => $form,
         ]);
