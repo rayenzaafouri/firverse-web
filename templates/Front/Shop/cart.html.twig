@@ -9,11 +9,23 @@
 {# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
 
 <div class="container">
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">
-            {{ message }}
-        </div>
-    {% endfor %}
+    <div class="row justify-content-center mb-4">
+    <div class="col-md-6">
+        <form action="{{ path('cart_apply_coupon') }}" method="POST" class="form-inline justify-content-center">
+            <div class="form-group mx-sm-3 mb-2">
+                <input type="text" name="coupon_code" class="form-control" placeholder="Enter coupon code">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Apply Coupon</button>
+        </form>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success mt-3">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger mt-3">{{ message }}</div>
+        {% endfor %}
+    </div>
+</div>
 
     {% if cartItems is not empty %}
         <div class="table-responsive ">
@@ -42,7 +54,7 @@
                             <td>
                                 <a href="{{ path('cart_remove', {'id': item.product.id}) }}" >Remove</a>
                             </td>
-                            <td>{{ item.product.price }} TND</td>
+                            <td>{{ item.product.price }} USD</td>
 
                         </tr>
                     {% endfor %}
@@ -50,9 +62,20 @@
             </table>
         </div>
 
+        {% set finalTotal = total %}
+        {% if app.session.get('coupon') %}
+            {% set discount = app.session.get('coupon').discount %}
+            {% set finalTotal = total * (1 - discount / 100) %}
+        {% endif %}
+
         <div class="text-right font-weight-bold mt-4">
-            Subtotal ({{ cartItems|length }} items): {{ total|number_format(2) }} TND
+            {% if app.session.get('coupon') %}
+                <p class="text-success">Coupon "{{ app.session.get('coupon').code }}" applied: -{{ discount }}%</p>
+            {% endif %}
+            <h4>Subtotal ({{ cartItems|length }} items): {{ finalTotal|number_format(2) }} USD</h4>
         </div>
+
+        <a href="{{ path('checkout') }}" class="btn d-inline-flex align-items-center border border-warning text-dark font-weight-bold bg-warning rounded-pill px-4 py-1 row justify-content-center mb-4" style=" border-radius: 200rem !important;border-width: 3px !important;">Proceed to Checkout</a>
     {% else %}
         <p class="text-center text-muted">Your cart is empty.</p>
     {% endif %}

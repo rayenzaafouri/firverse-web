@@ -107,4 +107,40 @@ class CartController extends AbstractController
 
         return $this->redirectToRoute('cart_index');
     }
+    #[Route('/shop/cart/apply-coupon', name: 'cart_apply_coupon', methods: ['POST'])]
+    public function applyCoupon(Request $request, SessionInterface $session, EntityManagerInterface $em): Response
+    {
+    $couponCode = $request->request->get('coupon_code');
+
+    if (!$couponCode) {
+        $this->addFlash('error', 'Please enter a coupon code.');
+        return $this->redirectToRoute('cart_index');
+    }
+
+    $coupon = $em->getRepository(\App\Entity\Coupon::class)->findOneBy([
+        'code' => $couponCode,
+        'is_active' => true,
+    ]);
+
+    if (!$coupon) {
+        $this->addFlash('error', 'Invalid or inactive coupon.');
+        return $this->redirectToRoute('cart_index');
+    }
+
+    $now = new \DateTime();
+    if ($coupon->getValidFrom() > $now || $coupon->getValidUntil() < $now) {
+        $this->addFlash('error', 'This coupon is expired.');
+        return $this->redirectToRoute('cart_index');
+    }
+
+    // Apply the coupon
+    $session->set('coupon', [
+        'code' => $coupon->getCode(),
+        'discount' => $coupon->getDiscountPercentage()
+    ]);
+
+    $this->addFlash('success', 'Coupon applied successfully!');
+
+    return $this->redirectToRoute('cart_index');
+}
 }

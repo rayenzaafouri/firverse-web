@@ -2,53 +2,81 @@
 
 namespace App\Controller\Front\Shop;
 
-use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Stripe\Stripe;
-use Stripe\Checkout\Session as StripeSession;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface; // ADD THIS!
+use Stripe\Checkout\Session;
+use Stripe\Exception\ApiErrorException;
+use App\Repository\ProductRepository;
+use App\Entity\Product;
 
 class CheckoutController extends AbstractController
 {
-    #[Route('/checkout', name: 'checkout_start', methods: ['POST'])]
-public function checkout(SessionInterface $session, ProductRepository $productRepository): Response
+    private const CART_SESSION_KEY = 'cart';
+
+    #[Route('/shop/cart/checkout', name: 'checkout', methods: ['POST'])]
+public function checkout(Request $request, SessionInterface $session, ProductRepository $productRepository): Response
 {
-    Stripe::setApiKey('sk_test_51Qwm6yG2v8TGz3VWDphJSGZigzB30TtZMSFJY7kGJdmlVV616fS2xFvb4q4y7paJvO1D0128jqsaaOIq4IptkXxT0063bpVoGc');
+    // CSRF protection
+    $submittedToken = $request->request->get('token');
+    if (!$this->isCsrfTokenValid('checkout', $submittedToken)) {
+        throw $this->createAccessDeniedException('Invalid CSRF token');
+    }
 
     $cart = $session->get('cart', []);
-    $lineItems = [];
+    $customerEmail = $this->getUser() ? $this->getUser()->getEmail() : 'test@example.com';
 
+    if (empty($cart)) {
+        $this->addFlash('warning', 'Your cart is empty');
+        return $this->redirectToRoute('cart_index');
+    }
+
+    Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+
+    $lineItems = [];
     foreach ($cart as $id => $quantity) {
         $product = $productRepository->find($id);
         if (!$product) continue;
-
+        
         $lineItems[] = [
             'price_data' => [
-                'currency' => 'usd',
+                'currency' => 'usd', // or 'tnd' if supported
                 'product_data' => [
                     'name' => $product->getName(),
                 ],
-                'unit_amount' => intval($product->getPrice() * 100),
+                'unit_amount' => (int) ($product->getPrice() * 100), // *1000 for TND
             ],
             'quantity' => $quantity,
         ];
     }
 
-    $checkoutSession = StripeSession::create([
-        'payment_method_types' => ['card'],
-        'line_items' => $lineItems,
-        'mode' => 'payment',
-        'success_url' => 'http://localhost:8000/checkout/success?session_id={CHECKOUT_SESSION_ID}',
-        'cancel_url' => 'http://localhost:8000/shop/cart',
+    try {
+        $checkoutSession = Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => $lineItems,
+            'mode' => 'payment',
+            'success_url' => $this->generateUrl(
+                'checkout_success',
+                [],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            ),
+            'cancel_url' => $this->generateUrl(
+                'checkout_cancel',
+                [],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            ),
+            'customer_email' => $customerEmail,
+        ]);
 
-    ]);
+        return $this->redirect($checkoutSession->url);
 
-    return $this->redirect($checkoutSession->url);
+    } catch (ApiErrorException $e) {
+        $this->addFlash('error', 'Payment error: '.$e->getMessage());
+        return $this->redirectToRoute('cart_index');
+    }
 }
 }

@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} | FitVerse{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+<div class="container py-5">
+
+    {% for message in app.flashes('add_success') %}
+        <div class="alert alert-success text-center" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="position-relative">
+                    {% set discount = 0 %}
+                    {% set now = 'now'|date('U') %}
+                    {% if product.productDiscounts|length > 0 %}
+                        {% for discountEntity in product.productDiscounts %}
+                            {% if discountEntity.validFrom|date('U') <= now and discountEntity.validUntil|date('U') >= now %}
+                                {% set discount = discountEntity.discountPercentage %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if discount > 0 %}
+                        <span class="badge badge-danger position-absolute" style="top: 10px; left: 10px;">SALE</span>
+                    {% endif %}
+
+                    <img src="{{ product.imageUrl }}" class="card-img-top p-4" style="height: 300px; object-fit: contain;" alt="{{ product.name }}">
+                </div>
+
+                <div class="card-body text-center">
+                    <h2 class="card-title mb-3">{{ product.name }}</h2>
+
+                    {% if discount > 0 %}
+                        <p>
+                            <del class="text-muted">{{ product.price|number_format(2) }} TND</del>
+                        </p>
+                        <p class="text-success font-weight-bold">
+                            {{ (product.price * (1 - discount/100))|number_format(2) }} TND
+                        </p>
+                    {% else %}
+                        <p class="text-primary font-weight-bold">{{ product.price|number_format(2) }} TND</p>
+                    {% endif %}
+
+                    <p class="text-muted mt-3">
+                        {{ product.description }}
+                    </p>
+
+                    <div class="mt-4">
+                        <a href="{{ path('cart_add', {'id': product.id}) }}" class="btn btn-success btn-lg">
+                            Add to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

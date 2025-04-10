@@ -24,6 +24,9 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/shop/cart/checkout, roles: PUBLIC_ACCESS }
+        - { path: ^/shop/checkout/success, roles: PUBLIC_ACCESS }
+        - { path: ^/shop/checkout/cancel, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

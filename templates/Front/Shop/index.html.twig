@@ -93,7 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
 <body data-context="shop">
 {# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
 <div class="container py-5">
-
+{% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
     <!-- Search Bar -->
     <div class="row justify-content-center mb-4">
         <div class="col-md-6">
@@ -154,16 +158,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         </p>
 
                         {% if discount > 0 %}
-                            <p><del>{{ product.price|number_format(2) }} TND</del></p>
-                            <p class="text-success font-weight-bold">{{ (product.price * (1 - discount/100))|number_format(2) }} TND</p>
+                            <p><del>{{ product.price|number_format(2) }} USD</del></p>
+                            <p class="text-success font-weight-bold">{{ (product.price * (1 - discount/100))|number_format(2) }} USD</p>
                         {% else %}
-                            <p class="text-primary font-weight-bold">{{ product.price|number_format(2) }} TND</p>
+                            <p class="text-primary font-weight-bold">{{ product.price|number_format(2) }} USD</p>
                         {% endif %}
 
 
                         <div class="mt-auto d-flex justify-content-between">
-                            <a href="{{ path('cart_add', {'id': product.id}) }}" class="btn btn-success btn-sm">Add</a>
-                            <a href="#" class="btn btn-primary btn-sm">View</a>
+                            <a href="{{ path('cart_add', {'id': product.id}) }}" class="btn btn-success btn-sm">Add to cart</a>
+                            <a href="{{ path('productdetail' , {'id' : product.id})}}" class="btn btn-primary btn-sm">View</a>
                         </div>
                     </div>
 
