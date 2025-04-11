@@ -24,7 +24,8 @@
               <a class="nav-link" href="#"> <span class="material-symbols-outlined">shopping_cart</span> Shop <span class="sr-only">(current)</span></a>
             </li>
           </ul>
-          <div class="navbar-text user-menu">
+
+          <div class="user-nav-menu navbar-text">
             <div class="user-display">
               <span>Foulen el fleni</span>
             </div>
@@ -32,13 +33,78 @@
               <span>F</span>
               <span>F</span>
             </div>
-           
           </div>
         </div>
+
+
+         <div class="user-nav-menu-content">
+
+         <ul>
+          <li>            
+          <a href="">
+              <span class="material-symbols-outlined">person</span>
+              <span> My account</span>
+              <span class="material-symbols-outlined">
+              chevron_right
+              </span>
+            </a></li>
+
+
+       <li>            
+          <a href="">
+              <span class="material-symbols-outlined">shopping_cart</span>
+              <span>Shopping cart</span>
+              <span class="material-symbols-outlined">
+              chevron_right
+              </span>
+            </a>
+        </li>
+
+
+
+        <li>            
+          <a href="">
+              <span class="material-symbols-outlined">support</span>
+              <span>Support & help</span>
+              <span class="material-symbols-outlined">
+              chevron_right
+              </span>
+            </a>
+        </li>
+
+
+                <li>            
+          <a href="">
+              <span class="material-symbols-outlined">settings_account_box</span>
+              <span>Preferences</span>
+              <span class="material-symbols-outlined">
+              chevron_right
+              </span>
+            </a>
+        </li>
+
+
+        
+        
+        </ul>
+
+        <button class="btn logout-btn" > <a href="/logout"><span class="material-symbols-outlined">door_open</span> Logout</a></button>
+     
+            
+          
+          </div>
+
   </nav>
 
 
+
+
+
+
+
   <script>
+
+
 
   const accentMap = {
     "gym":"#3478F6",
@@ -53,6 +119,14 @@
 
 
   document.addEventListener("DOMContentLoaded",()=>{
+
+
+    showUserMenu();
+
+
+
+
+
   //Setting current context color in navbar
   const currentContext = document.body.getAttribute("data-context")
   if(accentMap[currentContext]){
@@ -61,9 +135,8 @@
   }
   else{
     updateAccentColor(accentMap["default"])
+    console.error("Fitverse navbar failed to sync to context. Did you miss to set data-context?")
   }
-
-
   const items = Array.from(document.querySelectorAll(".fitverse-navbar .nav-item"))
   items.forEach(item => {
     item.addEventListener("mouseover", (event) => {
@@ -76,7 +149,6 @@
 
     item.addEventListener("mouseover", (event) => {
       let newContext = item.getAttribute("data-context")
-      console.log({newContext})
 
       if( newContext && accentMap[newContext]){
         updateAccentColor(accentMap[newContext])
@@ -92,11 +164,58 @@
     })
   })
 
-
-
   function updateAccentColor(hexValue){
     document.querySelector("nav.fitverse-navbar").style.setProperty("border-color",hexValue)
   }
+
+
+  //User menu toggle
+  document.querySelector(".user-nav-menu").addEventListener("click",()=>{
+    toggleNavbarState()
+  })
+
+
+  //Adding delay animation to each item for smooth roll
+  const time_offset = .10;
+  let iteration = 0;
+    const animatable_items = Array.from(document.querySelectorAll(".user-nav-menu-content > ul > li")).forEach(item => {
+     if(iteration>0){
+         item.style.setProperty("animation-delay", iteration*offset +"s")
+     }
+     iteration++;
+  })
+
+
+
+  function toggleNavbarState(){
+    if(!getNavbarState()){
+      showUserMenu();
+      return
+    }
+    closeUserMenu()
+  }
+
+  function getNavbarState(){
+    return document.querySelector(".user-nav-menu").classList.contains("open")
+  }
+
+  function showUserMenu(){
+      document.querySelector(".user-nav-menu").classList.add("open")
+      document.querySelector(".user-nav-menu-content").classList.add("open")
+
+     
+  }
+
+  function closeUserMenu(){
+      document.querySelector(".user-nav-menu").classList.remove("open")
+      document.querySelector(".user-nav-menu-content").classList.remove("open")
+  }
     
 })
+
+
 </script>
+
+
+
+
