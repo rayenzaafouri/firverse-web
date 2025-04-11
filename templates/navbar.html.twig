@@ -104,9 +104,7 @@
 
   <script>
 
-
-
-  const accentMap = {
+  let accentMap = {
     "gym":"#3478F6",
     "nutrition":"#AEC867",
     "exercise":"#69D2C8",
@@ -123,12 +121,8 @@
 
     showUserMenu();
 
-
-
-
-
   //Setting current context color in navbar
-  const currentContext = document.body.getAttribute("data-context")
+  let currentContext = document.body.getAttribute("data-context")
   if(accentMap[currentContext]){
     updateAccentColor(accentMap[currentContext])
     document.querySelector(".nav-item."+currentContext).classList.add("active")
@@ -137,7 +131,7 @@
     updateAccentColor(accentMap["default"])
     console.error("Fitverse navbar failed to sync to context. Did you miss to set data-context?")
   }
-  const items = Array.from(document.querySelectorAll(".fitverse-navbar .nav-item"))
+  let items = Array.from(document.querySelectorAll(".fitverse-navbar .nav-item"))
   items.forEach(item => {
     item.addEventListener("mouseover", (event) => {
       let newContext = item.getAttribute("data-context")
@@ -176,11 +170,11 @@
 
 
   //Adding delay animation to each item for smooth roll
-  const time_offset = .10;
+  let time_offset = .10;
   let iteration = 0;
-    const animatable_items = Array.from(document.querySelectorAll(".user-nav-menu-content > ul > li")).forEach(item => {
+    let animatable_items = Array.from(document.querySelectorAll(".user-nav-menu-content > ul > li")).forEach(item => {
      if(iteration>0){
-         item.style.setProperty("animation-delay", iteration*offset +"s")
+         item.style.setProperty("animation-delay", iteration*time_offset +"s")
      }
      iteration++;
   })
@@ -212,7 +206,6 @@
   }
     
 })
-
 
 </script>
 
