@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gym{% endblock %}
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+    <div class="container py-5" style="max-width: 1200px; margin-left: auto; margin-right: auto; background-color: #212529; color: white;">
+
+        <h1 class="text-center mb-4">Gym Details</h1>
+
+        <table class="table table-dark table-striped table-bordered">
+            <tbody>
+                <tr class="bg-dark">
+                    <th class="text-light">Id</th>
+                    <td>{{ gym.id }}</td>
+                </tr>
+                <tr class="bg-secondary">
+                    <th class="text-light">Name</th>
+                    <td>{{ gym.name }}</td>
+                </tr>
+                <tr class="bg-dark">
+                    <th class="text-light">Adresse</th>
+                    <td>{{ gym.adresse }}</td>
+                </tr>
+                <tr class="bg-secondary">
+                    <th class="text-light">Longitude</th>
+                    <td>{{ gym.longitude }}</td>
+                </tr>
+                <tr class="bg-dark">
+                    <th class="text-light">Latitude</th>
+                    <td>{{ gym.latitude }}</td>
+                </tr>
+                <tr class="bg-secondary">
+                    <th class="text-light">Phone</th>
+                    <td>{{ gym.phone }}</td>
+                </tr>
+                <tr class="bg-dark">
+                    <th class="text-light">Email</th>
+                    <td>{{ gym.email }}</td>
+                </tr>
+                <tr class="bg-secondary">
+                    <th class="text-light">Capacity</th>
+                    <td>{{ gym.capacity }}</td>
+                </tr>
+                <tr class="bg-dark">
+                    <th class="text-light">Opening Hours</th>
+                    <td>{{ gym.openingHours }}</td>
+                </tr>
+                <tr class="bg-secondary">
+                    <th class="text-light">Rating</th>
+                    <td>{{ gym.rating }}</td>
+                </tr>
+                <tr class="bg-dark">
+                    <th class="text-light">Created At</th>
+                    <td>{{ gym.createdAt ? gym.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+                <tr class="bg-secondary">
+                    <th class="text-light">Image</th>
+                    <td>
+                        {% if gym.image %}
+                            <img src="{{ gym.image }}" alt="{{ gym.name }}" style="width: 150px; height: auto;">
+                        {% else %}
+                            <span class="text-muted">No image</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ path('app_gym_index') }}" class="btn btn-info">Back to list</a>
+            <a href="{{ path('app_gym_edit', {'id': gym.id}) }}" class="btn btn-warning">Edit</a>
+        </div>
+
+        <div class="mt-3">
+            {{ include('gym/_delete_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

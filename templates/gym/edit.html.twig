@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Gym{% endblock %}
+
+{% block body %}
+    {% include 'navbar.html.twig' %}
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="container py-5" style="max-width: 1200px; margin: auto; background-color: #212529; color: white;">
+        <h1 class="text-center mb-4">Modifier une Salle de Sport</h1>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="bg-dark p-4 mb-4 rounded">
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.name, 'Name') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.name) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.adresse, 'Adresse') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.adresse, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.adresse) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.longitude, 'Longitude') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.longitude, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.longitude) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.latitude, 'Latitude') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.latitude, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.latitude) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.phone, 'Phone') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.phone, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.phone) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.email, 'Email') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.capacity, 'Capacity') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.capacity, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.capacity) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.opening_hours, 'Opening Hours') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.opening_hours, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.opening_hours) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.rating, 'Rating') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.rating, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.rating) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.createdAt, 'Created At') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.createdAt, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.createdAt) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.image, 'Image') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.image) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        {{ form_label(form.partner, 'Partenaire') }}
+                    </div>
+                    <div class="col-sm-10">
+                        {{ form_widget(form.partner, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.partner) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center mt-4">
+                <button type="submit" class="btn btn-success">Modifier</button>
+            </div>
+        {{ form_end(form) }}
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ path('app_gym_index') }}" class="btn btn-info">Retour</a>
+            <div>
+                {{ include('gym/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

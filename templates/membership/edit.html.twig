@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Membership{% endblock %}
+
+{% block body %}
+    <h1>Edit Membership</h1>
+
+    {{ include('membership/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_membership_index') }}">back to list</a>
+
+    {{ include('membership/_delete_form.html.twig') }}
+{% endblock %}

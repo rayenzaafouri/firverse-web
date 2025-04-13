@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Gyms{% endblock %}
+
+{% block body %}
+    {% include 'navbar.html.twig' %}
+
+    <div class="container-fluid px-3 py-3">
+        <h1 class="mb-4 text-center">Manage Gyms</h1>
+
+        <div class="text-center mb-3">
+            <a href="{{ path('app_gym_new') }}" class="btn btn-success">+ Add New Gym</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Longitude</th>
+                        <th>Latitude</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Capacity</th>
+                        <th>Opening Hours</th>
+                        <th>Rating</th>
+                        <th>Created At</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for gym in gyms %}
+                        <tr class="{% if loop.index is odd %}table-secondary{% endif %}">
+                            <td>{{ gym.id }}</td>
+                            <td>{{ gym.name }}</td>
+                            <td>{{ gym.adresse }}</td>
+                            <td>{{ gym.longitude }}</td>
+                            <td>{{ gym.latitude }}</td>
+                            <td>{{ gym.phone }}</td>
+                            <td>{{ gym.email }}</td>
+                            <td>{{ gym.capacity }}</td>
+                            <td>{{ gym.openingHours }}</td>
+                            <td>{{ gym.rating }}</td>
+                            <td>{{ gym.createdAt ? gym.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                            <td>
+                                {% if gym.image %}
+                                    <img src="{{ gym.image }}" alt="{{ gym.name }}" class="img-fluid" style="max-width: 150px;">
+                                {% else %}
+                                    <span class="text-muted">No image</span>
+                                {% endif %}
+                            </td>
+                        <td>
+                            <div class="d-flex flex-column gap-100">
+                                <a href="{{ path('app_gym_show', {'id': gym.id}) }}" class="btn btn-sm btn-primary">View</a>
+                                <a href="{{ path('app_gym_edit', {'id': gym.id}) }}" class="btn btn-sm btn-warning">Edit</a>
+                            </div>
+                        </td>
+
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="13" class="text-muted">No gyms found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
