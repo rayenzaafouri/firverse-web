@@ -1,0 +1,34 @@
+{% if product_discounts and product_discounts.id is defined %}
+    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal{{ product_discounts.id }}">
+        Delete
+    </button>
+
+    <div class="modal fade" id="deleteModal{{ product_discounts.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ product_discounts.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel{{ product_discounts.id }}">Confirm Deletion</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    Are you sure you want to delete the discount for "<strong>{{ product_discounts.product.name }}</strong>"?
+                </div>
+
+                <div class="modal-footer">
+                    <form method="post" action="{{ path('app_product_discount_delete', {'id': product_discounts.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product_discounts.id) }}">
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% else %}
+    <p class="text-danger">Invalid discount data.</p>
+{% endif %}

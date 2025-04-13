@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('Admin/product')]
+#[Route('/admin/shop/products')]
 final class ProductController extends AbstractController{
     #[Route(name: 'app_product_index', methods: ['GET'])]
     public function index(ProductRepository $productRepository): Response
@@ -41,7 +41,7 @@ final class ProductController extends AbstractController{
         ]);
     }
 
-    #[Route('/product/{id}', name: 'app_product_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_product_show', methods: ['GET'])]
     public function show(ProductRepository $productRepository, int $id): Response
     {
         $product = $productRepository->find($id);
@@ -73,14 +73,14 @@ final class ProductController extends AbstractController{
         ]);
     }
 
-    #[Route('/{id}', name: 'app_product_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_product_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($product);
-            $entityManager->flush();
-        }
+        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
+        $entityManager->remove($product);
+        $entityManager->flush();
+    }
 
-        return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
+    return $this->redirectToRoute('app_product_index');
     }
 }

@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Discount{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Edit Discount</h1>
+
+    <div class="card shadow p-4">
+        {{ form_start(form) }}
+        {# same form fields as above #}
+        <div class="form-group">
+            {{ form_label(form.product) }}
+            {{ form_widget(form.product, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.product) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.discount_percentage) }}
+            {{ form_widget(form.discount_percentage, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.discount_percentage) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.valid_from) }}
+            {{ form_widget(form.valid_from, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.valid_from) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.valid_until) }}
+            {{ form_widget(form.valid_until, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.valid_until) }}
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-warning mt-3">Update</button>
+            <a href="{{ path('app_product_discount_index') }}" class="btn btn-secondary mt-3 ml-2">Cancel</a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

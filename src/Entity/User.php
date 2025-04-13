@@ -397,10 +397,10 @@ class User
     #[ORM\JoinTable(
         name: 'wishlist',
         joinColumns: [
-            new ORM\JoinColumn(name: 'id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')
         ],
         inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')
         ]
     )]
     private Collection $products;
@@ -408,7 +408,7 @@ class User
     /**
      * @var Collection<int, Wishlist>
      */
-    #[ORM\OneToMany(targetEntity: Wishlist::class, mappedBy: 'User_id', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Wishlist::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $wishlists;
 
     public function __construct()

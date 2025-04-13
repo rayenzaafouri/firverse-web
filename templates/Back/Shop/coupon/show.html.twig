@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}View Coupon{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Coupon Details</h1>
+
+    <div class="card shadow p-4">
+        <h3>Code: {{ coupon.code }}</h3>
+
+        <p><strong>Discount:</strong> {{ coupon.discountPercentage }}%</p>
+        <p><strong>Valid From:</strong> {{ coupon.validFrom|date('Y-m-d H:i') }}</p>
+        <p><strong>Valid Until:</strong> {{ coupon.validUntil|date('Y-m-d H:i') }}</p>
+
+        <div class="my-3">
+            {% if coupon.isActive %}
+                <span class="badge badge-success">Active</span>
+            {% else %}
+                <span class="badge badge-secondary">Inactive</span>
+            {% endif %}
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ path('app_coupon_edit', {'id': coupon.id}) }}" class="btn btn-warning mr-2">Edit</a>
+            <a href="{{ path('app_coupon_index') }}" class="btn btn-secondary">Back to list</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

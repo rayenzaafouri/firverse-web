@@ -1,4 +1,8 @@
-<form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Are you sure you want to delete this product?');">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
-    <button class="btn btn-sm btn-danger">Delete</button>
-</form>
+{% if product and product.id is defined %}
+    <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Are you sure you want to delete this product?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+        <button class="btn btn-sm btn-danger">Delete</button>
+    </form>
+{% else %}
+    <p class="text-danger">Invalid product data.</p>
+{% endif %}

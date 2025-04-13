@@ -56,7 +56,7 @@ class CartController extends AbstractController
 
         $this->addFlash('success', $product->getName() . ' added to cart.');
 
-        return $this->redirectToRoute('shop_home'); // Redirect to your shop page
+        return $this->redirectToRoute('shop_home'); 
     }
 
     #[Route('/shop/cart/remove/{id}', name: 'cart_remove')]
@@ -133,7 +133,6 @@ class CartController extends AbstractController
         return $this->redirectToRoute('cart_index');
     }
 
-    // Apply the coupon
     $session->set('coupon', [
         'code' => $coupon->getCode(),
         'discount' => $coupon->getDiscountPercentage()

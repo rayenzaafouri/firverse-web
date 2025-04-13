@@ -8,6 +8,7 @@ body {
 
 
 .fitverse-navbar {
+    z-index: 9999;
     min-height: 6rem;
     background-color: #222529 !important;
     border-bottom: 4px solid #9FF856;

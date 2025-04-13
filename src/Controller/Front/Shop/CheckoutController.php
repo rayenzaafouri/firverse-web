@@ -79,4 +79,19 @@ public function checkout(Request $request, SessionInterface $session, ProductRep
         return $this->redirectToRoute('cart_index');
     }
 }
+#[Route('/shop/cart/checkout/success', name: 'checkout_success', methods: ['GET'])]
+public function success(SessionInterface $session): Response
+{
+    // Clear the cart after successful payment
+    $session->remove('cart');
+    $session->remove('coupon');
+
+    return $this->render('Front/Shop/success.html.twig');
+}
+#[Route('/shop/cart/checkout/cancel', name: 'checkout_cancel', methods: ['GET'])]
+public function cancel(): Response
+{
+    return $this->render('Front/Shop/cancel.html.twig');
+}
+
 }

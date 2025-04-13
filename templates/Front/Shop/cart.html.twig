@@ -9,23 +9,6 @@
 {# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
 
 <div class="container">
-    <div class="row justify-content-center mb-4">
-    <div class="col-md-6">
-        <form action="{{ path('cart_apply_coupon') }}" method="POST" class="form-inline justify-content-center">
-            <div class="form-group mx-sm-3 mb-2">
-                <input type="text" name="coupon_code" class="form-control" placeholder="Enter coupon code">
-            </div>
-            <button type="submit" class="btn btn-primary mb-2">Apply Coupon</button>
-        </form>
-
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success mt-3">{{ message }}</div>
-        {% endfor %}
-        {% for message in app.flashes('error') %}
-            <div class="alert alert-danger mt-3">{{ message }}</div>
-        {% endfor %}
-    </div>
-</div>
 
     {% if cartItems is not empty %}
         <div class="table-responsive ">
@@ -61,7 +44,18 @@
                 </tbody>
             </table>
         </div>
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <p class="form-inline justify-content-center text-dark text-decoration-none font-weight-bold">Posess a coupon code?</p>
+                <form action="{{ path('cart_apply_coupon') }}" method="POST" class="form-inline justify-content-center">
+                    <div class="form-group mx-sm-3 mb-2">
+                        <input type="text" name="coupon_code" class="form-control" placeholder="Enter your coupon">
+                    </div>
+                <button type="submit" class="btn btn-scondary mb-2">Apply Coupon</button>
+                </form>
 
+            </div>
+        </div>
         {% set finalTotal = total %}
         {% if app.session.get('coupon') %}
             {% set discount = app.session.get('coupon').discount %}
@@ -74,8 +68,13 @@
             {% endif %}
             <h4>Subtotal ({{ cartItems|length }} items): {{ finalTotal|number_format(2) }} USD</h4>
         </div>
-
-        <a href="{{ path('checkout') }}" class="btn d-inline-flex align-items-center border border-warning text-dark font-weight-bold bg-warning rounded-pill px-4 py-1 row justify-content-center mb-4" style=" border-radius: 200rem !important;border-width: 3px !important;">Proceed to Checkout</a>
+        <div>
+            <form action="{{ path('checkout') }}" method="POST" class="text-right mt-3">
+                <input type="hidden" name="token" value="{{ csrf_token('checkout') }}">
+                <button type="submit" class="btn d-inline-flex align-items-center border border-warning text-dark font-weight-bold bg-warning rounded-pill px-4 py-1 row justify-content-center mb-4" style="border-radius: 200rem !important;border-width: 3px !important;">
+                Proceed to Checkout
+                </button>
+            </form>
     {% else %}
         <p class="text-center text-muted">Your cart is empty.</p>
     {% endif %}

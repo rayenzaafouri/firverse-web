@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}View Category{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+<div class="container py-5">
+
+    <h1 class="mb-4 text-center">Category Details</h1>
+
+    <div class="card shadow p-4">
+        <h3>{{ category.name }}</h3>
+        <p class="text-muted">{{ category.description }}</p>
+
+        <div class="mt-4">
+            <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-warning mr-2">Edit</a>
+            <a href="{{ path('app_category_index') }}" class="btn btn-secondary">Back to list</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
