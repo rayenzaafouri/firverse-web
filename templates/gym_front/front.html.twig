@@ -1,0 +1,30 @@
+{# templates/gym_front/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Front - User{% endblock %}
+
+{% block body %}
+<div class="container mt-5 mb-5">
+
+    <h2 class="mb-4 text-center"> Nos Salles de Sport </h2>
+
+    <div class="row">
+        {% for gym in gyms %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ gym.image }}" alt="{{ gym.name }}" class="card-img-top img-fluid" style="height: 300px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ gym.name }}</h5>
+                        <a href="https://www.openstreetmap.org/?mlat={{ gym.latitude }}&mlon={{ gym.longitude }}&zoom=15"
+                           target="_blank"
+                           class="btn btn-outline-primary mb-2">📍 Voir sur Maps </a>
+                        <a href="{{ path('gym_front_detail', {'id': gym.id}) }}" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-center text-muted">Aucune salle de sport trouvée.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
