@@ -7,11 +7,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
+
 use App\Repository\UserRepository;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
-class User
+
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -479,4 +484,41 @@ class User
         return $this;
     }
 
+
+    //Interface specific methods ---------
+
+    public function getRoles(): array
+{
+    $validRoles = [
+        'user' => 'ROLE_USER',
+        'admin' => 'ROLE_ADMIN',
+    ];
+
+    $rolesFromDb = [$this->role ?? ''];
+
+    $mappedRoles = [];
+
+    foreach ($rolesFromDb as $role) {
+        if (isset($validRoles[$role])) {
+            $mappedRoles[] = $validRoles[$role];
+        }
+    }
+
+    if (!in_array('ROLE_USER', $mappedRoles)) {
+        $mappedRoles[] = 'ROLE_USER';
+    }
+
+    return array_unique($mappedRoles);
+}
+
+
+
+
+    public function eraseCredentials(): void {}
+
+    public function getUserIdentifier(): string
+    {
+        // Usually return username or email
+        return $this->email;
+    }
 }
