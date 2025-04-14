@@ -10,17 +10,34 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\Gym;
+use App\Form\GymType;
 
 #[Route('/membership')]
 final class MembershipController extends AbstractController
 {
-    #[Route(name: 'app_membership_index', methods: ['GET'])]
-    public function index(MembershipRepository $membershipRepository): Response
+    #[Route(name: 'app_membership_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, MembershipRepository $membershipRepository, EntityManagerInterface $entityManager): Response
     {
+        $gym = new Gym();
+        $form = $this->createForm(GymType::class, $gym);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($gym);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Salle de sport ajoutée avec succès.');
+
+            return $this->redirectToRoute('app_membership_index');
+        }
+
         return $this->render('membership/index.html.twig', [
             'memberships' => $membershipRepository->findAll(),
+            'form' => $form->createView(), // 🔥 c'est ce qui manquait
         ]);
     }
+
 
     #[Route('/new', name: 'app_membership_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -45,10 +62,16 @@ final class MembershipController extends AbstractController
     #[Route('/{id}', name: 'app_membership_show', methods: ['GET'])]
     public function show(Membership $membership): Response
     {
+        $form = $this->createForm(MembershipType::class, $membership, [
+            'disabled' => true,
+        ]);
+
         return $this->render('membership/show.html.twig', [
+            'form' => $form,
             'membership' => $membership,
         ]);
     }
+
 
     #[Route('/{id}/edit', name: 'app_membership_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Membership $membership, EntityManagerInterface $entityManager): Response

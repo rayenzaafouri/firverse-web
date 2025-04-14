@@ -1,43 +1,62 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Membership index{% endblock %}
+{% block title %}Membership - Admin {% endblock %}
 
 {% block body %}
-    <h1>Membership index</h1>
+    {% include 'navbar.html.twig' %}
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Start_date</th>
-                <th>End_date</th>
-                <th>Price</th>
-                <th>Coaching</th>
-                <th>Status</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for membership in memberships %}
-            <tr>
-                <td>{{ membership.id }}</td>
-                <td>{{ membership.startDate ? membership.startDate|date('Y-m-d') : '' }}</td>
-                <td>{{ membership.endDate ? membership.endDate|date('Y-m-d') : '' }}</td>
-                <td>{{ membership.price }}</td>
-                <td>{{ membership.coaching ? 'Yes' : 'No' }}</td>
-                <td>{{ membership.status }}</td>
-                <td>
-                    <a href="{{ path('app_membership_show', {'id': membership.id}) }}">show</a>
-                    <a href="{{ path('app_membership_edit', {'id': membership.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">no records found</td>
-            </tr>
+    {# Flash Messages #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         {% endfor %}
-        </tbody>
-    </table>
+    {% endfor %}
 
-    <a href="{{ path('app_membership_new') }}">Create new</a>
+    <div class="container py-5">
+        <div class="row">
+            {# Membership Table #}
+            <div class="col-md-7">
+                <h2 class="text-white mb-4">Liste des Adhésions</h2>
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Start_date</th>
+                            <th>End_date</th>
+                            <th>Price</th>
+                            <th>Coaching</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for membership in memberships %}
+                        <tr>
+                            <td>{{ membership.id }}</td>
+                            <td>{{ membership.startDate ? membership.start_date|date('Y-m-d') : '' }}</td>
+                            <td>{{ membership.endDate ? membership.end_date|date('Y-m-d') : '' }}</td>
+                            <td>{{ membership.price }}</td>
+                            <td>{{ membership.coaching ? 'Yes' : 'No' }}</td>
+                            <td>{{ membership.status }}</td>
+                            <td>
+                                <a href="{{ path('app_membership_show', {'id': membership.id}) }}" class="btn btn-sm btn-primary">Show</a>
+                                <a href="{{ path('app_membership_edit', {'id': membership.id}) }}" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7">Aucune abonnement trouvée</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ path('app_membership_new') }}" class="btn btn-success"> Créer une nouvelle abonnement </a>
+            </div>
+
+            </div>
+        </div>
+    </div>
 {% endblock %}

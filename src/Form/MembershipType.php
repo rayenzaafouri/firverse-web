@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class MembershipType extends AbstractType
 {
@@ -23,11 +24,33 @@ class MembershipType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('price', NumberType::class, [
-                'required' => true,  // ou false selon ton besoin
-                'attr' => ['step' => 'any'], // permet de saisir des décimales
+                'required' => true,
+                'attr' => [
+                    'class' => 'form-control',
+                    'step' => 5,
+                    'min' => 0
+                ]
             ])
-            ->add('coaching')
-            ->add('status')
+            ->add('coaching', ChoiceType::class, [
+                'choices'  => [
+                    'Oui' => true,
+                    'Non' => false,
+                ],
+                'expanded' => false,
+                'multiple' => false,
+                'required' => true,
+                'placeholder' => 'Sélectionner',
+                'attr' => ['class' => 'form-control']
+            ])
+
+            ->add('status', ChoiceType::class, [
+                'choices'  => [
+                    'Active' => 'Active',
+                    'Inactive' => 'Inactive',
+                    'Expired' => 'Expired',
+                ],
+                'placeholder' => 'Choisir un statut',
+            ])
             ->add('gym', EntityType::class, [
                 'class' => Gym::class,
                 'choice_label' => 'id',

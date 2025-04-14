@@ -1,13 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Membership{% endblock %}
+{% block title %}Modifier l'abonnement{% endblock %}
 
 {% block body %}
-    <h1>Edit Membership</h1>
+    {% include 'navbar.html.twig' %}
 
-    {{ include('membership/_form.html.twig', {'button_label': 'Update'}) }}
+    <div class="container py-5" style="max-width: 800px;">
+        <h1 class="text-center mb-4 text-white">Modifier l'abonnement</h1>
 
-    <a href="{{ path('app_membership_index') }}">back to list</a>
+        {{ include('membership/_form.html.twig', {'button_label': 'Modifier'}) }}
 
-    {{ include('membership/_delete_form.html.twig') }}
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ path('app_membership_index') }}" class="btn btn-info"> Retour </a>
+            {{ include('membership/_delete_form.html.twig') }}
+        </div>
+    </div>
 {% endblock %}

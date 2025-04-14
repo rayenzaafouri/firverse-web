@@ -1,11 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Membership{% endblock %}
+{% block title %}Nouveau Membership{% endblock %}
 
 {% block body %}
-    <h1>Create new Membership</h1>
+    {% include 'navbar.html.twig' %}
 
-    {{ include('membership/_form.html.twig') }}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
 
-    <a href="{{ path('app_membership_index') }}">back to list</a>
+    <div class="container py-5" style="max-width: 800px;">
+        <h1 class="text-center mb-4 text-white">Créer un nouvel abonnement</h1>
+
+        {{ include('membership/_form.html.twig', {'button_label': 'Ajouter'}) }}
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ path('app_membership_index') }}" class="btn btn-info">Retour</a>
+        </div>
+    </div>
 {% endblock %}
