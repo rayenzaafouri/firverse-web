@@ -8,13 +8,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use App\Repository\UserRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
@@ -30,6 +33,9 @@ class User
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'First name is required')]
+    #[Assert\Length(min: 2, max: 50, minMessage: 'First name must be at least 2 characters long.', maxMessage: 'First name cannot exceed 50 characters.')]
+
     private ?string $first_name = null;
 
     public function getFirst_name(): ?string
@@ -44,6 +50,9 @@ class User
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Last name cannot be blank.')]
+    #[Assert\Length(min: 2, max: 50, minMessage: 'Last name must be at least 2 characters long.', maxMessage: 'Last name cannot exceed 50 characters.')]
+
     private ?string $last_name = null;
 
     public function getLast_name(): ?string
@@ -58,6 +67,9 @@ class User
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Email cannot be blank.')]
+    #[Assert\Email(message: 'The email is not a valid email.')]
+
     private ?string $email = null;
 
     public function getEmail(): ?string
@@ -72,6 +84,9 @@ class User
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Address cannot be blank.')]
+    #[Assert\Length(min: 2, max: 100, minMessage: 'Address must be at least 2 characters long.', maxMessage: 'Address cannot exceed 100 characters.')]
+
     private ?string $address = null;
 
     public function getAddress(): ?string
@@ -86,6 +101,9 @@ class User
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Phone cannot be blank.')]
+    #[Assert\Length(min: 8, max: 8, minMessage: 'Phone must be 8 digits long.', maxMessage: 'Phone must be 8 digits long.')]
+
     private ?string $phone = null;
 
     public function getPhone(): ?string
@@ -100,6 +118,7 @@ class User
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+
     private ?string $password = null;
 
     public function getPassword(): ?string
@@ -142,6 +161,9 @@ class User
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotNull(message: 'Birth date cannot be null.')]
+    #[Assert\LessThanOrEqual(value: 'today', message: 'Birth date cannot be in the future.')]
+    #[Assert\Type(type: \DateTimeInterface::class, message: 'The value is not a valid date.')]
     private ?\DateTimeInterface $birth_date = null;
 
     public function getBirth_date(): ?\DateTimeInterface
@@ -149,13 +171,22 @@ class User
         return $this->birth_date;
     }
 
-    public function setBirth_date(\DateTimeInterface $birth_date): self
+    public function setBirthDate(?\DateTimeInterface $birth_date): static
     {
         $this->birth_date = $birth_date;
         return $this;
     }
 
+
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\Image(
+        mimeTypesMessage: 'Please upload a valid image file (jpeg, png, gif).'
+    )]
+    #[Assert\File(
+        maxSize: '1024k',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
+        mimeTypesMessage: 'Please upload a valid image file.'
+    )]
     private ?string $image = null;
 
     public function getImage(): ?string
@@ -471,12 +502,23 @@ class User
     {
         return $this->birth_date;
     }
-
-    public function setBirthDate(\DateTimeInterface $birth_date): static
+    public function getRoles(): array
     {
-        $this->birth_date = $birth_date;
-
-        return $this;
+        return [$this->role ? $this->role : 'ROLE_USER'];
     }
 
+
+    public function getUsername(): string
+    {
+        return $this->email;
+    }
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
 }
