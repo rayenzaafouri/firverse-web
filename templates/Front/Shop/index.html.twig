@@ -160,10 +160,10 @@ $(document).ready(function() {
                         <p class="card-text text-muted">{{ product.description|length > 60 ? product.description|slice(0, 60) ~ '...' : product.description }}</p>
 
                         {% if discount > 0 %}
-                            <p><del>{{ product.price|number_format(2) }} USD</del></p>
-                            <p class="text-success font-weight-bold">{{ (product.price * (1 - discount/100))|number_format(2) }} USD</p>
+                            <p><del>{{ product.price|number_format(2) }} TND</del></p>
+                            <p class="text-success font-weight-bold">{{ (product.price * (1 - discount/100))|number_format(2) }} TND</p>
                         {% else %}
-                            <p class="text-primary font-weight-bold">{{ product.price|number_format(2) }} USD</p>
+                            <p class="text-primary font-weight-bold">{{ product.price|number_format(2) }} TND</p>
                         {% endif %}
 
                         <div class="mt-auto d-flex justify-content-between">

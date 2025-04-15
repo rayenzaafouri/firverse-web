@@ -24,7 +24,7 @@
                         <tr>
                             <td>{{ order.id }}</td>
                             <td>{{ order.orderDate ? order.orderDate|date('Y-m-d H:i') : 'N/A' }}</td>
-                            <td>{{ order.totalPrice|number_format(2) }} USD</td>
+                            <td>{{ order.totalPrice|number_format(2) }} TND</td>
                             <td>{{ order.status|capitalize }}</td>
                         </tr>
                     {% endfor %}
