@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FIRVERSE Authentification
+{% endblock %}
+
+
+{% block javascripts %}
+{{ parent() }}
+
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{asset('/styles/login.css')}}">
+
+{% endblock %}
+
+{% block body %}
+
+	<div></div>
+
+
+	<div class="auth" data-controller="auth">
+
+		<div class="mt-5 auth-container shadow p-3 mb-5">
+			<div class="branding">
+				<img src="{{asset('images/landing/fitverse-logo.png')}}" alt="Fitverse logo">
+				<p>Enter your credentials to continue.</p>
+
+				<ul class="nav nav-pills">
+					<li class="nav-item">
+						<button class="nav-link nav-link-left active" id="loginSwitch">Login</button>
+					</li>
+					<li class="nav-item">
+						<button class="nav-link nav-link-right" id="registerSwitch">Register</button>
+					</li>
+				</ul>
+
+                
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+			</div>
+
+			<div>
+
+
+				<div
+					class="tab-content mt-3 bg-body rounded ">
+					<!-- Login Form -->
+					<div>
+						<form method="post" id="loginForm">
+							<div class="mb-3">
+								<label for="loginEmail" class="form-label">Email</label>
+								<input name="_username" type="email" class="form-control" id="loginEmail" v-model="login.email" required autofocus>
+							</div>
+							<div class="mb-3">
+								<label for="loginPassword" class="form-label">Password</label>
+								<input name="_password" type="password" class="form-control" id="loginPassword" v-model="login.password" required>
+							</div>
+
+							<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+							<button type="submit" class="btn btn-fitverse">Login</button>
+						</form>
+					</div>
+
+					<!-- Register Form -->
+					<div>
+						<form id="registerForm">
+							<div class="mb-3">
+								<label for="registerName" class="form-label">Name</label>
+								<input type="text" class="form-control" id="registerName" v-model="register.name" required>
+							</div>
+							<div class="mb-3">
+								<label for="registerEmail" class="form-label">Email</label>
+								<input type="email" class="form-control" id="registerEmail" v-model="register.email" required>
+							</div>
+							<div class="mb-3">
+								<label for="registerPassword" class="form-label">Password</label>
+								<input type="password" class="form-control" id="registerPassword" v-model="register.password" required>
+							</div>
+							<div class="mb-3">
+								<label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+								<input type="password" class="form-control" id="registerConfirmPassword" v-model="register.confirmPassword" required>
+							</div>
+							<button type="submit" class="btn btn-fitverse">Register</button>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+
+		<!-- This part is for showing errors -->
+
+		<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						...
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+	<script>
+
+        //Login-Register switching script
+
+	</script>
+
+
+
+{% endblock %}
