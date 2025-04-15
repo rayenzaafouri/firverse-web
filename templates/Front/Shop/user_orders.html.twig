@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Orders{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">My Orders</h1>
+
+    {% if orders is not empty %}
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.orderDate ? order.orderDate|date('Y-m-d H:i') : 'N/A' }}</td>
+                            <td>{{ order.totalPrice|number_format(2) }} USD</td>
+                            <td>{{ order.status|capitalize }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center text-muted">You have not placed any orders yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

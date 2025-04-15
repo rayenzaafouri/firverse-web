@@ -103,20 +103,6 @@ $(document).ready(function() {
 
 <div class="container py-5">
 
-    {% for message in app.flashes('success') %}
-    <div class="toast" id="successToast" role="alert" aria-live="assertive" aria-atomic="true" 
-         style="position: fixed; top: 20px; right: 20px; min-width: 250px; z-index: 1055;">
-        <div class="toast-header bg-success text-white">
-            <strong class="mr-auto">Success</strong>
-            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">
-                <span>&times;</span>
-            </button>
-        </div>
-        <div class="toast-body">
-            {{ message }}
-        </div>
-    </div>
-    {% endfor %}
 
     {# Search Bar #}
     <div class="row justify-content-center mb-4">
@@ -135,7 +121,6 @@ $(document).ready(function() {
     <div class="text-center mb-5">
         <a href="{{ path('cart_index') }}" class="btn btn-primary font-weight-bold">View Cart</a>
     </div>
-
     {# Category Filter #}
     <div class="row justify-content-end mb-4">
         <div class="col-md-3">
