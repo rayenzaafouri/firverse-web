@@ -11,12 +11,12 @@
     <div class="card shadow p-4">
         <h3>Code: {{ coupon.code }}</h3>
 
-        <p><strong>Discount:</strong> {{ coupon.discountPercentage }}%</p>
-        <p><strong>Valid From:</strong> {{ coupon.validFrom|date('Y-m-d H:i') }}</p>
-        <p><strong>Valid Until:</strong> {{ coupon.validUntil|date('Y-m-d H:i') }}</p>
+        <p><strong>Discount:</strong> {{ coupon.discount_percentage }}%</p>
+        <p><strong>Valid From:</strong> {{ coupon.valid_from|date('Y-m-d H:i') }}</p>
+        <p><strong>Valid Until:</strong> {{ coupon.valid_until|date('Y-m-d H:i') }}</p>
 
         <div class="my-3">
-            {% if coupon.isActive %}
+            {% if coupon.is_active %}
                 <span class="badge badge-success">Active</span>
             {% else %}
                 <span class="badge badge-secondary">Inactive</span>
