@@ -30,8 +30,15 @@ class Coupon
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $code = null;
-
+    #[Assert\NotBlank(message: 'Coupon code is required.')]
+    #[Assert\Length(
+        min: 3,
+        max: 20,
+        minMessage: 'Coupon code must be at least {{ limit }} characters.',
+        maxMessage: 'Coupon code must not exceed {{ limit }} characters.'
+    )]
+        private ?string $code = null;
+    
     public function getCode(): ?string
     {
         return $this->code;
@@ -44,7 +51,13 @@ class Coupon
     }
 
     #[ORM\Column(type: 'decimal', nullable: false)]
-    private ?float $discount_percentage = null;
+    #[Assert\NotBlank]
+    #[Assert\Range(
+        notInRangeMessage: 'Discount must be between {{ min }}% and {{ max }}%',
+        min: 1,
+        max: 100
+    )]
+        private ?float $discount_percentage = null;
 
     public function getDiscount_percentage(): ?float
     {
@@ -58,7 +71,8 @@ class Coupon
     }
 
     #[ORM\Column(type: 'decimal', nullable: false)]
-    private ?float $min_order_amount = null;
+    #[Assert\PositiveOrZero(message: 'Minimum order amount must be 0 or more.')]
+        private ?float $min_order_amount = null;
 
     public function getMin_order_amount(): ?float
     {
@@ -72,7 +86,9 @@ class Coupon
     }
 
     #[ORM\Column(type: 'datetime', nullable: false)]
-    private ?\DateTimeInterface $valid_from = null;
+    #[Assert\NotBlank]
+    #[Assert\Type(\DateTimeInterface::class)]
+        private ?\DateTimeInterface $valid_from = null;
 
     public function getValid_from(): ?\DateTimeInterface
     {
@@ -86,7 +102,10 @@ class Coupon
     }
 
     #[ORM\Column(type: 'datetime', nullable: false)]
-    private ?\DateTimeInterface $valid_until = null;
+    #[Assert\NotBlank]
+    #[Assert\Type(\DateTimeInterface::class)]
+    #[Assert\GreaterThan(propertyPath: 'valid_from', message: 'Valid until must be after valid from.')]
+        private ?\DateTimeInterface $valid_until = null;
 
     public function getValid_until(): ?\DateTimeInterface
     {

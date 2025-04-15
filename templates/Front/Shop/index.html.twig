@@ -5,6 +5,15 @@
 {% block stylesheets %}
 {{ parent() }}
 <style>
+    .card-body {
+        padding: 0.75rem; /* Reduced from default 1.25rem */
+    }
+    .card-title {
+        font-size: 1.25rem;
+    }
+    .card-text {
+        font-size: 0.85rem;
+    }
     #searchResults {
         position: absolute;
         background: white;
@@ -106,7 +115,7 @@ $(document).ready(function() {
 
     {# Search Bar #}
     <div class="row justify-content-center mb-4">
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div class="input-group">
                 <input id="searchInput" type="text" class="form-control" placeholder="Search products...">
                 <div class="input-group-append">
@@ -146,34 +155,34 @@ $(document).ready(function() {
             {% endfor %}
 
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 product-card" 
-                 data-name="{{ product.name }}" data-category="{{ product.category.name }}">
-                <div class="card h-100 shadow-sm position-relative">
+     data-name="{{ product.name }}" data-category="{{ product.category.name }}">
+    <div class="card h-100 shadow-sm position-relative">
+        {% if discount > 0 %}
+            <span class="badge badge-danger position-absolute" style="top: 5px; left: 5px;">SALE</span>
+        {% endif %}
 
-                    {% if discount > 0 %}
-                        <span class="badge badge-danger position-absolute" style="top: 10px; left: 10px;">SALE</span>
-                    {% endif %}
+        <img src="{{ product.imageUrl }}" class="card-img-top p-2" style="height: 150px; object-fit: contain;" alt="{{ product.name }}">
 
-                    <img src="{{ product.imageUrl }}" class="card-img-top p-3" style="height: 200px; object-fit: contain;" alt="{{ product.name }}">
+        <div class="card-body d-flex flex-column p-2">
+            <h5 class="card-title mb-1 ml-2">{{ product.name }}</h5>
+            <p class="card-text text-muted small mb-2 ml-2">
+                {{ product.description|length > 40 ? product.description|slice(0, 40) ~ '...' : product.description }}
+            </p>
 
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text text-muted">{{ product.description|length > 60 ? product.description|slice(0, 60) ~ '...' : product.description }}</p>
+            {% if discount > 0 %}
+                <p class="mb-1 ml-2"><small><del>{{ product.price|number_format(2) }} TND</del></small></p>
+                <p class="text-danger font-weight-bold mb-2 ml-2">{{ (product.price * (1 - discount/100))|number_format(2) }} TND</p>
+            {% else %}
+                <p class="text-dark font-weight-bold mb-2 ml-2">{{ product.price|number_format(2) }} TND</p>
+            {% endif %}
 
-                        {% if discount > 0 %}
-                            <p><del>{{ product.price|number_format(2) }} TND</del></p>
-                            <p class="text-success font-weight-bold">{{ (product.price * (1 - discount/100))|number_format(2) }} TND</p>
-                        {% else %}
-                            <p class="text-primary font-weight-bold">{{ product.price|number_format(2) }} TND</p>
-                        {% endif %}
-
-                        <div class="mt-auto d-flex justify-content-between">
-                            <a href="{{ path('cart_add', {'id': product.id}) }}" class="btn btn-success btn-sm">Add to cart</a>
-                            <a href="{{ path('productdetail', {'id': product.id}) }}" class="btn btn-primary btn-sm">View</a>
-                        </div>
-                    </div>
-
-                </div>
+            <div class="mt-auto d-flex ">
+                <a href="{{ path('cart_add', {'id': product.id}) }}" class="btn btn-success btn-sm py-1 mr-3 ml-1">Add to cart</a>
+                <a href="{{ path('productdetail', {'id': product.id}) }}" class="btn btn-primary btn-sm py-1">View</a>
             </div>
+        </div>
+    </div>
+</div>
         {% else %}
             <div class="col-12 text-center text-muted">
                 No products found.

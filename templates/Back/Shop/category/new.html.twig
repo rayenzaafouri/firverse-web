@@ -1,27 +1,27 @@
+{% import 'macros/form_errors.html.twig' as formErrors %}
 {% extends 'base.html.twig' %}
 
-{% block title %}Create New Category{% endblock %}
+{% block title %}Add Category{% endblock %}
 
 {% block body %}
 {% include 'navbar.html.twig' %}
 
 <div class="container py-5">
-
-    <h1 class="mb-4 text-center">Add New Category</h1>
+    <h1 class="text-center mb-4">Create New Category</h1>
 
     <div class="card shadow p-4">
-        {{ form_start(form) }}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
         <div class="form-group">
             {{ form_label(form.name) }}
             {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.name) }}
+            {{ formErrors.display_errors(form.name) }}
         </div>
 
         <div class="form-group">
             {{ form_label(form.description) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '4'}}) }}
-            {{ form_errors(form.description) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+            {{ formErrors.display_errors(form.description) }}
         </div>
 
         <div class="text-center">
@@ -31,6 +31,5 @@
 
         {{ form_end(form) }}
     </div>
-
 </div>
 {% endblock %}

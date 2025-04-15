@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
-use App\Repository\CategoryRepository;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\Table(name: 'category')]
@@ -17,19 +17,38 @@ class Category
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Please enter a category name.')]
+    #[Assert\Length(
+        min: 2,
+        max: 100,
+        minMessage: 'Category name must be at least {{ limit }} characters long.',
+        maxMessage: 'Category name cannot exceed {{ limit }} characters.'
+    )]
+    private ?string $name = null;
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Please enter a category description.')]
+    #[Assert\Length(
+        min:5,
+        max: 800,
+        minMessage: 'Category Description must be at least {{ limit }} characters long.',
+        maxMessage: 'Category Description cannot exceed {{ limit }} characters.'
+    )]
+    private ?string $description = null;
+
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
+    private Collection $products;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $name = null;
 
     public function getName(): ?string
     {
@@ -42,9 +61,6 @@ class Category
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $description = null;
-
     public function getDescription(): ?string
     {
         return $this->description;
@@ -56,37 +72,22 @@ class Category
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
-    private Collection $products;
-
-    public function __construct()
-    {
-        $this->products = new ArrayCollection();
-    }
-
-    /**
-     * @return Collection<int, Product>
-     */
     public function getProducts(): Collection
     {
-        if (!$this->products instanceof Collection) {
-            $this->products = new ArrayCollection();
-        }
         return $this->products;
     }
 
     public function addProduct(Product $product): self
     {
-        if (!$this->getProducts()->contains($product)) {
-            $this->getProducts()->add($product);
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
         }
         return $this;
     }
 
     public function removeProduct(Product $product): self
     {
-        $this->getProducts()->removeElement($product);
+        $this->products->removeElement($product);
         return $this;
     }
-
 }

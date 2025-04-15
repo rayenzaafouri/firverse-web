@@ -1,3 +1,4 @@
+{% import 'macros/form_errors.html.twig' as formErrors %}
 {% extends 'base.html.twig' %}
 
 {% block title %}Edit Coupon{% endblock %}
@@ -9,36 +10,36 @@
     <h1 class="mb-4 text-center">Edit Coupon</h1>
 
     <div class="card shadow p-4">
-        {{ form_start(form) }}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
         <div class="form-group">
             {{ form_label(form.code) }}
             {{ form_widget(form.code, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.code) }}
+            {{ formErrors.display_errors(form.code) }}
         </div>
 
         <div class="form-group">
             {{ form_label(form.discount_percentage) }}
             {{ form_widget(form.discount_percentage, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.discount_percentage) }}
+            {{ formErrors.display_errors(form.discount_percentage) }}
         </div>
 
         <div class="form-group">
             {{ form_label(form.valid_from) }}
             {{ form_widget(form.valid_from, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.valid_from) }}
+            {{ formErrors.display_errors(form.valid_from) }}
         </div>
 
         <div class="form-group">
             {{ form_label(form.valid_until) }}
             {{ form_widget(form.valid_until, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.valid_until) }}
+            {{ formErrors.display_errors(form.valid_until) }}
         </div>
 
         <div class="form-group">
             {{ form_label(form.is_active) }}
             {{ form_widget(form.is_active, {'attr': {'class': 'form-check-input ml-2'}}) }}
-            {{ form_errors(form.is_active) }}
+            {{ formErrors.display_errors(form.is_active) }}
         </div>
 
         <div class="text-center">
