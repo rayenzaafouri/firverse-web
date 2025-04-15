@@ -12,6 +12,8 @@ final class NavigationExampleController extends AbstractController
     #[Route('/diag')]
     public function index(UserRepository $userRepo): Response
     {
-        dd($userRepo->findAll());
+        return $this->render('navigation_example/index.html.twig', [
+            'controller_name' => 'AuthentificationController',
+        ]);
     }
 }
