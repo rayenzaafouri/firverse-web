@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard - Fitverse{% endblock %}
+
+{% block javascripts %}
+{{ parent() }} 
+{# Your javascript goes here #}
+<script>
+   
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }} 
+{# Your CSS goes here #}
+<style>
+
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+{% include 'navbar.html.twig' %} 
+
+<body data-context="default">
+
+<h2>Under construction</h2>
+        <a href="{{ path('shop_home') }}" class="btn bg-warning font-weight-bold">Go to SHOP</a>
+
+
+</body>
+
+{% endblock %}

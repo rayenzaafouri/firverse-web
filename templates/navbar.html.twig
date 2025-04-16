@@ -1,214 +1,210 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fitverse-navbar shadow" data-controller="navbar">
+	<a class="navbar-brand" href="/"><img src="/fitverse-white.png"></a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarText">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item exercise" data-context="exercise">
+				<a class="nav-link" href="/exercise">
+					<span class="material-symbols-outlined">sports_gymnastics</span>
+					Train
+					<span class="sr-only">(current)</span>
+				</a>
+			</li>
+			<li class="nav-item nutrition" data-context="nutrition">
+				<a class="nav-link" href="/nutrition">
+					<span class="material-symbols-outlined">ramen_dining</span>
+					Meals
+					<span class="sr-only">(current)</span>
+				</a>
+			</li>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fitverse-navbar shadow">
-        <a class="navbar-brand" href="/"><img src="/fitverse-white.png" ></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarText">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item exercise" data-context="exercise">
-              <a class="nav-link" href="#"> <span class="material-symbols-outlined">sports_gymnastics</span> Train <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item nutrition" data-context="nutrition">  
-              <a class="nav-link" href="#"> <span class="material-symbols-outlined">ramen_dining</span> Meals <span class="sr-only">(current)</span></a>
-            </li>
+			<li class="nav-item gym" data-context="gym">
+				<a class="nav-link" href="/gym">
+					<span class="material-symbols-outlined">fitness_center</span>
+					Gyms
+					<span class="sr-only">(current)</span>
+				</a>
+			</li>
+			<li class="nav-item events" data-context="events">
+				<a class="nav-link" href="/events">
+					<span class="material-symbols-outlined">local_activity</span>
+					Events
+					<span class="sr-only">(current)</span>
+				</a>
+			</li>
 
-            <li class="nav-item gym" data-context="gym">
-              <a class="nav-link" href="#"> <span class="material-symbols-outlined">fitness_center</span> Gyms <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item events" data-context="events">
-              <a class="nav-link" href="#"> <span class="material-symbols-outlined">local_activity</span> Events <span class="sr-only">(current)</span></a>
-            </li>
+			<li class="nav-item shop" data-context="shop">
+				<a class="nav-link" href="/shop">
+					<span class="material-symbols-outlined">shopping_cart</span>
+					Shop
+					<span class="sr-only">(current)</span>
+				</a>
+			</li>
+		</ul>
 
-            <li class="nav-item shop" data-context="shop">
-              <a class="nav-link" href="#"> <span class="material-symbols-outlined">shopping_cart</span> Shop <span class="sr-only">(current)</span></a>
-            </li>
-          </ul>
-          
-          <div class="user-nav-menu navbar-text">
-            <div class="user-display">
-              <span>Foulen el fleni</span>
-            </div>
-            <div class="user-badge">
-              <span>F</span>
-              <span>F</span>
-            </div>
-          </div>
-        </div>
+		<div class="user-nav-menu navbar-text">
+			<div class="user-display">
+				<span>{{  app.user.first_name ~ " " ~  app.user.first_name  }}</span>
+			</div>
+			<div class="user-badge">
+				<span>{{ app.user.first_name|slice(0, 1) }}</span>
+				<span>{{ app.user.last_name|slice(0, 1) }}</span>
+			</div>
 
-
-         <div class="user-nav-menu-content">
-
-         <ul>
-          <li>            
-          <a href="">
-              <span class="material-symbols-outlined">person</span>
-              <span> My account</span>
-              <span class="material-symbols-outlined">
-              chevron_right
-              </span>
-            </a></li>
-
-
-       <li>
-          {% if app.user %}
-            
-          <a href="{{ path('user_orders') }}">
-              <span class="material-symbols-outlined">shopping_cart</span>
-              <span>Shopping cart</span>
-              <span class="material-symbols-outlined">
-              chevron_right
-              </span>
-            </a>
-          {% endif %}
-
-        </li>
+		</div>
+	</div>
 
 
-
-        <li>            
-          <a href="">
-              <span class="material-symbols-outlined">support</span>
-              <span>Support & help</span>
-              <span class="material-symbols-outlined">
-              chevron_right
-              </span>
-            </a>
-        </li>
+	<div class="user-nav-menu-content">
 
 
-                <li>            
-          <a href="">
-              <span class="material-symbols-outlined">settings_account_box</span>
-              <span>Preferences</span>
-              <span class="material-symbols-outlined">
-              chevron_right
-              </span>
-            </a>
-        </li>
+		{% if is_granted('ROLE_ADMIN') %}
+			<ul>
+				<li><a href=""><span class="material-symbols-outlined">person</span><span>Admin account</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+				<li><a href=""><span class="material-symbols-outlined">shopping_cart</span><span>Shopping cart</span><span class="material-symbols-outlined">chevron_right</span></a></li>
 
 
-        
-        
-        </ul>
-
-        <button class="btn logout-btn" > <a href="/logout"><span class="material-symbols-outlined">door_open</span> Logout</a></button>
-     
-            
-          
-          </div>
-
-  </nav>
+				<li><a href=""><span class="material-symbols-outlined">support</span><span>Support & help</span><span class="material-symbols-outlined">chevron_right</span></a></li>
 
 
+				<li><a href=""><span class="material-symbols-outlined">settings_account_box</span><span>Preferences</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+
+			</ul>
+
+		{% endif %}
+
+
+		{% if not is_granted('ROLE_ADMIN') %}
+			<ul>
+				<li><a href=""><span class="material-symbols-outlined">person</span><span>My account</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+				<li><a href="{{ path('cart_index') }}"><span class="material-symbols-outlined">shopping_cart</span><span>Shopping cart</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+
+				<li><a href=""><span class="material-symbols-outlined">support</span><span>Support & help</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+
+				<li><a href=""><span class="material-symbols-outlined">settings_account_box</span><span>Preferences</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+
+			</ul>
+		{% endif %}
+
+
+		<button class="btn logout-btn">
+			<a href="/logout">
+				<span class="material-symbols-outlined">door_open</span>
+				Logout</a>
+		</button>
+
+
+	</div>
+
+</nav>
+
+
+<script>
+
+            let accentMap = {
+                "gym": "#3478F6",
+                "nutrition": "#AEC867",
+                "exercise": "#69D2C8",
+                "shop": "#F09A37",
+                "user": "#545454",
+                "events": "#EB4E3D",
+                "default": "#9FF85"
+            }
+
+
+            // Setting current context color in navbar
+            let currentContext = document.body.getAttribute("data-context")
+            if (accentMap[currentContext]) {
+                updateAccentColor(accentMap[currentContext])
+                document.querySelector(".nav-item." + currentContext).classList.add("active")
+            } else {
+                updateAccentColor(accentMap["default"])
+                console.error("Fitverse navbar failed to sync to context. Did you miss to set data-context?")
+            }
+            let items = Array.from(document.querySelectorAll(".fitverse-navbar .nav-item"))
+            items.forEach(item => {
+                item.addEventListener("mouseover", (event) => {
+                    let newContext = item.getAttribute("data-context")
+
+                    if (newContext && accentMap[newContext]) {
+                        updateAccentColor(accentMap[newContext])
+                    }
+                })
+
+                item.addEventListener("mouseover", (event) => {
+                    let newContext = item.getAttribute("data-context")
+
+                    if (newContext && accentMap[newContext]) {
+                        updateAccentColor(accentMap[newContext])
+                    }
+                })
+
+            })
+
+
+            items.forEach(item => {
+                item.addEventListener("mouseout", (event) => {
+                    updateAccentColor(accentMap[currentContext])
+                })
+            })
+
+            function updateAccentColor(hexValue) {
+                document.querySelector("nav.fitverse-navbar").style.setProperty("border-color", hexValue)
+            }
+
+
+            // User menu toggle
+            document.querySelector(".user-nav-menu").addEventListener("click", () => {
+                toggleNavbarState()
+            })
+
+
+            // Adding delay animation to each item for smooth roll
+            let time_offset = .10;
+            let iteration = 0;
+            let animatable_items = Array.from(document.querySelectorAll(".user-nav-menu-content > ul > li")).forEach(item => {
+                if (iteration > 0) {
+                    item.style.setProperty("animation-delay", iteration * time_offset + "s")
+                }
+                iteration++;
+            })
+
+
+            function toggleNavbarState() {
+                if (!getNavbarState()) {
+                    showUserMenu();
+                    return
+                }
+                closeUserMenu()
+            }
+
+            function getNavbarState() {
+                return document.querySelector(".user-nav-menu").classList.contains("open")
+            }
+
+            function showUserMenu() {
+                document.querySelector(".user-nav-menu").classList.add("open")
+                document.querySelector(".user-nav-menu-content").classList.add("open")
+
+
+            }
+
+            function closeUserMenu() {
+                document.querySelector(".user-nav-menu").classList.remove("open")
+                document.querySelector(".user-nav-menu-content").classList.remove("open")
+            }
 
 
 
 
 
-  <script>
-
-  let accentMap = {
-    "gym":"#3478F6",
-    "nutrition":"#AEC867",
-    "exercise":"#69D2C8",
-    "shop":"#F09A37",
-    "user":"#545454",
-    "events":"#EB4E3D",
-    "default":"black"
-  }
-
-
-
-  document.addEventListener("DOMContentLoaded",()=>{
-
-
-    showUserMenu();
-
-  //Setting current context color in navbar
-  let currentContext = document.body.getAttribute("data-context")
-  if(accentMap[currentContext]){
-    updateAccentColor(accentMap[currentContext])
-    document.querySelector(".nav-item."+currentContext).classList.add("active")
-  }
-  else{
-    updateAccentColor(accentMap["default"])
-    console.error("Fitverse navbar failed to sync to context. Did you miss to set data-context?")
-  }
-  let items = Array.from(document.querySelectorAll(".fitverse-navbar .nav-item"))
-  items.forEach(item => {
-    item.addEventListener("mouseover", (event) => {
-      let newContext = item.getAttribute("data-context")
-
-      if( newContext && accentMap[newContext]){
-        updateAccentColor(accentMap[newContext])
-      }
-    })
-
-    item.addEventListener("mouseover", (event) => {
-      let newContext = item.getAttribute("data-context")
-
-      if( newContext && accentMap[newContext]){
-        updateAccentColor(accentMap[newContext])
-      }
-    })
-
-  })
-
-
-  items.forEach(item =>{
-    item.addEventListener("mouseout",(event)=>{
-        updateAccentColor(accentMap[currentContext])
-    })
-  })
-
-  function updateAccentColor(hexValue){
-    document.querySelector("nav.fitverse-navbar").style.setProperty("border-color",hexValue)
-  }
-
-
-  //User menu toggle
-  document.querySelector(".user-nav-menu").addEventListener("click",()=>{
-    toggleNavbarState()
-  })
-
-
-  //Adding delay animation to each item for smooth roll
-  let time_offset = .10;
-  let iteration = 0;
-    let animatable_items = Array.from(document.querySelectorAll(".user-nav-menu-content > ul > li")).forEach(item => {
-     if(iteration>0){
-         item.style.setProperty("animation-delay", iteration*time_offset +"s")
-     }
-     iteration++;
-  })
-
-
-
-  function toggleNavbarState(){
-    if(!getNavbarState()){
-      showUserMenu();
-      return
-    }
-    closeUserMenu()
-  }
-
-  function getNavbarState(){
-    return document.querySelector(".user-nav-menu").classList.contains("open")
-  }
-
-  function showUserMenu(){
-      document.querySelector(".user-nav-menu").classList.add("open")
-      document.querySelector(".user-nav-menu-content").classList.add("open")
-
-     
-  }
-
-  function closeUserMenu(){
-      document.querySelector(".user-nav-menu").classList.remove("open")
-      document.querySelector(".user-nav-menu-content").classList.remove("open")
-  }
-    
-})
 
 </script>

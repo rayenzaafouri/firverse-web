@@ -5,14 +5,20 @@
 {% block body %}
 {% include 'navbar.html.twig' %}
 
+<style>
+table tr  td {
+    vertical-align: middle;
+}
+</style>
+
 <body data-context="shop">
 {# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
 
 <div class="container">
 
     {% if cartItems is not empty %}
-        <div class="table-responsive ">
-            <table class="table border-none">
+        <div class="mt-3">
+            <table class="table border-none table-hover">
                 <thead>
                     <tr>
                         <th></th>
@@ -27,15 +33,25 @@
                         <tr>
                             <td><img src="{{ item.product.imageUrl }}" alt="{{ item.product.name }}"  width="100"></td>
                             <td>{{ item.product.name }}</td>
-                            <td class="d-flex align-items-center">
-                               <div class="d-inline-flex align-items-center border border-warning rounded-pill px-4 py-1" style="background-color: white; border-radius: 200rem !important;border-width: 3px !important;"> 
-                                    <a href="{{ path('cart_decrease', {'id': item.product.id}) }}" class="text-dark text-decoration-none font-weight-bold" style="font-size: 1rem; line-height: 1;">-</a>
-                                    <span class="mx-3 font-weight-bold" style="font-size: 1.3rem; line-height: 1;">{{ item.quantity }}</span>
-                                    <a href="{{ path('cart_increase', {'id': item.product.id}) }}" class="text-dark text-decoration-none font-weight-bold" style="font-size: 1rem; line-height: 1;">+</a>
+                            <td>
+                               <div style="all: unset;display: flex;align-items: center;justify-content: center;border: 3px solid orange;border-radius: 1.3rem;padding: 0 .9rem;width:fit-content;"> 
+                                    <form method="POST" action="{{ path('cart_decrease', {'id': item.product.id}) }}" class="d-inline-block" style="all: unset;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('decrease' ~ item.product.id) }}">
+                                        <button type="submit" style="all: unset; font-weight: bold; font-size: 1.2rem; padding: 0 0.5rem;">-</button>
+                                    </form>
+
+                                    <span class="mx-2 font-weight-bold">{{ item.quantity }}</span>
+
+                                    <form method="POST" action="{{ path('cart_increase', {'id': item.product.id}) }}" class="d-inline-block" style="all: unset;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('increase' ~ item.product.id) }}">
+                                        <button type="submit" style="all: unset; font-weight: bold; font-size: 1.2rem; padding: 0 0.5rem;">+</button>
+                                    </form>
+
+
                                 </div>
                             </td>
                             <td>
-                                <a href="{{ path('cart_remove', {'id': item.product.id}) }}" >Remove</a>
+                                <a class="text-decoration-none text-info" href="{{ path('cart_remove', {'id': item.product.id}) }}" >Remove</a>
                             </td>
                             <td>{{ item.product.price }} TND</td>
 
@@ -64,11 +80,11 @@
 
         <div class="text-right font-weight-bold mt-4">
             {% if app.session.get('coupon') %}
-                <p class="text-success">Coupon "{{ app.session.get('coupon').code }}" applied: -{{ discount }}%</p>
+                <p class="text-secondary">Coupon "{{ app.session.get('coupon').code }}" applied: -{{ discount }}%</p>
             {% endif %}
             <h4>Subtotal ({{ cartItems|length }} items): {{ finalTotal|number_format(2) }} TND</h4>
         </div>
-        <div>
+        
             <form action="{{ path('checkout') }}" method="POST" class="text-right mt-3">
                 <input type="hidden" name="token" value="{{ csrf_token('checkout') }}">
                 <button type="submit" class="btn d-inline-flex align-items-center border border-warning text-dark font-weight-bold bg-warning rounded-pill px-4 py-1 row justify-content-center mb-4" style="border-radius: 200rem !important;border-width: 3px !important;">

@@ -96,4 +96,9 @@ class Product
         $this->getProductDiscounts()->removeElement($productDiscount);
         return $this;
     }
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
 }

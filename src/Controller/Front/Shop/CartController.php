@@ -40,23 +40,22 @@ class CartController extends AbstractController
         ]);
     }
 
-    #[Route('/shop/cart/add/{id}', name: 'cart_add')]
-    public function add(Product $product, SessionInterface $session): Response
+    #[Route('/shop/cart/add/{id}', name: 'cart_add', methods: ['POST'])]
+    public function add(Request $request, Product $product, SessionInterface $session): Response
     {
-        $cart = $session->get('cart', []);
-        $id = $product->getId();
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('add' . $product->getId(), $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+    }
 
-        if (!isset($cart[$id])) {
-            $cart[$id] = 1;
-        } else {
-            $cart[$id]++;
-        }
+    $cart = $session->get('cart', []);
+    $id = $product->getId();
 
-        $session->set('cart', $cart);
+    $cart[$id] = ($cart[$id] ?? 0) + 1;
+    $session->set('cart', $cart);
 
-        $this->addFlash('success', $product->getName() . ' added to cart.');
-
-        return $this->redirectToRoute('shop_home'); 
+    $this->addFlash('success', $product->getName() . ' added to cart.');
+    return $this->redirectToRoute('shop_home');
     }
 
     #[Route('/shop/cart/remove/{id}', name: 'cart_remove')]

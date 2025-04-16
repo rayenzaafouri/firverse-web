@@ -31,11 +31,11 @@
                          {{ include('Back/Shop/coupon/_delete_form.html.twig') }}
                     </td>
                     <td>{{ coupon.code }}</td>
-                    <td>{{ coupon.discountPercentage }}</td>
-                    <td>{{ coupon.validFrom|date('Y-m-d H:i') }}</td>
-                    <td>{{ coupon.validUntil|date('Y-m-d H:i') }}</td>
+                    <td>{{ coupon.discount_percentage }}</td>
+                    <td>{{ coupon.valid_from|date('Y-m-d H:i') }}</td>
+                    <td>{{ coupon.valid_until|date('Y-m-d H:i') }}</td>
                     <td>
-                        {% if coupon.isActive %}
+                        {% if coupon.is_active %}
                             <span class="badge badge-success">Active</span>
                         {% else %}
                             <span class="badge badge-secondary">Inactive</span>
