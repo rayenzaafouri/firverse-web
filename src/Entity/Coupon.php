@@ -125,7 +125,7 @@ class Coupon
     {
         return $this->is_active;
     }
-
+    
     public function setIs_active(bool $is_active): self
     {
         $this->is_active = $is_active;

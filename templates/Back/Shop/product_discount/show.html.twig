@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}View Discount{% endblock %}
+{% block stylesheets %}
+<style>
 
+</style>
+{% endblock %}
 {% block body %}
 {% include 'navbar.html.twig' %}
 
@@ -13,7 +17,7 @@
         <p>Discount: <strong>{{ product_discount.discountPercentage }}%</strong></p>
         <p>Valid From: {{ product_discount.validFrom ? product_discount.validFrom|date('Y-m-d') : '-' }}</p>
         <p>Valid Until: {{ product_discount.validUntil ? product_discount.validUntil|date('Y-m-d') : '-' }}</p>
-
+        
         <div class="mt-4">
             <a href="{{ path('app_product_discount_edit', {'id': product_discount.id}) }}" class="btn btn-warning mr-2">Edit</a>
             <a href="{{ path('app_product_discount_index') }}" class="btn btn-secondary">Back to List</a>

@@ -1,8 +1,36 @@
-{% if coupons and coupon.id is defined %}
-    <form method="post" action="{{ path('app_coupon_delete', {'id': coupon.id}) }}" onsubmit="return confirm('Are you sure you want to delete this coupon?');">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ coupon.id) }}">
-        <button class="btn btn-sm btn-danger">Delete</button>
-    </form>
-{% else %}
-    <p class="text-danger">Invalid coupon data.</p>
+{% block stylesheets %}
+<style>
+    /* Custom styles can go here */
+</style>
+{% endblock %}
+
+{% if coupon and coupon.id is defined %}
+    <!-- Delete Button (opens Modal) -->
+    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ coupon.id }}">
+        Delete
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal{{ coupon.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ coupon.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel{{ coupon.id }}">Confirm Deletion</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    Are you sure you want to delete this coupon?
+                </div>
+
+                <div class="modal-footer">
+                    <form method="post" action="{{ path('app_coupon_delete', {'id': coupon.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ coupon.id) }}">
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endif %}

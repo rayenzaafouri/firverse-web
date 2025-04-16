@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}View Coupon{% endblock %}
+{% block stylesheets %}
+<style>
 
+</style>
+{% endblock %}
 {% block body %}
 {% include 'navbar.html.twig' %}
 
@@ -16,10 +20,12 @@
         <p><strong>Valid Until:</strong> {{ coupon.valid_until|date('Y-m-d H:i') }}</p>
 
         <div class="my-3">
+            <strong>Status:</strong>
+           
             {% if coupon.is_active %}
-                <span class="badge badge-success">Active</span>
+                <span class="badge bg-primary">Active</span>
             {% else %}
-                <span class="badge badge-secondary">Inactive</span>
+                <span class="badge bg-danger">Inactive</span>
             {% endif %}
         </div>
 

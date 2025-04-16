@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}My Cart{% endblock %}
-
-{% block body %}
-{% include 'navbar.html.twig' %}
-
+{% block stylesheets %}
 <style>
 table tr  td {
     vertical-align: middle;
 }
 </style>
+{% endblock %}
+{% block body %}
+{% include 'navbar.html.twig' %}
 
 <body data-context="shop">
 {# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}

@@ -73,6 +73,27 @@
 
 				</ul>
 			</li>
+			<li>
+				<a class="btn" data-toggle="collapse" href="#collapseShop" role="button" aria-expanded="false">
+					<span class="material-symbols-outlined">Shopping_Cart</span>
+					<span>Shop Management</span>
+				</a>
+				<ul
+					class="collapse" id="collapseShop">
+					<li>
+						<a class="btn " href="{{ path('app_product_index') }}">Manage Products</a>
+					</li>
+					<li>
+						<a class="btn" href="{{ path('app_category_index') }}">Manage Categories</a>
+					</li>
+					<li>
+						<a class="btn" href="{{ path('app_coupon_index') }}">Manage Coupons</a>
+					</li>
+					<li>
+						<a class="btn" href="{ path('app_product_discount_index') }}">Manage Discounts</a>
+					</li>
+
+				</ul>
 		</ul>
 
 

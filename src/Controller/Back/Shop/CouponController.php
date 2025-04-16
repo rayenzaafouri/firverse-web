@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/admin/shop/coupons')]
+#[Route('/shop/coupons')]
 final class CouponController extends AbstractController{
     #[Route(name: 'app_coupon_index', methods: ['GET'])]
     public function index(CouponRepository $couponRepository): Response

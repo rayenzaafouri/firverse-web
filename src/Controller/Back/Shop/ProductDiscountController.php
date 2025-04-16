@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/admin/shop/product/discount')]
+#[Route('/shop/product/discount')]
 final class ProductDiscountController extends AbstractController{
     #[Route(name: 'app_product_discount_index', methods: ['GET'])]
     public function index(ProductDiscountRepository $productDiscountRepository): Response

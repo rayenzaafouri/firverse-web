@@ -19,17 +19,16 @@
                 <p class="text-muted">{{ product.brand }}</p>
                 <p>{{ product.description }}</p>
 
-                <div class="my-3">
-                    <span class="badge badge-primary">Price: {{ product.price|number_format(2) }} TND</span>
-                </div>
+                     <p class="badge badge-primary">Price: {{ product.price|number_format(2) }} TND</p>
+                
 
-                <div class="my-3">
-                    <span class="badge badge-info">Stock: {{ product.stock }}</span>
-                </div>
+                
+                    <p class="badge badge-info">Stock: {{ product.stock }}</p>
+                
 
-                <div class="my-3">
-                    <span class="badge badge-secondary">Category: {{ product.category.name }}</span>
-                </div>
+                
+                    <p class="badge badge-secondary">Category: {{ product.category.name }}</p>
+                
 
                 <div class="mt-4">
                     <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-warning mr-2">Edit</a>
