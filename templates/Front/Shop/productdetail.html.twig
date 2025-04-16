@@ -6,11 +6,6 @@
 {% include 'navbar.html.twig' %}
 
 <div class="container py-5">
-    {% for message in app.flashes('add_success') %}
-        <div class="alert alert-success text-center" role="alert">
-            {{ message }}
-        </div>
-    {% endfor %}
 
     <div class="row">
         <div class="col-lg-8">

@@ -23,7 +23,9 @@ class ProductDiscountType extends AbstractType
             ])
             ->add('product', EntityType::class, [
                 'class' => Product::class,
-'choice_label' => 'id',
+                'choice_label' => 'name', 
+                'placeholder' => 'Select a product',
+                'attr' => ['class' => 'form-control']
             ])
         ;
     }

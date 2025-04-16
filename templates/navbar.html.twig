@@ -6,14 +6,14 @@
 	<div class="collapse navbar-collapse" id="navbarText">
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item exercise" data-context="exercise">
-				<a class="nav-link" href="#">
+				<a class="nav-link" href="/exercise">
 					<span class="material-symbols-outlined">sports_gymnastics</span>
 					Train
 					<span class="sr-only">(current)</span>
 				</a>
 			</li>
 			<li class="nav-item nutrition" data-context="nutrition">
-				<a class="nav-link" href="#">
+				<a class="nav-link" href="/nutrition">
 					<span class="material-symbols-outlined">ramen_dining</span>
 					Meals
 					<span class="sr-only">(current)</span>
@@ -21,14 +21,14 @@
 			</li>
 
 			<li class="nav-item gym" data-context="gym">
-				<a class="nav-link" href="#">
+				<a class="nav-link" href="/gym">
 					<span class="material-symbols-outlined">fitness_center</span>
 					Gyms
 					<span class="sr-only">(current)</span>
 				</a>
 			</li>
 			<li class="nav-item events" data-context="events">
-				<a class="nav-link" href="#">
+				<a class="nav-link" href="/events">
 					<span class="material-symbols-outlined">local_activity</span>
 					Events
 					<span class="sr-only">(current)</span>
@@ -36,7 +36,7 @@
 			</li>
 
 			<li class="nav-item shop" data-context="shop">
-				<a class="nav-link" href="#">
+				<a class="nav-link" href="/shop">
 					<span class="material-symbols-outlined">shopping_cart</span>
 					Shop
 					<span class="sr-only">(current)</span>
@@ -64,20 +64,7 @@
 			<ul>
 				<li><a href=""><span class="material-symbols-outlined">person</span><span>Admin account</span><span class="material-symbols-outlined">chevron_right</span></a></li>
 
-
-       <li>
-          {% if app.user %}
-            
-          <a href="{{ path('user_orders') }}">
-              <span class="material-symbols-outlined">shopping_cart</span>
-              <span>Shopping cart</span>
-              <span class="material-symbols-outlined">
-              chevron_right
-              </span>
-            </a>
-          {% endif %}
-
-        </li>
+				<li><a href=""><span class="material-symbols-outlined">shopping_cart</span><span>Shopping cart</span><span class="material-symbols-outlined">chevron_right</span></a></li>
 
 
 				<li><a href=""><span class="material-symbols-outlined">support</span><span>Support & help</span><span class="material-symbols-outlined">chevron_right</span></a></li>
@@ -95,7 +82,7 @@
 			<ul>
 				<li><a href=""><span class="material-symbols-outlined">person</span><span>My account</span><span class="material-symbols-outlined">chevron_right</span></a></li>
 
-				<li><a href=""><span class="material-symbols-outlined">shopping_cart</span><span>Shopping cart</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+				<li><a href="{{ path('cart_index') }}"><span class="material-symbols-outlined">shopping_cart</span><span>Shopping cart</span><span class="material-symbols-outlined">chevron_right</span></a></li>
 
 
 				<li><a href=""><span class="material-symbols-outlined">support</span><span>Support & help</span><span class="material-symbols-outlined">chevron_right</span></a></li>
