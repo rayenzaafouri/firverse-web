@@ -4,6 +4,7 @@
 
 {% block body %}
 {% include 'navbar.html.twig' %}
+{{ include('Back/Shop/coupon/_delete_form.html.twig') }}
 
 <div class="container py-5">
     <h1 class="mb-4">Coupons</h1>
@@ -24,39 +25,10 @@
         <tbody>
             {% for coupon in coupons %}
                 <tr>
-                <td>
+                <td class="d-flex justify-content-center">
                         <a href="{{ path('app_coupon_show', {'id': coupon.id}) }}" class="btn btn-sm btn-primary mr-1">View</a>
                         <a href="{{ path('app_coupon_edit', {'id': coupon.id}) }}" class="btn btn-sm btn-warning mr-1">Edit</a>
-
-                        <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal{{ coupon.id }}">
-                          Delete
-                        </button>
-
-                        <!-- Modal -->
-                        <div class="modal fade" id="deleteModal{{ coupon.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ coupon.id }}" aria-hidden="true">
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title" id="deleteModalLabel{{ coupon.id }}">Confirm Delete</h5>
-                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                Are you sure you want to delete the coupon <strong>{{ coupon.code }}</strong>?
-                              </div>
-                              <div class="modal-footer">
-                                <form method="post" action="{{ path('app_coupon_delete', {'id': coupon.id}) }}">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ coupon.id) }}">
-                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                </form>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
+                         {{ include('Back/Shop/coupon/_delete_form.html.twig') }}
                     </td>
                     <td>{{ coupon.code }}</td>
                     <td>{{ coupon.discountPercentage }}</td>

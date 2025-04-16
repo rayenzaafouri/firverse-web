@@ -25,7 +25,7 @@ class CheckoutController extends AbstractController
     public function __construct(
         private string $stripeSecretKey,
         private ProductRepository $productRepository,
-        private EntityManagerInterface $entityManager // ✅ Inject EntityManager too
+        private EntityManagerInterface $entityManager 
     ) {
         Stripe::setApiKey($this->stripeSecretKey);
     }
