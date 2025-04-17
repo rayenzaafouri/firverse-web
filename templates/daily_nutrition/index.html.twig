@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Daily Nutrition{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4">Daily Nutrition</h1>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <a href="{{ path('app_daily_nutrition_show', {'date': 'now'|date('Y-m-d')}) }}" class="btn btn-primary">
+                    Today's Nutrition
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Foods</th>
+                                <th>Recipes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for nutrition in nutritions %}
+                                <tr>
+                                    <td>{{ nutrition.date|date('Y-m-d') }}</td>
+                                    <td>
+                                        {% for food in nutrition.foods %}
+                                            <span class="badge bg-primary">{{ food.name }}</span>
+                                        {% else %}
+                                            <span class="text-muted">No foods</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% for recipe in nutrition.recipes %}
+                                            <span class="badge bg-success">{{ recipe.name }}</span>
+                                        {% else %}
+                                            <span class="text-muted">No recipes</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('app_daily_nutrition_show', {'date': nutrition.date|date('Y-m-d')}) }}" 
+                                           class="btn btn-sm btn-info">
+                                            View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No nutrition records found</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

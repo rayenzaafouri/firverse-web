@@ -1,0 +1,431 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nutrition for {{ nutrition.date|date('Y-m-d') }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .search-container {
+            position: relative;
+        }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .search-result-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+        .search-result-item:hover, .search-result-item.highlighted {
+            background-color: #f8f9fa;
+        }
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        .item-type-badge {
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+        .nutrition-info {
+            font-size: 0.8em;
+            color: #666;
+        }
+        .loading-spinner {
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .search-input-container {
+            position: relative;
+        }
+        .search-input {
+            padding-right: 40px;
+        }
+        .no-results {
+            padding: 10px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        .search-result-item .nutrition-details {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+        .nutrition-badge {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            color: #495057;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4">Nutrition for {{ nutrition.date|date('Y-m-d') }}</h1>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <a href="{{ path('app_daily_nutrition_index') }}" class="btn btn-secondary">
+                    Back to List
+                </a>
+            </div>
+        </div>
+
+        {% for meal_type in meal_types %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header {% if meal_type == 'breakfast' %}bg-primary{% elseif meal_type == 'lunch' %}bg-success{% elseif meal_type == 'dinner' %}bg-info{% else %}bg-warning{% endif %} text-white">
+                            <h3 class="mb-0">{{ meal_type|capitalize }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Search Form -->
+                            <div class="mb-3">
+                                <form action="{{ path('app_daily_nutrition_add_item', {
+                                    'date': nutrition.date|date('Y-m-d'),
+                                    'mealType': meal_type
+                                }) }}" method="post" class="search-container">
+                                    <input type="hidden" name="selected_item" id="selected_item_{{ meal_type }}">
+                                    <div class="input-group search-input-container">
+                                        <input type="text" 
+                                               class="form-control search-input" 
+                                               placeholder="Search for foods or recipes..."
+                                               data-meal-type="{{ meal_type }}"
+                                               autocomplete="off">
+                                        <div class="loading-spinner">
+                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Add Item</button>
+                                    </div>
+                                    <div class="search-results" id="search_results_{{ meal_type }}"></div>
+                                </form>
+                            </div>
+
+                            <!-- Items List -->
+                            <ul class="list-group">
+                                {% for food in nutrition.foods %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1">
+                                                {{ food.name }}
+                                                <span class="badge bg-primary">Food</span>
+                                            </h5>
+                                            <div class="nutrition-info">
+                                                <small class="text-muted">
+                                                    Calories: {{ food.calories|default(0) }} |
+                                                    Protein: {{ food.protein|default(0) }}g |
+                                                    Carbs: {{ food.carbohydrate|default(0) }}g |
+                                                    Fat: {{ food.fats|default(0) }}g
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <form action="{{ path('app_daily_nutrition_remove_food', {
+                                            'date': nutrition.date|date('Y-m-d'),
+                                            'foodId': food.id,
+                                            'mealType': meal_type
+                                        }) }}" method="post" class="d-inline">
+                                            <input type="hidden" name="_method" value="POST">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </li>
+                                {% endfor %}
+                                {% for recipe in nutrition.recipes %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1">
+                                                {{ recipe.name }}
+                                                <span class="badge bg-success">Recipe</span>
+                                            </h5>
+                                            <div class="nutrition-info">
+                                                <small class="text-muted">
+                                                    {% set totalCalories = 0 %}
+                                                    {% set totalProtein = 0 %}
+                                                    {% set totalCarbs = 0 %}
+                                                    {% set totalFats = 0 %}
+                                                    {% for food in recipe.foods %}
+                                                        {% set totalCalories = totalCalories + (food.calories|default(0)) %}
+                                                        {% set totalProtein = totalProtein + (food.protein|default(0)) %}
+                                                        {% set totalCarbs = totalCarbs + (food.carbohydrate|default(0)) %}
+                                                        {% set totalFats = totalFats + (food.fats|default(0)) %}
+                                                    {% endfor %}
+                                                    Calories: {{ totalCalories|round }} |
+                                                    Protein: {{ totalProtein|round }}g |
+                                                    Carbs: {{ totalCarbs|round }}g |
+                                                    Fat: {{ totalFats|round }}g
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <form action="{{ path('app_daily_nutrition_remove_recipe', {
+                                            'date': nutrition.date|date('Y-m-d'),
+                                            'recipeId': recipe.id,
+                                            'mealType': meal_type
+                                        }) }}" method="post" class="d-inline">
+                                            <input type="hidden" name="_method" value="POST">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </li>
+                                {% endfor %}
+                                {% if nutrition.foods|length == 0 and nutrition.recipes|length == 0 %}
+                                    <li class="list-group-item">No items added</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- Nutrition Summary -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Daily Nutrition Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                    <h4 class="mb-0 text-primary">
+                                        {% set totalCalories = 0 %}
+                                        {% for food in nutrition.foods %}
+                                            {% set totalCalories = totalCalories + (food.calories|default(0)) %}
+                                        {% endfor %}
+                                        {% for recipe in nutrition.recipes %}
+                                            {% for food in recipe.foods %}
+                                                {% set totalCalories = totalCalories + (food.calories|default(0)) %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {{ totalCalories|round }}
+                                    </h4>
+                                    <small class="text-muted">Calories</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                    <h4 class="mb-0 text-success">
+                                        {% set totalProtein = 0 %}
+                                        {% for food in nutrition.foods %}
+                                            {% set totalProtein = totalProtein + (food.protein|default(0)) %}
+                                        {% endfor %}
+                                        {% for recipe in nutrition.recipes %}
+                                            {% for food in recipe.foods %}
+                                                {% set totalProtein = totalProtein + (food.protein|default(0)) %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {{ totalProtein|round }}g
+                                    </h4>
+                                    <small class="text-muted">Protein</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                    <h4 class="mb-0 text-info">
+                                        {% set totalCarbs = 0 %}
+                                        {% for food in nutrition.foods %}
+                                            {% set totalCarbs = totalCarbs + (food.carbohydrate|default(0)) %}
+                                        {% endfor %}
+                                        {% for recipe in nutrition.recipes %}
+                                            {% for food in recipe.foods %}
+                                                {% set totalCarbs = totalCarbs + (food.carbohydrate|default(0)) %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {{ totalCarbs|round }}g
+                                    </h4>
+                                    <small class="text-muted">Carbs</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                    <h4 class="mb-0 text-warning">
+                                        {% set totalFats = 0 %}
+                                        {% for food in nutrition.foods %}
+                                            {% set totalFats = totalFats + (food.fats|default(0)) %}
+                                        {% endfor %}
+                                        {% for recipe in nutrition.recipes %}
+                                            {% for food in recipe.foods %}
+                                                {% set totalFats = totalFats + (food.fats|default(0)) %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {{ totalFats|round }}g
+                                    </h4>
+                                    <small class="text-muted">Fat</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInputs = document.querySelectorAll('.search-input');
+            
+            searchInputs.forEach(input => {
+                const mealType = input.dataset.mealType;
+                const resultsContainer = document.getElementById(`search_results_${mealType}`);
+                const selectedItemInput = document.getElementById(`selected_item_${mealType}`);
+                const loadingSpinner = input.parentElement.querySelector('.loading-spinner');
+                let searchTimeout;
+                let currentHighlightIndex = -1;
+
+                function formatNutritionValue(value) {
+                    return value ? Math.round(value) : 0;
+                }
+
+                function createResultItem(item) {
+                    const div = document.createElement('div');
+                    div.className = 'search-result-item';
+                    div.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${item.name}</strong>
+                                <span class="badge ${item.type === 'Food' ? 'bg-primary' : 'bg-success'} item-type-badge">
+                                    ${item.type}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="nutrition-details">
+                            <span class="nutrition-badge">${formatNutritionValue(item.calories)} cal</span>
+                            <span class="nutrition-badge">${formatNutritionValue(item.protein)}g protein</span>
+                            <span class="nutrition-badge">${formatNutritionValue(item.carbohydrate)}g carbs</span>
+                            <span class="nutrition-badge">${formatNutritionValue(item.fats)}g fat</span>
+                        </div>
+                    `;
+                    return div;
+                }
+
+                function updateHighlightedItem(index) {
+                    const items = resultsContainer.querySelectorAll('.search-result-item');
+                    items.forEach((item, i) => {
+                        item.classList.toggle('highlighted', i === index);
+                    });
+                }
+
+                function selectHighlightedItem() {
+                    const items = resultsContainer.querySelectorAll('.search-result-item');
+                    if (currentHighlightIndex >= 0 && currentHighlightIndex < items.length) {
+                        const item = items[currentHighlightIndex];
+                        const itemData = item.dataset.item;
+                        if (itemData) {
+                            const data = JSON.parse(itemData);
+                            selectedItemInput.value = data.id;
+                            input.value = data.name;
+                            resultsContainer.style.display = 'none';
+                        }
+                    }
+                }
+
+                input.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    const query = this.value.trim();
+                    
+                    if (query.length < 2) {
+                        resultsContainer.style.display = 'none';
+                        loadingSpinner.style.display = 'none';
+                        return;
+                    }
+
+                    loadingSpinner.style.display = 'block';
+                    resultsContainer.style.display = 'none';
+                    currentHighlightIndex = -1;
+
+                    searchTimeout = setTimeout(() => {
+                        fetch(`/nutrition/user/dailynutrition/search-items?q=${encodeURIComponent(query)}`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                resultsContainer.innerHTML = '';
+                                if (data.length === 0) {
+                                    resultsContainer.innerHTML = '<div class="no-results">No items found</div>';
+                                } else {
+                                    data.forEach(item => {
+                                        const div = createResultItem(item);
+                                        div.dataset.item = JSON.stringify(item);
+                                        div.addEventListener('click', () => {
+                                            selectedItemInput.value = item.id;
+                                            input.value = item.name;
+                                            resultsContainer.style.display = 'none';
+                                        });
+                                        resultsContainer.appendChild(div);
+                                    });
+                                }
+                                resultsContainer.style.display = 'block';
+                            })
+                            .catch(error => {
+                                console.error('Error fetching search results:', error);
+                                resultsContainer.innerHTML = '<div class="no-results">Error loading results</div>';
+                                resultsContainer.style.display = 'block';
+                            })
+                            .finally(() => {
+                                loadingSpinner.style.display = 'none';
+                            });
+                    }, 300);
+                });
+
+                input.addEventListener('keydown', function(e) {
+                    const items = resultsContainer.querySelectorAll('.search-result-item');
+                    
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        currentHighlightIndex = Math.min(currentHighlightIndex + 1, items.length - 1);
+                        updateHighlightedItem(currentHighlightIndex);
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        currentHighlightIndex = Math.max(currentHighlightIndex - 1, 0);
+                        updateHighlightedItem(currentHighlightIndex);
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        selectHighlightedItem();
+                    } else if (e.key === 'Escape') {
+                        resultsContainer.style.display = 'none';
+                    }
+                });
+
+                // Hide results when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!input.contains(e.target) && !resultsContainer.contains(e.target)) {
+                        resultsContainer.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %} 
