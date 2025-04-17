@@ -4,7 +4,6 @@
 </style>
 {% endblock %}
 
-{% if category and category.id is defined %}
     <!-- Delete Button (opens Modal) -->
     <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ category.id }}">
         Delete
@@ -33,4 +32,3 @@
             </div>
         </div>
     </div>
-{% endif %}

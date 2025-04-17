@@ -1,39 +1,25 @@
-{% import 'macros/form_errors.html.twig' as formErrors %}
 {% extends 'base.html.twig' %}
 
 {% block title %}Add Category{% endblock %}
-{% block stylesheets %}
-<style>
 
-</style>
-{% endblock %}
 {% block body %}
-{% include 'navbar.html.twig' %}
+  {% include 'navbar.html.twig' %}
 
-<div class="container py-5">
+  <div class="container py-5">
     <h1 class="text-center mb-4">Create New Category</h1>
 
     <div class="card shadow p-4">
-        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+      {{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
 
-        <div class="form-group">
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
-            {{ formErrors.display_errors(form.name) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.description) }}
+
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-success">Save</button>
+          <a href="{{ path('app_category_index') }}" class="btn btn-secondary ms-2">Cancel</a>
         </div>
 
-        <div class="form-group">
-            {{ form_label(form.description) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
-            {{ formErrors.display_errors(form.description) }}
-        </div>
-
-        <div class="text-center">
-            <button class="btn btn-success mt-3">Save</button>
-            <a href="{{ path('app_category_index') }}" class="btn btn-secondary mt-3 ml-2">Cancel</a>
-        </div>
-
-        {{ form_end(form) }}
+      {{ form_end(form) }}
     </div>
-</div>
+  </div>
 {% endblock %}

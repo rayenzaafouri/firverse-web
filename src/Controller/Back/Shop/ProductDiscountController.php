@@ -3,7 +3,7 @@
 namespace App\Controller\Back\Shop;
 
 use App\Entity\ProductDiscount;
-use App\Form\ProductDiscount1Type;
+use App\Form\ProductDiscountType;
 use App\Repository\ProductDiscountRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,7 +25,7 @@ final class ProductDiscountController extends AbstractController{
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $productDiscount = new ProductDiscount();
-        $form = $this->createForm(ProductDiscount1Type::class, $productDiscount);
+        $form = $this->createForm(ProductDiscountType::class, $productDiscount);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -52,7 +52,7 @@ final class ProductDiscountController extends AbstractController{
     #[Route('/{id}/edit', name: 'app_product_discount_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, ProductDiscount $productDiscount, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(ProductDiscount1Type::class, $productDiscount);
+        $form = $this->createForm(ProductDiscountType::class, $productDiscount);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

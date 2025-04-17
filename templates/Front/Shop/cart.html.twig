@@ -3,19 +3,37 @@
 {% block title %}My Cart{% endblock %}
 {% block stylesheets %}
 <style>
-table tr  td {
-    vertical-align: middle;
-}
+    table tr td {
+        vertical-align: middle;
+    }
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    .old-price {
+        text-decoration: line-through;
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+    .discounted-price {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    .discount-badge {
+        background-color: #28a745;
+        color: white;
+        padding: 0.2em 0.5em;
+        border-radius: 0.25rem;
+        font-size: 0.8em;
+        margin-left: 0.5em;
+    }
 </style>
 {% endblock %}
 {% block body %}
 {% include 'navbar.html.twig' %}
 
 <body data-context="shop">
-{# data-context value should be one of the values "exercise","gym","events","shop","nutrition" or "user" depending on your module  #}
-
 <div class="container">
-
     {% if cartItems is not empty %}
         <div class="mt-3">
             <table class="table border-none table-hover">
@@ -30,8 +48,14 @@ table tr  td {
                 </thead>
                 <tbody>
                     {% for item in cartItems %}
+                        {% set hasProductDiscount = item.product.productDiscounts is not empty %}
+                        {% if hasProductDiscount %}
+                            {% set productDiscount = item.product.productDiscounts.first %}
+                            {% set discountedPrice = item.product.price * (1 - productDiscount.discountPercentage / 100) %}
+                        {% endif %}
+                        
                         <tr>
-                            <td><img src="{{ item.product.imageUrl }}" alt="{{ item.product.name }}"  width="100"></td>
+                            <td><img src="{{ item.product.imageUrl }}" alt="{{ item.product.name }}" width="100"></td>
                             <td>{{ item.product.name }}</td>
                             <td>
                                <div style="all: unset;display: flex;align-items: center;justify-content: center;border: 3px solid orange;border-radius: 1.3rem;padding: 0 .9rem;width:fit-content;"> 
@@ -46,55 +70,85 @@ table tr  td {
                                         <input type="hidden" name="_token" value="{{ csrf_token('increase' ~ item.product.id) }}">
                                         <button type="submit" style="all: unset; font-weight: bold; font-size: 1.2rem; padding: 0 0.5rem;">+</button>
                                     </form>
-
-
                                 </div>
                             </td>
                             <td>
-                                <a class="text-decoration-none text-info" href="{{ path('cart_remove', {'id': item.product.id}) }}" >Remove</a>
+                                <a class="text-decoration-none text-info" href="{{ path('cart_remove', {'id': item.product.id}) }}">Remove</a>
                             </td>
-                            <td>{{ item.product.price }} TND</td>
-
+                            <td>
+                                {% if hasProductDiscount %}
+                                    <span class="old-price">{{ item.product.price|number_format(2) }} TND</span>
+                                    <span class="discounted-price">{{ discountedPrice|number_format(2) }} TND</span>
+                                    <span class="badge bg-danger position-absolute discount-badge">-{{ productDiscount.discountPercentage }}%</span>
+                                {% else %}
+                                    {{ item.product.price|number_format(2) }} TND
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
+        {# Coupon Code Section - Preserved from original #}
         <div class="row justify-content-center mb-4">
-            <div class="col-md-6">
-                <p class="form-inline justify-content-center text-dark text-decoration-none font-weight-bold">Posess a coupon code?</p>
-                <form action="{{ path('cart_apply_coupon') }}" method="POST" class="form-inline justify-content-center">
+            <div class="col-md-6 text-center">
+                <p>Possess a coupon code?</p>
+                <form action="{{ path('cart_apply_coupon') }}" method="POST">
                     <div class="form-group mx-sm-3 mb-2">
                         <input type="text" name="coupon_code" class="form-control" placeholder="Enter your coupon">
                     </div>
-                <button type="submit" class="btn btn-scondary mb-2">Apply Coupon</button>
+                    <button type="submit" class="btn btn-success mb-2">Apply Coupon</button>
                 </form>
-
             </div>
         </div>
-        {% set finalTotal = total %}
-        {% if app.session.get('coupon') %}
-            {% set discount = app.session.get('coupon').discount %}
-            {% set finalTotal = total * (1 - discount / 100) %}
-        {% endif %}
-
-        <div class="text-right font-weight-bold mt-4">
-            {% if app.session.get('coupon') %}
-                <p class="text-secondary">Coupon "{{ app.session.get('coupon').code }}" applied: -{{ discount }}%</p>
+        
+        {# Calculate totals with both product discounts and coupon #}
+        {% set subtotal = 0 %}
+        {% set productDiscountTotal = 0 %}
+        
+        {% for item in cartItems %}
+            {% set hasProductDiscount = item.product.productDiscounts is not empty %}
+            {% if hasProductDiscount %}
+                {% set productDiscount = item.product.productDiscounts.first %}
+                {% set itemPrice = item.product.price * (1 - productDiscount.discountPercentage / 100) %}
+                {% set productDiscountTotal = productDiscountTotal + (item.product.price - itemPrice) * item.quantity %}
+            {% else %}
+                {% set itemPrice = item.product.price %}
             {% endif %}
-            <h4>Subtotal ({{ cartItems|length }} items): {{ finalTotal|number_format(2) }} TND</h4>
+            {% set subtotal = subtotal + (itemPrice * item.quantity) %}
+        {% endfor %}
+        
+        {% set finalTotal = subtotal %}
+        {% set couponDiscount = 0 %}
+        
+        {% if app.session.get('coupon') %}
+            {% set coupon = app.session.get('coupon') %}
+            {% set couponDiscount = subtotal * (coupon.discount / 100) %}
+            {% set finalTotal = subtotal - couponDiscount %}
+        {% endif %}
+        
+        <div class="text-right font-weight-bold mt-4">
+            {% if productDiscountTotal > 0 %}
+                <p class="text-success">Product discounts saved: {{ productDiscountTotal|number_format(2) }} TND</p>
+            {% endif %}
+            
+            {% if app.session.get('coupon') %}
+                <p class="text-secondary">Coupon "{{ coupon.code }}" applied: -{{ coupon.discount }}% ({{ couponDiscount|number_format(2) }} TND)</p>
+            {% endif %}
+            
+            <h4>Total ({{ cartItems|length }} items): {{ finalTotal|number_format(2) }} TND</h4>
         </div>
         
-            <form action="{{ path('checkout') }}" method="POST" class="text-right mt-3">
-                <input type="hidden" name="token" value="{{ csrf_token('checkout') }}">
-                <button type="submit" class="btn d-inline-flex align-items-center border border-warning text-dark font-weight-bold bg-warning rounded-pill px-4 py-1 row justify-content-center mb-4" style="border-radius: 200rem !important;border-width: 3px !important;">
+        <form action="{{ path('checkout') }}" method="POST" class="text-right mt-3">
+            <input type="hidden" name="token" value="{{ csrf_token('checkout') }}">
+            <button type="submit" class="btn d-inline-flex align-items-center border border-warning text-dark font-weight-bold bg-warning rounded-pill px-4 py-1 row justify-content-center mb-4" style="border-radius: 200rem !important;border-width: 3px !important;">
                 Proceed to Checkout
-                </button>
-            </form>
+            </button>
+        </form>
     {% else %}
         <p class="text-center text-muted">Your cart is empty.</p>
     {% endif %}
 </div>
-
 </body>
 {% endblock %}

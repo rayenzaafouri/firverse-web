@@ -27,13 +27,10 @@ class Category
     )]
     private ?string $name = null;
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: 'Please enter a category description.')]
+    #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\Length(
-        min:5,
-        max: 800,
-        minMessage: 'Category Description must be at least {{ limit }} characters long.',
-        maxMessage: 'Category Description cannot exceed {{ limit }} characters.'
+        max: 500,
+        maxMessage: 'Description cannot exceed {{ limit }} characters.'
     )]
     private ?string $description = null;
 

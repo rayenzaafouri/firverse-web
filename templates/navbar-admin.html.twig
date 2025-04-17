@@ -11,7 +11,7 @@
 
 		<div class="user-nav-menu navbar-text">
 			<div class="user-display">
-				<span>{{  app.user.first_name ~ " " ~  app.user.first_name  }}</span>
+				<span>{{  app.user.first_name ~ " " ~  app.user.last_name  }}</span>
 			</div>
 			<div class="user-badge">
 				<span>{{ app.user.first_name|slice(0, 1) }}</span>
@@ -90,7 +90,7 @@
 						<a class="btn" href="{{ path('app_coupon_index') }}">Manage Coupons</a>
 					</li>
 					<li>
-						<a class="btn" href="{ path('app_product_discount_index') }}">Manage Discounts</a>
+						<a class="btn" href="{{ path('app_product_discount_index') }}">Manage Discounts</a>
 					</li>
 
 				</ul>

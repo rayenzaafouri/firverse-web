@@ -1,4 +1,38 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
+
+<div class="mb-3">
+  {{ form_label(form.product) }}
+  {{ form_widget(form.product) }}
+  <div class="text-danger">{{ form_errors(form.product) }}</div>
+</div>
+
+<div class="mb-3">
+  {{ form_label(form.discount_percentage) }}
+  {{ form_widget(form.discount_percentage) }}
+  <div class="text-danger">{{ form_errors(form.discount_percentage) }}</div>
+</div>
+
+<div class="mb-3">
+  {{ form_label(form.valid_from) }}
+  {{ form_widget(form.valid_from) }}
+  <div class="text-danger">{{ form_errors(form.valid_from) }}</div>
+</div>
+
+<div class="mb-3">
+  {{ form_label(form.valid_until) }}
+  {{ form_widget(form.valid_until) }}
+  <div class="text-danger">{{ form_errors(form.valid_until) }}</div>
+</div>
+
+<div class="text-center">
+  <button class="btn btn-success">
+    {{ button_label|default('Save') }}
+  </button>
+  <a href="{{ path('app_product_discount_index') }}"
+     class="btn btn-secondary ms-2">
+    Cancel
+  </a>
+</div>
+
 {{ form_end(form) }}

@@ -16,6 +16,7 @@ class ProductDiscount
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Assert\NotNull(message: 'Please select a product.')]
     private ?int $id = null;
 
     public function getId(): ?int
@@ -45,6 +46,11 @@ class ProductDiscount
     }
 
     #[ORM\Column(type: 'decimal', nullable: false)]
+    #[Assert\NotBlank(message: 'Discount % is required.')]
+    #[Assert\Range(
+        min: 1, max: 100,
+        notInRangeMessage: 'Discount must be between {{ min }}% and {{ max }}%.'
+    )]
     private ?float $discount_percentage = null;
 
     public function getDiscount_percentage(): ?float
@@ -59,6 +65,8 @@ class ProductDiscount
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotBlank(message: 'Start date is required.')]
+    #[Assert\Date(message: 'Invalid date.')]
     private ?\DateTimeInterface $valid_from = null;
 
     public function getValid_from(): ?\DateTimeInterface
@@ -73,6 +81,12 @@ class ProductDiscount
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotBlank(message: 'End date is required.')]
+    #[Assert\Date(message: 'Invalid date.')]
+    #[Assert\GreaterThan(
+        propertyPath: 'valid_from',
+        message: 'End date must be after start date.'
+    )]
     private ?\DateTimeInterface $valid_until = null;
 
     public function getValid_until(): ?\DateTimeInterface

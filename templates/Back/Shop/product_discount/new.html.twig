@@ -1,48 +1,13 @@
+{# templates/Back/Shop/product_discount/new.html.twig #}
 {% extends 'base.html.twig' %}
-
-{% block title %}Create Discount{% endblock %}
-{% block stylesheets %}
-<style>
-
-</style>
-{% endblock %}
 {% block body %}
-{% include 'navbar.html.twig' %}
+{{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
 
-<div class="container py-5">
-    <h1 class="mb-4 text-center">Add New Discount</h1>
-
+  {% include 'navbar-admin.html.twig' %}
+  <div class="container py-5">
+    <h1 class="text-center mb-4">Add New Discount</h1>
     <div class="card shadow p-4">
-        {{ form_start(form) }}
-        <div class="form-group">
-            {{ form_label(form.product) }}
-            {{ form_widget(form.product, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.product) }}
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.discount_percentage) }}
-            {{ form_widget(form.discount_percentage, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.discount_percentage) }}
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.valid_from) }}
-            {{ form_widget(form.valid_from, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.valid_from) }}
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.valid_until) }}
-            {{ form_widget(form.valid_until, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.valid_until) }}
-        </div>
-
-        <div class="text-center">
-            <button class="btn btn-success mt-3">Save</button>
-            <a href="{{ path('app_product_discount_index') }}" class="btn btn-secondary mt-3 ml-2">Cancel</a>
-        </div>
-        {{ form_end(form) }}
+      {{ include('Back/Shop/product_discount/_form.html.twig') }}
     </div>
-</div>
+  </div>
 {% endblock %}

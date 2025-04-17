@@ -3,7 +3,7 @@
 {% block title %}Admin - Categories{% endblock %}
 
 {% block body %}
-{% include 'navbar.html.twig' %}
+{% include 'navbar-admin.html.twig' %}
 {% block stylesheets %}
 <style>
 
@@ -26,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-            {% for category in category %}
+            {% for category in categories %}
                 <tr>
                     <td class="gap-2">
                         <a href="{{ path('app_category_show', {'id': category.id}) }}" class="btn btn-sm btn-primary mr-1">View</a>
