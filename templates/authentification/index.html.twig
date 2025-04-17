@@ -1,17 +1,17 @@
+{# templates/auth.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}FIRVERSE Authentification{% endblock %}
 
 {% block javascripts %}
-    {{ parent() }} 
-    {# This is necessary for login/register switch #}
+    {{ parent() }}
     <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.min.js"></script>
 {% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }} 
+    {{ parent() }}
     <style>
-        body{
+        body {
             height: 100lvh;
             background-color: black;
             background-image: url("{{ asset('images/login/background.png') }}");
@@ -19,17 +19,17 @@
             background-size: cover;
             padding: 1rem;
         }
-        .branding>img{
+        .branding > img {
             width: 10rem;
         }
-        .auth{
+        .auth {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding-top: 10lvh;
         }
-        .auth-container{
+        .auth-container {
             display: flex;
             flex-direction: row;
             flex-wrap: nowrap;
@@ -41,192 +41,175 @@
             background-color: white;
             border: 4px solid #7cb64c;
         }
-        .nav{
+        .nav {
             font-size: .75rem;
             width: fit-content;
             border-radius: 0.375rem;
             background-color: #eeeeee;
-            button{
-                border: unset;
-                cursor: pointer;
-            }
-            .nav-link.active.nav-link-right{
-                background-color: #7cb64c;
-            }
-            .nav-link-left{
-                border-top-left-radius: 0.375rem;
-                border-bottom-left-radius: 0.375rem;
-                border-top-right-radius: 0;
-                border-bottom-right-radius: 0;
-            }
-            .nav-link-right{
-                border-top-right-radius: 0.375rem;
-                border-bottom-right-radius: 0.375rem;
-                border-top-left-radius: 0;
-                border-bottom-left-radius: 0;
-            }
-            .nav-link.active.nav-link-left{
-                background-color: #7cb64c;
-            }
-            .nav-link:not(.active){
-                color: rgb(74, 72, 72);
-            }
+        }
+        .nav .nav-link {
+            border: unset;
+            cursor: pointer;
+        }
+        .nav-link-left {
+            border-top-left-radius: 0.375rem;
+            border-bottom-left-radius: 0.375rem;
+        }
+        .nav-link-right {
+            border-top-right-radius: 0.375rem;
+            border-bottom-right-radius: 0.375rem;
+        }
+        .nav-link.active {
+            background-color: #7cb64c;
+            color: white !important;
+        }
+        .nav-link:not(.active) {
+            color: rgb(74,72,72);
         }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="auth">
-    <div id="switchable-auth" class="mt-5 auth-container shadow p-3 mb-5">
-        <div class="branding">
-            <img src="{{ asset('images/landing/fitverse-logo.png') }}" alt="Fitverse logo">
-            <p>Enter your credentials to continue.</p>
-    
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <button class="nav-link nav-link-left" :class="{ 'active': activeTab === 'login' }" @click="activeTab = 'login'">Login</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link nav-link-right" :class="{ 'active': activeTab === 'register' }" @click="activeTab = 'register'">Register</button>
-                </li>
-            </ul>
-        </div>
-    
-        <div>
-            <div class="tab-content mt-3 bg-body rounded">
-                <!-- Login Form -->
-                <div v-if="activeTab === 'login'">
-                    <form action="{{ path('app_auth') }}" method="post">
-                        <div class="mb-3">
-                            <label for="loginEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="loginEmail" name="_username" v-model="login.email" required autofocus>
-                        </div>
-                        <div class="mb-3">
-                            <label for="loginPassword" class="form-label">Password</label>
-                            <!-- Fixed the typo in the name attribute -->
-                            <input type="password" class="form-control" id="loginPassword" name="_password" v-model="login.password" required>
-                        </div>
-                        <button type="submit" class="btn btn-fitverse">Login</button>
-                        {% if error is defined and error %}
-                            <div class="alert alert-danger mt-2">
-                                {{ error.messageKey|trans(error.messageData, 'security') }}
-                            </div>
-                        {% endif %}
-                    </form>
-                </div>
-        
-                <!-- Register Form -->
-                <div v-if="activeTab === 'register'">
-                {{ form_start(registrationForm, {
-         'attr': {
-             'novalidate': 'novalidate',
-             'enctype': 'multipart/form-data'
-         }
-    }) }}
-    
-    <div class="mb-3">
-        {{ form_label(registrationForm.first_name, 'First Name', { 'label_attr': { 'class': 'form-label', 'for': 'registerFirstName' } }) }}
-        {{ form_widget(registrationForm.first_name, { 'attr': { 'class': 'form-control', 'id': 'registerFirstName' } }) }}
-         <div class="text-danger">
-                {{ form_errors(registrationForm.first_name) }}
-            </div>
+<div id="switchable-auth" class="auth mt-5">
+  <div class="auth-container shadow p-3 mb-5">
+
+    <div class="branding text-center">
+      <img src="{{ asset('images/landing/fitverse-logo.png') }}" alt="Fitverse logo">
+      <p>Enter your credentials to continue.</p>
+
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <button
+            class="nav-link nav-link-left"
+            :class="{ active: activeTab==='login' }"
+            @click="activeTab='login'"
+          >Login</button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link nav-link-right"
+            :class="{ active: activeTab==='register' }"
+            @click="activeTab='register'"
+          >Register</button>
+        </li>
+      </ul>
     </div>
-    
-    <div class="mb-3">
-        {{ form_label(registrationForm.last_name, 'Last Name', { 'label_attr': { 'class': 'form-label', 'for': 'registerLastName' } }) }}
-        {{ form_widget(registrationForm.last_name, { 'attr': { 'class': 'form-control', 'id': 'registerLastName' } }) }}
-        <div class="text-danger">
-                {{ form_errors(registrationForm.last_name) }}
-            </div>
+
+    <div class="tab-content mt-3 bg-body rounded">
+
+      {# —— LOGIN —— #}
+      <div v-show="activeTab==='login'">
+        <form action="{{ path('app_auth_login') }}" method="post">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+          <div class="mb-3">
+            <label for="loginEmail" class="form-label">Email</label>
+            <input
+              type="email"
+              id="loginEmail"
+              name="_username"
+              class="form-control"
+              value="{{ last_username|default('') }}"
+              required autofocus
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="loginPassword" class="form-label">Password</label>
+            <input
+              type="password"
+              id="loginPassword"
+              name="_password"
+              class="form-control"
+              required
+            >
+          </div>
+
+          <button type="submit" class="btn btn-fitverse">Login</button>
+
+          
+        </form>
+      </div>
+
+      {# —— REGISTER —— #}
+      <div v-show="activeTab==='register'">
+        {{ form_start(registrationForm, {
+            action: path('app_register'),
+            method: 'POST',
+            attr: { novalidate: 'novalidate', enctype: 'multipart/form-data' }
+        }) }}
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.first_name, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.first_name, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.first_name) }}</div>
+          </div>
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.last_name, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.last_name, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.last_name) }}</div>
+          </div>
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.email, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.email, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.email) }}</div>
+          </div>
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.address, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.address, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.address) }}</div>
+          </div>
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.phone, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.phone, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.phone) }}</div>
+          </div>
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.plainPassword, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.plainPassword, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.plainPassword) }}</div>
+          </div>
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.gender, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.gender, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.gender) }}</div>
+          </div>
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.birth_date, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.birth_date, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.birth_date) }}</div>
+          </div>
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.image, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.image, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.image) }}</div>
+          </div>
+
+          <button type="submit" class="btn btn-fitverse">Register</button>
+
+        {{ form_end(registrationForm) }}
+      </div>
+
     </div>
-    
-    <div class="mb-3">
-        {{ form_label(registrationForm.email, 'Email', { 'label_attr': { 'class': 'form-label', 'for': 'registerEmail' } }) }}
-        {{ form_widget(registrationForm.email, { 'attr': { 'class': 'form-control', 'id': 'registerEmail' } }) }}
-        <div class="text-danger">
-                {{ form_errors(registrationForm.email) }}
-            </div>
-    </div>
-    
-    <div class="mb-3">
-        {{ form_label(registrationForm.address, 'Address', { 'label_attr': { 'class': 'form-label', 'for': 'registerAddress' } }) }}
-        {{ form_widget(registrationForm.address, { 'attr': { 'class': 'form-control', 'id': 'registerAddress' } }) }}
-        <div class="text-danger">
-                {{ form_errors(registrationForm.address) }}
-            </div>
-    </div>
-    
-    <div class="mb-3">
-        {{ form_label(registrationForm.phone, 'Phone', { 'label_attr': { 'class': 'form-label', 'for': 'registerPhone' } }) }}
-        {{ form_widget(registrationForm.phone, { 'attr': { 'class': 'form-control', 'id': 'registerPhone' } }) }}
-        <div class="text-danger">
-                {{ form_errors(registrationForm.phone) }}
-            </div>
-    </div>
-    
-    <div class="mb-3">
-        {{ form_label(registrationForm.plainPassword, 'Password', { 'label_attr': { 'class': 'form-label', 'for': 'registerPassword' } }) }}
-        {{ form_widget(registrationForm.plainPassword, { 'attr': { 'class': 'form-control', 'id': 'registerPassword' } }) }}
-         <div class="text-danger">
-                {{ form_errors(registrationForm.plainPassword) }}
-            </div>
-    </div>
-    
-    <div class="mb-3">
-        {{ form_label(registrationForm.gender, 'Select Gender', { 'label_attr': { 'class': 'form-label', 'for': 'registerGender' } }) }}
-        {{ form_widget(registrationForm.gender, { 'attr': { 'class': 'form-control', 'id': 'registerGender' } }) }}
-        <div class="text-danger">
-                {{ form_errors(registrationForm.gender) }}
-            </div>
-    </div>
-    
-    <div class="mb-3">
-        {{ form_label(registrationForm.birth_date, 'Birth Date', { 'label_attr': { 'class': 'form-label', 'for': 'registerBirthDate' } }) }}
-        {{ form_widget(registrationForm.birth_date, { 'attr': { 'class': 'form-control', 'id': 'registerBirthDate' } }) }}
-       <div class="text-danger">
-                {{ form_errors(registrationForm.birth_date) }}
-            </div>
-    </div>
-    
-    <div class="mb-3">
-        {{ form_label(registrationForm.image, 'Image', { 'label_attr': { 'class': 'form-label', 'for': 'registerImage' } }) }}
-        {{ form_widget(registrationForm.image, { 'attr': { 'class': 'form-control', 'id': 'registerImage' } }) }}
-        <div class="text-danger">
-                {{ form_errors(registrationForm.image) }}
-            </div>
-    </div>
-    
-    <button type="submit" class="btn btn-fitverse">Register</button>
-    {{ form_end(registrationForm) }}
-                </div>
+  </div>
+</div>
 
 <script>
-    // This script switches between login/register tabs.
-    const { createApp } = Vue;
-    createApp({
-        data() {
-            return {
-                activeTab: 'login',
-                login: {
-                    email: '',
-                    password: ''
-                },
-                register: {
-                    name: '',
-                    email: '',
-                    password: '',
-                    confirmPassword: ''
-                }
-            }
-        },
-        methods: {
-            handleLogin() {
-                console.log('Login attempt with:', this.login);
-            },
-            handleRegister() {
-                console.log('Registration attempt with:', this.register);
-            }
-        }
-    }).mount('#switchable-auth');
+  const { createApp } = Vue;
+  createApp({
+    data() {
+      return {
+        activeTab: '{{ activeTab|default("login") }}'
+      };
+    }
+  }).mount('#switchable-auth');
 </script>
 {% endblock %}

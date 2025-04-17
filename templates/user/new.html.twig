@@ -1,11 +1,28 @@
-{% extends 'base.html.twig' %}
+{# templates/back/user/new.html.twig #}
+{% extends 'back/base.html.twig' %}
 
-{% block title %}New User{% endblock %}
+{% block title %}Create User{% endblock %}
+{% block page_title %}Create New User{% endblock %}
 
 {% block body %}
-    <h1>Create new User</h1>
+    <div style="max-width: 700px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+        {{ form_start(form, { 'attr': { 'style': 'display: grid; gap: 1.5rem;' } }) }}
 
-    {{ include('user/_form.html.twig') }}
+        {% for field in [form.first_name, form.last_name, form.email, form.address, form.phone, form.password, form.gender, form.role, form.birth_date, form.image] %}
+            <div style="display: flex; flex-direction: column;">
+                {{ form_label(field, null, { 'label_attr': { 'style': 'font-weight: 600; margin-bottom: 0.5rem; color: #2d3e50;' } }) }}
+                {{ form_widget(field, { 'attr': { 'style': 'padding: 0.6rem 1rem; border: 1px solid #ccc; border-radius: 0.3rem; font-size: 1rem;' } }) }}
+                <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 0.3rem;">
+                    {{ form_errors(field) }}
+                </div>
+            </div>
+        {% endfor %}
 
-    <a href="{{ path('app_user_index') }}">back to list</a>
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
+            <a href="{{ path('app_user_index') }}" style="padding: 0.6rem 1.2rem; background: #95a5a6; color: #fff; border-radius: 0.3rem; text-decoration: none;">Back to list</a>
+            <button type="submit" style="padding: 0.6rem 1.2rem; background: #1abc9c; color: #fff; border: none; border-radius: 0.3rem; font-size: 1rem; cursor: pointer; transition: background 0.3s;">{{ button_label|default('Save') }}</button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

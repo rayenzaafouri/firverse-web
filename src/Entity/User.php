@@ -179,14 +179,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\Image(
-        mimeTypesMessage: 'Please upload a valid image file (jpeg, png, gif).'
-    )]
-    #[Assert\File(
-        maxSize: '1024k',
-        mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
-        mimeTypesMessage: 'Please upload a valid image file.'
-    )]
+
     private ?string $image = null;
 
     public function getImage(): ?string

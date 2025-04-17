@@ -1,0 +1,89 @@
+{# templates/base.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+    <style>
+        /* Reset & base */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7fa; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* Layout */
+        .wrapper { display: grid; grid-template-columns: 250px auto; height: 100vh; }
+        .sidebar { background: #2d3e50; color: #fff; display: flex; flex-direction: column; }
+        .user-profile { text-align: center; padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .user-profile img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; margin-bottom: 0.5rem; }
+        .user-profile .username { color: #ecf0f1; font-size: 1rem; font-weight: 500; }
+        .sidebar-header { padding: 1.5rem; font-size: 1.4rem; font-weight: bold; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .nav-links { flex: 1; overflow-y: auto; }
+        .nav-links a { display: flex; align-items: center; padding: 0.8rem 1.2rem; transition: background 0.3s; }
+        .nav-links a:hover { background: rgba(255,255,255,0.1); }
+        .nav-links a .icon { margin-right: 0.8rem; font-size: 1.2rem; }
+
+        /* Many links for richness */
+        .nav-links a.dashboard { color: #f39c12; }
+        .nav-links a.users { color: #1abc9c; }
+        .nav-links a.reclamations { color: #e74c3c; }
+        .nav-links a.orders { color: #9b59b6; }
+        .nav-links a.products { color: #3498db; }
+        .nav-links a.analytics { color: #16a085; }
+        .nav-links a.reports { color: #27ae60; }
+        .nav-links a.settings { color: #7f8c8d; }
+        .nav-links a.profile { color: #d35400; }
+        .nav-links a.logout { color: #c0392b; }
+
+        .main-content { background: #fff; overflow-y: auto; }
+        .header { padding: 1.5rem; border-bottom: 1px solid #e1e5eb; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 1.8rem; color: #34495e; }
+        .header .actions a { margin-left: 1rem; padding: 0.5rem 1rem; background: #3498db; color: #fff; border-radius: 0.3rem; transition: background 0.3s; }
+        .header .actions a:hover { background: #2980b9; }
+
+        .content { padding: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <aside class="sidebar">
+            <div class="user-profile">
+                {% if app.user.image %}
+                    <img src="{{ asset('profile_images/' ~ app.user.image) }}" alt="{{ app.user.username }}">
+                {% else %}
+                    <div style="width:60px; height:60px; border-radius:50%; background:#ecf0f1; display:inline-flex; align-items:center; justify-content:center; border:2px solid #fff; color:#7f8c8d; font-size:1rem;">N/A</div>
+                {% endif %}
+                <div class="username">{{ app.user.username }}</div>
+            </div>
+            <div class="sidebar-header">MyAdmin</div>
+            <ul class="nav-links">
+                <li><a href="#" class="dashboard"><span class="icon">🏠</span>Dashboard</a></li>
+                <li><a href="{{ path('app_user_index') }}" class="users"><span class="icon">👥</span>Users</a></li>
+                <li><a href="{{ path('app_admin_reclamation_index') }}" class="reclamations"><span class="icon">📝</span>Reclamations</a></li>
+                <li><a href="#" class="orders"><span class="icon">📦</span>Orders</a></li>
+                <li><a href="#" class="products"><span class="icon">🛒</span>Products</a></li>
+                <li><a href="#" class="analytics"><span class="icon">📊</span>Analytics</a></li>
+                <li><a href="#" class="reports"><span class="icon">📈</span>Reports</a></li>
+                <li><a href="#" class="settings"><span class="icon">⚙️</span>Settings</a></li>
+                <li><a href="#" class="profile"><span class="icon">👤</span>Profile</a></li>
+                <li><a href="{{ path('app_logout') }}" class="logout"><span class="icon">🚪</span>Logout</a></li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>{% block page_title %}Welcome{% endblock %}</h1>
+                <div class="actions">
+                    <a href="#">New Record</a>
+                    <a href="#">Help</a>
+                </div>
+            </header>
+            <section class="content">
+                {% block body %}
+                <!-- Page content goes here -->
+                {% endblock %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{# templates/front/reclamation/index.html.twig #}
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Reclamation List{% endblock %}
+
+{% block body %}
+    <style>
+        .recl-container { background: #fff; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .recl-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .recl-header h2 { color: #2d3e50; font-size: 1.5rem; }
+        .recl-header a { padding: 0.5rem 1rem; background: #1abc9c; color: #fff; border-radius: 0.3rem; text-decoration: none; transition: background 0.3s; }
+        .recl-header a:hover { background: #16a085; }
+        .recl-table { width: 100%; border-collapse: separate; border-spacing: 0 0.5rem; }
+        .recl-table th { background: #34495e; color: #ecf0f1; padding: 0.75rem 1rem; text-align: left; }
+        .recl-table td { background: #fdfdfd; padding: 0.75rem 1rem; }
+        .recl-table tr:hover td { background: #ecf0f1; }
+        .btn { padding: 0.4rem 0.8rem; border-radius: 0.3rem; text-decoration: none; font-size: 0.9rem; display: inline-block; margin-right: 0.5rem; }
+        .btn-show { background: #3498db; color: #fff; }
+        .btn-show:hover { background: #2980b9; }
+        .btn-edit { background: #f39c12; color: #fff; }
+        .btn-edit.disabled, .btn-edit[aria-disabled="true"] { background: #95a5a6; cursor: default; }
+        .btn-edit:not(.disabled):hover { background: #d35400; }
+    </style>
+
+    <div class="recl-container">
+        <div class="recl-header">
+            <h2>Reclamation List</h2>
+            <a href="{{ path('app_reclamation_new') }}">+ New Reclamation</a>
+        </div>
+
+        <table class="recl-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reclamation in reclamations %}
+                    <tr>
+                        <td>{{ reclamation.id }}</td>
+                        <td>{{ reclamation.title }}</td>
+                        <td>{{ reclamation.description|length > 60 ? reclamation.description|slice(0,60) ~ '…' : reclamation.description }}</td>
+                        <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d') : '—' }}</td>
+                        <td>{{ reclamation.status ? '✅ Traité' : '⏳ En attente' }}</td>
+                        <td>
+                            <a href="{{ path('app_reclamation_show', {id: reclamation.id}) }}" class="btn btn-show">Show</a>
+                            {% if not reclamation.status %}
+                                <a href="{{ path('app_reclamation_edit', {id: reclamation.id}) }}" class="btn btn-edit">Edit</a>
+                            {% else %}
+                                <span class="btn btn-edit disabled" aria-disabled="true">Edit</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:1rem; color:#7f8c8d;">No reclamations found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

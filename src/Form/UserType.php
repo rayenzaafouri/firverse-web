@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-
+use Symfony\Component\Validator\Constraints\File as FileConstraint;
 class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -48,9 +48,16 @@ class UserType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('image', FileType::class, [
-                'label' => 'Image',
-                'mapped' => false,
-                'required' => false,
+                'label'       => 'Image (JPEG/PNG/GIF, max 1 MB)',
+                'mapped'      => false,
+                'required'    => false,
+                'constraints' => [
+                    new FileConstraint([
+                        'maxSize'        => '1024k',
+                        'mimeTypes'      => ['image/jpeg', 'image/png', 'image/gif'],
+                        'mimeTypesMessage' => 'Please upload a valid image file.',
+                    ]),
+                ],
             ])
 
         ;

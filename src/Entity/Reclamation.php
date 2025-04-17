@@ -15,7 +15,7 @@ use App\Repository\ReclamationRepository;
 class Reclamation
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
@@ -74,8 +74,7 @@ class Reclamation
         min: 5,
         max: 1000,
         minMessage: 'Description must be at least {{ limit }} characters long.',
-        maxMessage: 'Description cannot exceed {{ limit }} characters.',
-        allowNull: true
+        maxMessage: 'Description cannot exceed {{ limit }} characters.'
     )]
     private ?string $description = null;
 
@@ -91,12 +90,7 @@ class Reclamation
     }
 
     #[ORM\Column(type: 'date', nullable: true)]
-    #[Assert\Optional]
-    #[Assert\Type(
-        type: \DateTimeInterface::class,
-        message: 'The value {{ value }} is not a valid date.'
-    )]
-    #[Assert\LessThanOrEqual('today', message: 'The reclamation date cannot be in the future.')]
+
     private ?\DateTimeInterface $date_reclamation = null;
 
     public function getDate_reclamation(): ?\DateTimeInterface
@@ -111,10 +105,7 @@ class Reclamation
     }
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    #[Assert\Type(
-        type: 'bool',
-        message: 'The status must be a boolean value.'
-    )]
+
     private ?bool $status = null;
 
     public function isStatus(): ?bool

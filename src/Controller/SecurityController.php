@@ -14,24 +14,34 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route('/security', name: 'app_auth', methods: ['GET', 'POST'])]
-    public function index(
+    #[Route('/auth', name: 'app_auth', methods: ['GET'])]
+    public function loginPage(AuthenticationUtils $authUtils): Response
+    {
+        $error        = $authUtils->getLastAuthenticationError();
+        $lastUsername = $authUtils->getLastUsername();
+
+        $registrationForm = $this->createForm(RegistrationFormType::class);
+
+        return $this->render('authentification/index.html.twig', [
+            'last_username'     => $lastUsername,
+            'error'             => $error,
+            'registrationForm' => $registrationForm->createView(),
+            'activeTab'         => 'login',
+        ]);
+    }
+
+    #[Route('/auth/register', name: 'app_register', methods: ['POST'])]
+    public function register(
         Request $request,
-        UserPasswordHasherInterface $userPasswordHasher,
-        EntityManagerInterface $entityManager,
-        AuthenticationUtils $authenticationUtils
+        UserPasswordHasherInterface $hasher,
+        EntityManagerInterface $em
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
-            $user->setRole("UTILISATEUR");
+
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -39,19 +49,27 @@ class SecurityController extends AbstractController
                 $imageFile->move($this->getParameter('images_directory'), $newFilename);
                 $user->setImage($newFilename);
             }
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $user->setRole("UTILISATEUR");
+
+            $user->setPassword(
+                $hasher->hashPassword($user, $form->get('plainPassword')->getData())
+            );
+            $em->persist($user);
+            $em->flush();
+
             return $this->redirectToRoute('app_index');
         }
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastUsername();
+
         return $this->render('authentification/index.html.twig', [
+            'last_username'     => '',
+            'error'             => null,
             'registrationForm' => $form->createView(),
-            'last_username' => $lastUsername,
-            'error' => $error,
+            'activeTab'         => 'register',
         ]);
     }
 
+    #[Route('/auth/login_check', name: 'app_auth_login', methods: ['POST'])]
+    public function loginCheck(): void {}
 
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void

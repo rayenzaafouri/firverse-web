@@ -1,0 +1,42 @@
+{# templates/front/reclamation/new.html.twig #}
+{% extends 'front/base.html.twig' %}
+
+{% block title %}New Reclamation{% endblock %}
+
+{% block body %}
+  <style>
+    .form-card { max-width: 600px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .form-card h2 { color: #2d3e50; margin-bottom: 1.5rem; font-size: 1.6rem; }
+    .form-field { display: flex; flex-direction: column; margin-bottom: 1rem; }
+    .form-field label { font-weight: 600; color: #2d3e50; margin-bottom: 0.5rem; }
+    .form-field input,
+    .form-field textarea,
+    .form-field select { padding: 0.6rem 1rem; border: 1px solid #ccc; border-radius: 0.3rem; font-size: 1rem; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; }
+    .btn-back { padding: 0.6rem 1.2rem; background: #95a5a6; color: #fff; border-radius: 0.3rem; text-decoration: none; }
+    .btn-save { padding: 0.6rem 1.2rem; background: #1abc9c; color: #fff; border: none; border-radius: 0.3rem; cursor: pointer; transition: background 0.3s; }
+    .btn-save:hover { background: #16a085; }
+  </style>
+
+  <div class="form-card">
+    <h2>Create New Reclamation</h2>
+    {{ form_start(form, { 'attr': { 'style': 'display: grid; gap: 1rem;' } }) }}
+
+    {% for field in [form.title, form.description] %}
+      <div class="form-field">
+        {{ form_label(field) }}
+        {{ form_widget(field) }}
+        <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 0.3rem;">
+          {{ form_errors(field) }}
+        </div>
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <a href="{{ path('app_reclamation_index') }}" class="btn-back">Back to List</a>
+      <button type="submit" class="btn-save">{{ button_label|default('Save') }}</button>
+    </div>
+
+    {{ form_end(form) }}
+  </div>
+{% endblock %}

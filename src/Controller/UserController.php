@@ -24,16 +24,56 @@ final class UserController extends AbstractController
             'users' => $userRepository->findAll(),
         ]);
     }
-    
 
+    #[Route('/profile/edit', name: 'app_user_profile_edit', methods: ['GET', 'POST'])]
+    public function editProfile(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        $user = $this->getUser();
+        $form = $this->createForm(UserType::class, $user);
+        $form->remove('role');
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('password')->getData()) {
+                $hashed = $passwordHasher->hashPassword(
+                    $user,
+                    $form->get('password')->getData()
+                );
+                $user->setPassword($hashed);
+            }
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                $imageFile->move($this->getParameter('images_directory'), $newFilename);
+                $user->setImage($newFilename);
+            }
+            $em->flush();
+
+            $this->addFlash('success', 'Profile updated successfully.');
+            return $this->redirectToRoute('app_reclamation_index');
+        }
+        return $this->render('user/edit_profile.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('password')->getData()) {
+                $hashed = $passwordHasher->hashPassword(
+                    $user,
+                    $form->get('password')->getData()
+                );
+                $user->setPassword($hashed);
+            }
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -66,6 +106,7 @@ final class UserController extends AbstractController
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(UserType::class, $user);
+        $form->remove('password');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

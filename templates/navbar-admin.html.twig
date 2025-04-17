@@ -1,0 +1,80 @@
+<nav class="fitverse-navbar admin navbar navbar-expand-lg navbar-dark bg-dark  shadow " data-controller="admin-navbar">
+	<button class="navbar-admin-toggle" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+		<img src="/fitverse-white.png"/>
+	</button>
+  <span class="admin-badge"> | Administration</span>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarText">
+		<ul class="navbar-nav mr-auto"></ul>
+
+		<div class="user-nav-menu navbar-text">
+			<div class="user-display">
+				<span>{{  app.user.first_name ~ " " ~  app.user.first_name  }}</span>
+			</div>
+			<div class="user-badge">
+				<span>{{ app.user.first_name|slice(0, 1) }}</span>
+				<span>{{ app.user.last_name|slice(0, 1) }}</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="user-nav-menu-content">
+		{% if is_granted('ROLE_ADMIN') %}
+			<ul>
+				<li><a href=""><span class="material-symbols-outlined">person</span><span>Admin account</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+				<li><a href=""><span class="material-symbols-outlined">shopping_cart</span><span>Shopping cart</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+				<li><a href=""><span class="material-symbols-outlined">support</span><span>Support & help</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+				<li><a href=""><span class="material-symbols-outlined">settings_account_box</span><span>Preferences</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+			</ul>
+
+		{% endif %}
+		{% if not is_granted('ROLE_ADMIN') %}
+			<ul>
+				<li><a href=""><span class="material-symbols-outlined">person</span><span>My account</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+				<li><a href=""><span class="material-symbols-outlined">shopping_cart</span><span>Shopping cart</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+				<li><a href=""><span class="material-symbols-outlined">support</span><span>Support & help</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+
+				<li><a href=""><span class="material-symbols-outlined">settings_account_box</span><span>Preferences</span><span class="material-symbols-outlined">chevron_right</span></a></li>
+			</ul>
+		{% endif %}
+
+		<button class="btn logout-btn">
+			<a href="/logout">
+				<span class="material-symbols-outlined">door_open</span>
+				Logout</a>
+		</button>
+	</div>
+</nav>
+
+<div class="container">
+	<aside>
+		<ul>
+			<li>
+
+				<a class="btn" data-toggle="collapse" href="#collapseExercise" role="button" aria-expanded="false">
+					<span class="material-symbols-outlined">fitness_center</span>
+					<span>Exercise Management</span>
+				</a>
+				<ul
+					class="collapse" id="collapseExercise">
+					<li>
+						<a class="btn " href="/admin/exercise/add">Add exercise</a>
+					</li>
+					<li>
+						<a class="btn" href="/admin/exercise/add">Manage exercises</a>
+					</li>
+
+				</ul>
+			</li>
+		</ul>
+
+
+	</aside>
+</div>

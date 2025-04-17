@@ -1,0 +1,42 @@
+{# templates/back/reclamation/show.html.twig #}
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Reclamation Details{% endblock %}
+{% block page_title %}Reclamation Details{% endblock %}
+
+{% block body %}
+  <div style="max-width: 600px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+    <h2 style="margin-bottom: 1.5rem; color: #2d3e50; text-align: center;">Reclamation #{{ reclamation.id }}</h2>
+    <div style="display: grid; grid-template-columns: 150px 1fr; row-gap: 1rem; column-gap: 2rem;">
+      <div style="font-weight:600; color:#2d3e50;">Title</div>
+      <div>{{ reclamation.title }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Description</div>
+      <div>{{ reclamation.description }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Date</div>
+      <div>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d') : '—' }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Status</div>
+      <div>
+        {% if reclamation.status %}
+          <span style="background: #27ae60; color: #ecf0f1; padding: 0.3rem 0.6rem; border-radius: 0.3rem;">✅ Traité</span>
+        {% else %}
+          <span style="background: #f39c12; color: #fff; padding: 0.3rem 0.6rem; border-radius: 0.3rem;">⏳ En attente</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+      <a href="{{ path('app_reclamation_index') }}" style="padding: 0.6rem 1.2rem; background: #95a5a6; color: #fff; border-radius: 0.3rem; text-decoration: none;">Back to List</a>
+      <div style="display: flex; gap: 1rem;">
+        {% if not reclamation.status %}
+          <form method="post" action="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" onsubmit="return confirm('Are you sure you want to delete this reclamation?');" style="display:inline;">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
+            <button type="submit" style="padding: 0.6rem 1.2rem; background: #e74c3c; color: #fff; border: none; border-radius: 0.3rem; cursor: pointer; transition: background 0.3s;" onmouseover="this.style.background='#c0392b';" onmouseout="this.style.background='#e74c3c';">Delete</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

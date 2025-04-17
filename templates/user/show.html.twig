@@ -1,69 +1,54 @@
-{% extends 'base.html.twig' %}
+{# templates/back/user/show.html.twig #}
+{% extends 'back/base.html.twig' %}
 
 {% block title %}User Details{% endblock %}
+{% block page_title %}User Details{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1 class="mb-4">User Details</h1>
-
-    <table class="table table-bordered">
-        <tbody>
-            <tr>
-                <th>ID</th>
-                <td>{{ user.id }}</td>
-            </tr>
-            <tr>
-                <th>First Name</th>
-                <td>{{ user.firstName }}</td>
-            </tr>
-            <tr>
-                <th>Last Name</th>
-                <td>{{ user.lastName }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ user.email }}</td>
-            </tr>
-            <tr>
-                <th>Address</th>
-                <td>{{ user.address }}</td>
-            </tr>
-            <tr>
-                <th>Phone</th>
-                <td>{{ user.phone }}</td>
-            </tr>
-            {# Password field is removed for security reasons #}
-            <tr>
-                <th>Gender</th>
-                <td>{{ user.gender }}</td>
-            </tr>
-            <tr>
-                <th>Role</th>
-                <td>{{ user.role }}</td>
-            </tr>
-            <tr>
-                <th>Birth Date</th>
-                <td>{{ user.birthDate ? user.birthDate|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Image</th>
-                <td>
-                    {% if user.image %}
-                        <img src="{{ asset('profile_images/' ~ user.image) }}" alt="User Image" class="img-thumbnail" style="max-width: 200px;">
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="d-flex justify-content-between mt-4">
-        <a href="{{ path('app_user_index') }}" class="btn btn-secondary">Back to List</a>
-        <div>
-            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary me-2">Edit</a>
-            {{ include('user/_delete_form.html.twig') }}
-        </div>
+  <div style="max-width: 600px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      {% if user.image %}
+        <img src="{{ asset('profile_images/' ~ user.image) }}" alt="Avatar" style="width:100px; height:100px; border-radius:50%; object-fit:cover; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+      {% else %}
+        <div style="width:100px; height:100px; border-radius:50%; background:#ecf0f1; display:inline-flex; align-items:center; justify-content:center; color:#7f8c8d; font-size:1.2rem;">N/A</div>
+      {% endif %}
     </div>
-</div>
+
+    <div style="display: grid; grid-template-columns: 150px 1fr; row-gap: 1rem; column-gap: 2rem;">
+      <div style="font-weight:600; color:#2d3e50;">ID</div>
+      <div>{{ user.id }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">First Name</div>
+      <div>{{ user.firstName }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Last Name</div>
+      <div>{{ user.lastName }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Email</div>
+      <div>{{ user.email }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Address</div>
+      <div>{{ user.address ?: '—' }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Phone</div>
+      <div>{{ user.phone ?: '—' }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Gender</div>
+      <div>{{ user.gender }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Role</div>
+      <div>{{ user.role }}</div>
+
+      <div style="font-weight:600; color:#2d3e50;">Birth Date</div>
+      <div>{{ user.birthDate ? user.birthDate|date('Y-m-d') : '—' }}</div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+      <a href="{{ path('app_user_index') }}" style="padding: 0.6rem 1.2rem; background: #95a5a6; color: #fff; border-radius: 0.3rem; text-decoration: none;">Back to List</a>
+      <div style="display: flex; gap: 1rem;">
+        <a href="{{ path('app_user_edit', {'id': user.id}) }}" style="padding: 0.6rem 1.2rem; background: #3498db; color: #fff; border-radius: 0.3rem; text-decoration: none;">Edit</a>
+        {{ include('user/_delete_form.html.twig') }}
+      </div>
+    </div>
+  </div>
 {% endblock %}
