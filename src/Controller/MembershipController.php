@@ -32,7 +32,7 @@ final class MembershipController extends AbstractController
             return $this->redirectToRoute('app_membership_index');
         }
 
-        return $this->render('membership/index.html.twig', [
+        return $this->render('back/membership/index.html.twig', [
             'memberships' => $membershipRepository->findAll(),
             'form' => $form->createView(), // 🔥 c'est ce qui manquait
         ]);
@@ -53,7 +53,7 @@ final class MembershipController extends AbstractController
             return $this->redirectToRoute('app_membership_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('membership/new.html.twig', [
+        return $this->render('back/membership/new.html.twig', [
             'membership' => $membership,
             'form' => $form,
         ]);
@@ -66,7 +66,7 @@ final class MembershipController extends AbstractController
             'disabled' => true,
         ]);
 
-        return $this->render('membership/show.html.twig', [
+        return $this->render('back/membership/show.html.twig', [
             'form' => $form,
             'membership' => $membership,
         ]);
@@ -85,7 +85,7 @@ final class MembershipController extends AbstractController
             return $this->redirectToRoute('app_membership_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('membership/edit.html.twig', [
+        return $this->render('back/membership/edit.html.twig', [
             'membership' => $membership,
             'form' => $form,
         ]);

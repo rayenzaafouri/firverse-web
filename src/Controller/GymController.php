@@ -17,7 +17,7 @@ final class GymController extends AbstractController
     #[Route(name: 'app_gym_index', methods: ['GET'])]
     public function index(GymRepository $gymRepository): Response
     {
-        return $this->render('gym/index.html.twig', [
+        return $this->render('back/gym/index.html.twig', [
             'gyms' => $gymRepository->findAll(),
         ]);
     }
@@ -44,7 +44,7 @@ final class GymController extends AbstractController
                    $this->addFlash('error', 'Erreur lors de l\'ajout de la salle de sport.');
                }
            }
-        return $this->render('gym/new.html.twig', [
+        return $this->render('back/gym/new.html.twig', [
             'gym' => $gym,
             'form' => $form,
         ]);
@@ -54,7 +54,7 @@ final class GymController extends AbstractController
     #[Route('/{id}', name: 'app_gym_show', methods: ['GET'])]
     public function show(Gym $gym): Response
     {
-        return $this->render('gym/show.html.twig', [
+        return $this->render('back/gym/show.html.twig', [
             'gym' => $gym,
         ]);
     }
@@ -72,7 +72,7 @@ final class GymController extends AbstractController
             return $this->redirectToRoute('app_gym_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('gym/edit.html.twig', [
+        return $this->render('back/gym/edit.html.twig', [
             'gym' => $gym,
             'form' => $form,
         ]);

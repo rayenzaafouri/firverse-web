@@ -13,7 +13,7 @@ class GymFrontController extends AbstractController
     public function list(GymRepository $gymRepository): Response
     {
         $gyms = $gymRepository->findAll();
-        return $this->render('gym_front/front.html.twig', [
+        return $this->render('front/gym/front.html.twig', [
             'gyms' => $gyms,
         ]);
     }
@@ -26,7 +26,7 @@ class GymFrontController extends AbstractController
             throw $this->createNotFoundException('Salle non trouvée.');
         }
 
-        return $this->render('gym_front/detail.html.twig', [
+        return $this->render('front/gym/detail.html.twig', [
             'gym' => $gym,
         ]);
     }

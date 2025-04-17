@@ -91,17 +91,17 @@
 
     <div class="form-container py-5">
         <div class="form-section">
-            <h1>Nouvel Abonnement</h1>
+            <h1>New Membership</h1>
 
             {# Start the form with validation off to show custom error handling #}
             {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
             {# Include the form partial #}
-            {{ include('membership/_form.html.twig', {'button_label': 'Ajouter'}) }}
+            {{ include('back/membership/_form.html.twig', {'button_label': 'Add'}) }}
 
             {# Button to go back to the membership list #}
             <div class="d-flex justify-content-between mt-4">
-                <a href="{{ path('app_membership_index') }}" class="btn btn-info">Retour</a>
+                <a href="{{ path('app_membership_index') }}" class="btn btn-info">Back</a>
             </div>
 
             {# Flash messages to display after form submission (success or error) #}
