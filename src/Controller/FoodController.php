@@ -19,7 +19,7 @@ final class FoodController extends AbstractController
     {
         $searchQuery = $request->query->get('search', '');
         if ($searchQuery) {
-            $food = $foodRepository->findBySearch($searchQuery);
+            $food = $foodRepository->findByNameLike($searchQuery);
         } else {
             $food = $foodRepository->findAll();
         }
@@ -119,7 +119,7 @@ final class FoodController extends AbstractController
                 return $this->json([]);
             }
             
-            $results = $foodRepository->findBySearch($query);
+            $results = $foodRepository->findByNameLike($query);
             
             $data = array_map(function($food) {
                 return [
