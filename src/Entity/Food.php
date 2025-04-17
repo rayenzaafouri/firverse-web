@@ -27,9 +27,8 @@ class Food
     {
         $this->id = $id;
         return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
+    } 
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     private ?string $name = null;
 
     public function getName(): ?string
@@ -113,7 +112,7 @@ class Food
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(type: 'decimal', nullable: true, name: 'saturatedFats')]
     private ?float $saturatedFats = null;
 
     public function getSaturatedFats(): ?float

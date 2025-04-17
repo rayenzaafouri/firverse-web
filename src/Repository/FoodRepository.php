@@ -40,4 +40,16 @@ class FoodRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findBySearch(string $query): array
+    {
+        return $this->createQueryBuilder('f')
+            ->where('f.name LIKE :query')
+            ->orWhere('f.measure LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('f.name', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

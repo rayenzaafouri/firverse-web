@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Food{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h1 class="h3 mb-0">Create new Food</h1>
+            </div>
+            <div class="card-body">
+                {{ include('food/_form.html.twig') }}
+                
+                <div class="mt-3">
+                    <a href="{{ path('app_food_index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to list
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

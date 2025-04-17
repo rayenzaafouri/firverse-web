@@ -1,0 +1,261 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.name, 'Recipe Name', {'label_attr': {'class': 'font-weight-bold'}}) }}
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.name, {'attr': {'class': 'text-danger'}}) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.is_favoris, 'Add to Favorites', {'label_attr': {'class': 'font-weight-bold'}}) }}
+                        <div class="custom-control custom-switch">
+                            {{ form_widget(form.is_favoris, {'attr': {'class': 'custom-control-input'}}) }}
+                            <label class="custom-control-label" for="{{ form.is_favoris.vars.id }}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="font-weight-bold">User</label>
+                <select name="user_id" class="form-control">
+                    <option value="">Select a user</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}" {% if recipe.user and recipe.user.id == user.id %}selected{% endif %}>
+                            {{ user.email }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <small class="form-text text-muted">Select a user to associate with this recipe</small>
+            </div>
+
+            <div class="form-group">
+                <label class="font-weight-bold">Ingredients</label>
+                <div class="ingredient-search-container mb-3">
+                    <div class="input-group">
+                        <input type="text" id="ingredientSearch" class="form-control" placeholder="Search for ingredients...">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="addIngredientBtn">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                    <div id="ingredientSearchResults" class="list-group mt-2" style="display: none; max-height: 200px; overflow-y: auto;"></div>
+                </div>
+                
+                <div id="selectedIngredients" class="mb-3">
+                    <div class="d-flex flex-wrap">
+                        {% for food in form.foods.vars.data %}
+                            <div class="selected-ingredient badge badge-info p-2 m-1" data-id="{{ food.id }}">
+                                {{ food.name }}
+                                <button type="button" class="btn-close btn-close-white ml-2 remove-ingredient" aria-label="Remove"></button>
+                                <input type="hidden" name="{{ form.foods.vars.full_name }}[]" value="{{ food.id }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                {{ form_errors(form.foods, {'attr': {'class': 'text-danger'}}) }}
+            </div>
+
+            <div class="form-group text-right">
+                <a href="{{ path('app_recipe_index') }}" class="btn btn-secondary mr-2">
+                    <i class="fas fa-arrow-left"></i> Back to list
+                </a>
+                <button class="btn btn-primary">
+                    <i class="fas fa-save"></i> {{ button_label|default('Save') }}
+                </button>
+            </div>
+        </div>
+    </div>
+{{ form_end(form) }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ingredientSearch = document.getElementById('ingredientSearch');
+        const ingredientSearchResults = document.getElementById('ingredientSearchResults');
+        const addIngredientBtn = document.getElementById('addIngredientBtn');
+        const selectedIngredients = document.getElementById('selectedIngredients');
+        const foods = {{ foods|json_encode|raw }};
+        
+        let currentFocus = -1;
+        let searchTimeout;
+        
+        // Function to search ingredients with debounce
+        function searchIngredients(query) {
+            clearTimeout(searchTimeout);
+            
+            if (query.length < 1) {
+                ingredientSearchResults.style.display = 'none';
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                const results = foods.filter(food => 
+                    food.name.toLowerCase().includes(query.toLowerCase()) &&
+                    !isIngredientSelected(food.id)
+                );
+                
+                displaySearchResults(results);
+            }, 150); // Debounce time
+        }
+        
+        // Function to check if an ingredient is already selected
+        function isIngredientSelected(id) {
+            return document.querySelector(`.selected-ingredient[data-id="${id}"]`) !== null;
+        }
+        
+        // Function to display search results
+        function displaySearchResults(results) {
+            ingredientSearchResults.innerHTML = '';
+            currentFocus = -1;
+            
+            if (results.length === 0) {
+                ingredientSearchResults.innerHTML = '<div class="list-group-item">No ingredients found</div>';
+            } else {
+                results.forEach((food, index) => {
+                    const item = document.createElement('a');
+                    item.href = '#';
+                    item.className = 'list-group-item list-group-item-action';
+                    item.textContent = food.name;
+                    item.dataset.id = food.id;
+                    item.dataset.name = food.name;
+                    item.dataset.index = index;
+                    
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        addIngredient(food.id, food.name);
+                        ingredientSearch.value = '';
+                        ingredientSearchResults.style.display = 'none';
+                    });
+                    
+                    ingredientSearchResults.appendChild(item);
+                });
+            }
+            
+            ingredientSearchResults.style.display = 'block';
+        }
+        
+        // Function to add an ingredient
+        function addIngredient(id, name) {
+            if (isIngredientSelected(id)) return;
+            
+            const ingredientElement = document.createElement('div');
+            ingredientElement.className = 'selected-ingredient badge badge-info p-2 m-1';
+            ingredientElement.dataset.id = id;
+            ingredientElement.innerHTML = `
+                ${name}
+                <button type="button" class="btn-close btn-close-white ml-2 remove-ingredient" aria-label="Remove"></button>
+                <input type="hidden" name="{{ form.foods.vars.full_name }}[]" value="${id}">
+            `;
+            
+            const removeBtn = ingredientElement.querySelector('.remove-ingredient');
+            removeBtn.addEventListener('click', function() {
+                ingredientElement.remove();
+            });
+            
+            selectedIngredients.querySelector('.d-flex').appendChild(ingredientElement);
+            
+            // Focus back on search input after adding
+            ingredientSearch.focus();
+        }
+        
+        // Function to handle keyboard navigation
+        function handleKeyDown(e) {
+            const items = ingredientSearchResults.getElementsByClassName('list-group-item');
+            
+            if (items.length === 0) return;
+            
+            // Remove active class from all items
+            for (let i = 0; i < items.length; i++) {
+                items[i].classList.remove('active');
+            }
+            
+            // Arrow down
+            if (e.key === 'ArrowDown') {
+                currentFocus++;
+                if (currentFocus >= items.length) currentFocus = 0;
+                items[currentFocus].classList.add('active');
+                items[currentFocus].scrollIntoView({ block: 'nearest' });
+            }
+            // Arrow up
+            else if (e.key === 'ArrowUp') {
+                currentFocus--;
+                if (currentFocus < 0) currentFocus = items.length - 1;
+                items[currentFocus].classList.add('active');
+                items[currentFocus].scrollIntoView({ block: 'nearest' });
+            }
+            // Enter
+            else if (e.key === 'Enter' && currentFocus > -1) {
+                e.preventDefault();
+                const selectedItem = items[currentFocus];
+                addIngredient(
+                    selectedItem.dataset.id,
+                    selectedItem.dataset.name
+                );
+                ingredientSearch.value = '';
+                ingredientSearchResults.style.display = 'none';
+            }
+            // Escape
+            else if (e.key === 'Escape') {
+                ingredientSearchResults.style.display = 'none';
+            }
+        }
+        
+        // Event listeners
+        ingredientSearch.addEventListener('input', function() {
+            searchIngredients(this.value);
+        });
+        
+        ingredientSearch.addEventListener('focus', function() {
+            if (this.value.length >= 1) {
+                searchIngredients(this.value);
+            }
+        });
+        
+        ingredientSearch.addEventListener('keydown', handleKeyDown);
+        
+        document.addEventListener('click', function(e) {
+            if (!ingredientSearch.contains(e.target) && !ingredientSearchResults.contains(e.target)) {
+                ingredientSearchResults.style.display = 'none';
+            }
+        });
+        
+        // Add ingredient button
+        addIngredientBtn.addEventListener('click', function() {
+            const query = ingredientSearch.value.trim();
+            if (query.length < 1) return;
+            
+            const results = foods.filter(food => 
+                food.name.toLowerCase().includes(query.toLowerCase()) &&
+                !isIngredientSelected(food.id)
+            );
+            
+            if (results.length > 0) {
+                addIngredient(results[0].id, results[0].name);
+                ingredientSearch.value = '';
+                ingredientSearchResults.style.display = 'none';
+            }
+        });
+        
+        // Remove ingredient buttons for existing ingredients
+        document.querySelectorAll('.remove-ingredient').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.selected-ingredient').remove();
+            });
+        });
+        
+        // Add keyboard shortcut for focusing search
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+I or Cmd+I to focus ingredient search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+                e.preventDefault();
+                ingredientSearch.focus();
+            }
+        });
+    });
+</script> 
