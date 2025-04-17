@@ -1,35 +1,129 @@
-{# templates/event/front/events_home/reservation.html.twig #}
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Reserve Spot{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* White form fields */
+        .form-control {
+            background-color: white !important;
+            color: black !important;
+            border: 1px solid #ced4da !important;
+        }
+        
+        /* Error styling */
+        .form-group.has-error .form-control {
+            border-color: #dc3545 !important;
+        }
+        
+        .help-block {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+        
+        /* Checkbox error styling */
+        .form-check.has-error .form-check-input {
+            border-color: #dc3545 !important;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 {% include 'navbar.html.twig' %}
 
-<div class="container" style="text-align: center; padding-top: 20px;">
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="card-title text-center mb-4">Reserve Your Spot for {{ event.name }}</h1>
 
-    <h1>Reserve Your Spot for {{ event.name }}</h1>
-
-    {{ form_start(form) }}
-        <div class="form-group">
-            {{ form_row(form.email) }}
-            {{ form_row(form.phoneNumber) }}
-            {{ form_row(form.gender) }}
-            {{ form_row(form.dateOfBirth) }}
-            {{ form_row(form.participantType) }}
-            {{ form_row(form.numberOfParticipants) }}
-            {{ form_row(form.termsAccepted) }}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
+            
+                {# Email Field #}
+                <div class="form-group mb-3 {% if not form.email.vars.valid %}has-error{% endif %}">
+                    {{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.email.vars.valid %}
+                        {% for error in form.email.vars.errors %}
+                            <span class="help-block">{{ error.message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                {# Phone Number Field #}
+                <div class="form-group mb-3 {% if not form.phoneNumber.vars.valid %}has-error{% endif %}">
+                    {{ form_label(form.phoneNumber, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.phoneNumber.vars.valid %}
+                        {% for error in form.phoneNumber.vars.errors %}
+                            <span class="help-block">{{ error.message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                {# Gender Field #}
+                <div class="form-group mb-3 {% if not form.gender.vars.valid %}has-error{% endif %}">
+                    {{ form_label(form.gender, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.gender, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.gender.vars.valid %}
+                        {% for error in form.gender.vars.errors %}
+                            <span class="help-block">{{ error.message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                {# Date of Birth Field #}
+                <div class="form-group mb-3 {% if not form.dateOfBirth.vars.valid %}has-error{% endif %}">
+                    {{ form_label(form.dateOfBirth, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.dateOfBirth, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.dateOfBirth.vars.valid %}
+                        {% for error in form.dateOfBirth.vars.errors %}
+                            <span class="help-block">{{ error.message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                {# Participant Type Field #}
+                <div class="form-group mb-3 {% if not form.participantType.vars.valid %}has-error{% endif %}">
+                    {{ form_label(form.participantType, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.participantType, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.participantType.vars.valid %}
+                        {% for error in form.participantType.vars.errors %}
+                            <span class="help-block">{{ error.message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                {# Number of Participants Field #}
+                <div class="form-group mb-3 {% if not form.numberOfParticipants.vars.valid %}has-error{% endif %}">
+                    {{ form_label(form.numberOfParticipants, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.numberOfParticipants, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.numberOfParticipants.vars.valid %}
+                        {% for error in form.numberOfParticipants.vars.errors %}
+                            <span class="help-block">{{ error.message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                {# Terms Accepted Field #}
+                <div class="form-group form-check mb-3 {% if not form.termsAccepted.vars.valid %}has-error{% endif %}">
+                    {{ form_widget(form.termsAccepted, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(form.termsAccepted, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    {% if not form.termsAccepted.vars.valid %}
+                        {% for error in form.termsAccepted.vars.errors %}
+                            <span class="help-block d-block">{{ error.message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Submit Reservation</button>
+                    <a href="{{ path('event_detail', {'id': event.id}) }}" class="btn btn-outline-secondary">Back to Event</a>
+                </div>
+                
+            {{ form_end(form) }}
         </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-success">Submit Reservation</button>
-        </div>
-    {{ form_end(form) }}
-
-    <div style="margin-top: 20px;">
-        <a href="{{ path('event_detail', {'id': event.id}) }}" class="btn btn-primary">Back to Event</a>
     </div>
-
 </div>
-
 {% endblock %}

@@ -13,11 +13,6 @@
             <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">   
             <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Train+One&display=swap" rel="stylesheet">
   
-            <!-- Less CSS pre-processor -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/4.2.2/less.min.js"
-            integrity="sha512-RvWSOL32duQKqvfcdl2aKktT2VHgL1Nst/cO7EzPhuuVSMKDu86eXkAEi9AUJjSzcpA4XZfK8EaPNNzIP7MlBw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  
             <!-- Bootstrap -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
             <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
@@ -39,93 +34,106 @@
             }
 
             body {
-                background-color: #121212;
-                color: #e0e0e0;
+                background-color: #f8f9fa;
+                color: #212529;
                 min-height: 100vh;
             }
 
-            button > a {
-                all: unset;
-            }
-
+            /* Form styles */
             .form-control,
             .form-select,
             .form-check-input {
-                background-color: #2d2d2d;
-                border-color: #444;
-                color: #fff;
+                background-color: white;
+                color: #495057;
+                border: 1px solid #ced4da;
             }
 
             .form-control:focus,
             .form-select:focus,
             .form-check-input:focus {
-                background-color: #3a3a3a;
-                border-color: #89b55a;
-                color: #fff;
-                box-shadow: 0 0 0 .25rem rgba(137, 181, 90, 0.25);
+                background-color: white;
+                border-color: #80bdff;
+                color: #495057;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
             }
 
             .form-check-input:checked {
-                background-color: #89b55a;
-                border-color: #89b55a;
+                background-color: #007bff;
+                border-color: #007bff;
             }
 
             .form-label {
-                color: #ccc;
+                color: #495057;
+                font-weight: 500;
             }
 
+            /* Button styles */
             .btn-fitverse {
-                background-color: #89b55a !important;
-                border-color: #eeeeee !important;
-                color: white !important;
+                background-color: #89b55a;
+                border-color: #89b55a;
+                color: white;
                 transition: all 0.3s ease;
             }
 
             .btn-fitverse:hover {
-                background-color: #7aa84d !important;
+                background-color: #7aa84d;
+                border-color: #7aa84d;
                 transform: translateY(-1px);
             }
 
+            /* Card styles */
             .card {
-                background-color: #1e1e1e;
-                border-color: #333;
-                color: #e0e0e0;
+                background-color: white;
+                border-color: #dee2e6;
+                color: #212529;
             }
 
+            /* Table styles */
             .table {
-                color: #e0e0e0;
+                color: #212529;
             }
 
             .table th {
-                background-color: #2d2d2d;
-                border-color: #444;
+                background-color: #f8f9fa;
+                border-color: #dee2e6;
             }
 
             .table td {
-                border-color: #444;
+                border-color: #dee2e6;
             }
 
             .table-striped tbody tr:nth-of-type(odd) {
-                background-color: rgba(255, 255, 255, 0.05);
+                background-color: rgba(0, 0, 0, 0.02);
             }
 
             .table-hover tbody tr:hover {
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgba(0, 0, 0, 0.05);
             }
 
+            /* Alert styles */
             .alert {
-                background-color: #2d2d2d;
-                border-color: #444;
-                color: #e0e0e0;
+                background-color: white;
+                border-color: #dee2e6;
+                color: #212529;
             }
 
             .text-muted {
-                color: #aaa !important;
+                color: #6c757d !important;
+            }
+
+            /* Custom container for forms */
+            .form-container {
+                background-color: white;
+                border-radius: 0.5rem;
+                padding: 2rem;
+                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+                margin: 2rem auto;
+                max-width: 800px;
             }
         </style>
         {% endblock %}
     </head>
-    <body style="background-color: #121212; color: #e0e0e0;">
+    <body>
         {% block body %}{% endblock %}
     </body>
 </html>

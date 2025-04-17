@@ -24,7 +24,7 @@ class EventsHomeController extends AbstractController
         ]);
     }
 
-    #[Route('/event/{id}', name: 'event_detail')]
+    #[Route('/event/home/{id}', name: 'event_detail')]
     public function showDetail(Event $event): Response
     {
         return $this->render('/event/front/events_home/detail.html.twig', [

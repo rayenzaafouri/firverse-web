@@ -6,13 +6,14 @@ use App\Entity\Participation;
 use App\Form\ParticipationType;
 use App\Repository\ParticipationRepository;
 use App\Repository\EventRepository;
+use Psr\Log\LoggerInterface;  // Add this line
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/participation')]
 final class ParticipationController extends AbstractController
 {
@@ -29,6 +30,7 @@ final class ParticipationController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         EventRepository $eventRepository,
+        LoggerInterface $logger,
         int $event_id
     ): Response {
         $event = $eventRepository->find($event_id);
@@ -37,22 +39,44 @@ final class ParticipationController extends AbstractController
         }
     
         $participation = new Participation();
-        $participation->setEvent($event); // Set the event BEFORE handling the form
+        $participation->setEvent($event);
     
         $form = $this->createForm(ParticipationType::class, $participation);
         $form->handleRequest($request);
     
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($participation);
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $entityManager->persist($participation);
+                $entityManager->flush();
+                return $this->redirectToRoute('app_participation_index');
+            } else {
+                // Log all validation errors
+                $errors = [];
+                foreach ($form->getErrors(true) as $error) {
+                    $errorMsg = sprintf(
+                        "Field: %s | Error: %s",
+                        $error->getOrigin() ? $error->getOrigin()->getName() : 'global',
+                        $error->getMessage()
+                    );
+                    $errors[] = $errorMsg;
+                    
+                    // Log to Symfony logs
+                    $logger->error($errorMsg);
+                    
+                    // Output to terminal (STDOUT)
+                    error_log($errorMsg);
+                }
     
-            return $this->redirectToRoute('app_participation_index');
-            
+                // Debug dump (visible in profiler)
+                dump('Validation Errors:', $errors);
+    
+                $this->addFlash('error', 'Please fix the validation errors');
+            }
         }
     
         return $this->render('participation/new.html.twig', [
             'form' => $form->createView(),
-            'event' => $event, // Pass to template if needed
+            'event' => $event,
         ]);
     }
 
