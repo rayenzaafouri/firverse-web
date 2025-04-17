@@ -1,6 +1,80 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Gym{% endblock %}
+{% block title %}Modifier Salle de Sport{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-section {
+            background-color: #f1f8f2;
+            padding: 30px;
+            border-radius: 15px;
+            color: #343a40;
+            border: 2px solid #28a745;
+        }
+
+        .form-section h1 {
+            color: #28a745;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-control {
+            background-color: #ffffff;
+            color: #495057;
+            border: 1px solid #28a745;
+            border-radius: 5px;
+        }
+
+        .form-control::placeholder {
+            color: #6c757d;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row .col {
+            width: 48%;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            border-radius: 5px;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
     {% include 'navbar.html.twig' %}
@@ -14,142 +88,119 @@
         {% endfor %}
     {% endfor %}
 
-    <div class="container py-5" style="max-width: 1200px; margin: auto; background-color: #212529; color: white;">
-        <h1 class="text-center mb-4">Modifier une Salle de Sport</h1>
+    <div class="form-container py-5">
+        <div class="form-section">
+            <h1>Modifier Salle de Sport</h1>
 
-        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-            <div class="bg-dark p-4 mb-4 rounded">
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.name, 'Name') }}
-                    </div>
-                    <div class="col-sm-10">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">Modifier</button>
+                <a href="{{ path('app_gym_index') }}" class="btn btn-secondary">Retour</a>
+            </div>
+
+            <div class="form-row">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.name) }}
                     </div>
                 </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.adresse, 'Adresse') }}
-                    </div>
-                    <div class="col-sm-10">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.adresse, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.adresse, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.adresse) }}
                     </div>
                 </div>
+            </div>
 
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.longitude, 'Longitude') }}
-                    </div>
-                    <div class="col-sm-10">
+            <div class="form-row">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.longitude, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.longitude, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.longitude) }}
                     </div>
                 </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.latitude, 'Latitude') }}
-                    </div>
-                    <div class="col-sm-10">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.latitude, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.latitude, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.latitude) }}
                     </div>
                 </div>
+            </div>
 
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.phone, 'Phone') }}
-                    </div>
-                    <div class="col-sm-10">
+            <div class="form-row">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.phone, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.phone, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.phone) }}
                     </div>
                 </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.email, 'Email') }}
-                    </div>
-                    <div class="col-sm-10">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.email) }}
                     </div>
                 </div>
+            </div>
 
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.capacity, 'Capacity') }}
-                    </div>
-                    <div class="col-sm-10">
+            <div class="form-row">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.capacity, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.capacity, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.capacity) }}
                     </div>
                 </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.opening_hours, 'Opening Hours') }}
-                    </div>
-                    <div class="col-sm-10">
-                        {{ form_widget(form.opening_hours, {'attr': {'class': 'form-control'}}) }}
-                        {{ form_errors(form.opening_hours) }}
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.rating, 'Rating') }}
-                    </div>
-                    <div class="col-sm-10">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.rating, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.rating, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.rating) }}
                     </div>
                 </div>
+            </div>
 
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.createdAt, 'Created At') }}
-                    </div>
-                    <div class="col-sm-10">
-                        {{ form_widget(form.createdAt, {'attr': {'class': 'form-control'}}) }}
-                        {{ form_errors(form.createdAt) }}
+            <div class="form-row">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.opening_hours, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.opening_hours, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.opening_hours) }}
                     </div>
                 </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.image, 'Image') }}
-                    </div>
-                    <div class="col-sm-10">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.image, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.image) }}
                     </div>
                 </div>
+            </div>
 
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        {{ form_label(form.partner, 'Partenaire') }}
-                    </div>
-                    <div class="col-sm-10">
+            <div class="form-row">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form_label(form.partner, null, {'label_attr': {'class': 'form-label'}}) }}
                         {{ form_widget(form.partner, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.partner) }}
                     </div>
                 </div>
             </div>
 
-            <div class="row justify-content-center mt-4">
-                <button type="submit" class="btn btn-success">Modifier</button>
+            <div class="mb-3">
+                {{ form_label(form.createdAt, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.createdAt, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.createdAt) }}
             </div>
-        {{ form_end(form) }}
 
-        <div class="d-flex justify-content-between mt-4">
-            <a href="{{ path('app_gym_index') }}" class="btn btn-info">Retour</a>
-            <div>
-                {{ include('gym/_delete_form.html.twig') }}
-            </div>
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

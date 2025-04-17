@@ -2,9 +2,84 @@
 
 {% block title %}Nouveau Membership{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-section {
+            background-color: #f1f8f2;
+            padding: 30px;
+            border-radius: 15px;
+            color: #343a40;
+            border: 2px solid #28a745;
+        }
+
+        .form-section h1 {
+            color: #28a745;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-control {
+            background-color: #ffffff;
+            color: #495057;
+            border: 1px solid #28a745;
+            border-radius: 5px;
+        }
+
+        .form-control::placeholder {
+            color: #6c757d;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row .col {
+            width: 48%;
+        }
+
+        .alert {
+            border-radius: 5px;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     {% include 'navbar.html.twig' %}
 
+    {# Display any flash messages for success or errors #}
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
@@ -14,13 +89,34 @@
         {% endfor %}
     {% endfor %}
 
-    <div class="container py-5" style="max-width: 800px;">
-        <h1 class="text-center mb-4 text-white">Créer un nouvel abonnement</h1>
+    <div class="form-container py-5">
+        <div class="form-section">
+            <h1>Nouvel Abonnement</h1>
 
-        {{ include('membership/_form.html.twig', {'button_label': 'Ajouter'}) }}
+            {# Start the form with validation off to show custom error handling #}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-        <div class="d-flex justify-content-between mt-4">
-            <a href="{{ path('app_membership_index') }}" class="btn btn-info">Retour</a>
+            {# Include the form partial #}
+            {{ include('membership/_form.html.twig', {'button_label': 'Ajouter'}) }}
+
+            {# Button to go back to the membership list #}
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ path('app_membership_index') }}" class="btn btn-info">Retour</a>
+            </div>
+
+            {# Flash messages to display after form submission (success or error) #}
+            {% if app.request.method == 'POST' %}
+                {% if form.vars.valid %}
+                    <div class="alert alert-success mt-3">
+                        L'abonnement a été ajouté avec succès !
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger mt-3">
+                        Veuillez vérifier les erreurs dans le formulaire.
+                    </div>
+                {% endif %}
+            {% endif %}
+
         </div>
     </div>
 {% endblock %}

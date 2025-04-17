@@ -27,11 +27,14 @@ final class GymController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $gym = new Gym();
+        $gym->setCreatedAt(new \DateTime());
+
         $form = $this->createForm(GymType::class, $gym);
         $form->handleRequest($request);
 
            if ($form->isSubmitted()) {
                if ($form->isValid()) {
+
                    $entityManager->persist($gym);
                    $entityManager->flush();
 

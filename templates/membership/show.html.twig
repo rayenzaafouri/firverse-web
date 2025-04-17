@@ -2,83 +2,159 @@
 
 {% block title %}Détails de l'abonnement{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-section {
+            background-color: #f1f8f2;
+            padding: 30px;
+            border-radius: 15px;
+            color: #343a40;
+            border: 2px solid #28a745;
+        }
+
+        .form-section h1 {
+            color: #28a745;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-control {
+            background-color: #ffffff;
+            color: #495057;
+            border: 1px solid #28a745;
+            border-radius: 5px;
+        }
+
+        .form-control::placeholder {
+            color: #6c757d;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row .col {
+            width: 48%;
+        }
+
+        .alert {
+            border-radius: 5px;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     {% include 'navbar.html.twig' %}
 
-    <div class="container py-5" style="max-width: 800px;">
-        <h1 class="text-center text-white mb-4">Détails de l'abonnement</h1>
+    <div class="form-container py-5">
+        <div class="form-section">
+            <h1>Détails de l'abonnement</h1>
 
-        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-            <div class="bg-dark p-4 mb-4 rounded text-white">
-                <div class="row mb-3">
-                    <div class="col-sm-4">
-                        {{ form_label(form.start_date, 'Date de début') }}
-                    </div>
-                    <div class="col-sm-8">
-                        {{ form_widget(form.start_date, {'attr': {'class': 'form-control'}}) }}
-                    </div>
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            <div class="form-row mb-3">
+                <div class="col-sm-4">
+                    {{ form_label(form.start_date, 'Date de début') }}
                 </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-4">
-                        {{ form_label(form.end_date, 'Date de fin') }}
-                    </div>
-                    <div class="col-sm-8">
-                        {{ form_widget(form.end_date, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-4">
-                        {{ form_label(form.price, 'Prix') }}
-                    </div>
-                    <div class="col-sm-8">
-                        {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-4">
-                        {{ form_label(form.coaching, 'Coaching') }}
-                    </div>
-                    <div class="col-sm-8">
-                        {{ form_widget(form.coaching, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-4">
-                        {{ form_label(form.status, 'Statut') }}
-                    </div>
-                    <div class="col-sm-8">
-                        {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-4">
-                        {{ form_label(form.user, 'Utilisateur') }}
-                    </div>
-                    <div class="col-sm-8">
-                        {{ form_widget(form.user, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-4">
-                        {{ form_label(form.gym, 'Salle de sport') }}
-                    </div>
-                    <div class="col-sm-8">
-                        {{ form_widget(form.gym, {'attr': {'class': 'form-control'}}) }}
-                    </div>
+                <div class="col-sm-8">
+                    {{ form_widget(form.start_date, {'attr': {'class': 'form-control'}}) }}
                 </div>
             </div>
-        {{ form_end(form) }}
 
-        <div class="d-flex justify-content-between mt-4">
-            <a href="{{ path('app_membership_index') }}" class="btn btn-info">Retour</a>
-            <a href="{{ path('app_membership_edit', {'id': membership.id}) }}" class="btn btn-warning">Modifier</a>
-            {{ include('membership/_delete_form.html.twig') }}
+            <div class="form-row mb-3">
+                <div class="col-sm-4">
+                    {{ form_label(form.end_date, 'Date de fin') }}
+                </div>
+                <div class="col-sm-8">
+                    {{ form_widget(form.end_date, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="col-sm-4">
+                    {{ form_label(form.price, 'Prix') }}
+                </div>
+                <div class="col-sm-8">
+                    {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="col-sm-4">
+                    {{ form_label(form.coaching, 'Coaching') }}
+                </div>
+                <div class="col-sm-8">
+                    {{ form_widget(form.coaching, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="col-sm-4">
+                    {{ form_label(form.status, 'Statut') }}
+                </div>
+                <div class="col-sm-8">
+                    {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="col-sm-4">
+                    {{ form_label(form.user, 'Utilisateur') }}
+                </div>
+                <div class="col-sm-8">
+                    {{ form_widget(form.user, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="col-sm-4">
+                    {{ form_label(form.gym, 'Salle de sport') }}
+                </div>
+                <div class="col-sm-8">
+                    {{ form_widget(form.gym, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            {{ form_end(form) }}
+
+            <div class="form-buttons mt-4">
+                <a href="{{ path('app_membership_index') }}" class="btn btn-info">Retour</a>
+                <a href="{{ path('app_membership_edit', {'id': membership.id}) }}" class="btn btn-warning">Modifier</a>
+                {{ include('membership/_delete_form.html.twig') }}
+            </div>
         </div>
     </div>
 {% endblock %}

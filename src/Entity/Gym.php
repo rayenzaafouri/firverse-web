@@ -69,9 +69,9 @@ class Gym
     )]
     private ?float $rating = null;
 
-    #[ORM\Column(type: 'datetime', nullable: false, name: 'createdAt')]
-    #[Assert\NotNull(message: 'La date de création est requise.')]
+    #[ORM\Column(type: 'datetime', nullable: true, name: 'createdAt')]
     private ?\DateTimeInterface $createdAt = null;
+
 
     #[ORM\Column(type: 'string',length: 1000, nullable: true, name: 'image')]
     #[Assert\NotNull(message: 'L image est requise.')]
