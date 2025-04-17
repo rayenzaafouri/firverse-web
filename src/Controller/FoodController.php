@@ -109,17 +109,48 @@ final class FoodController extends AbstractController
         return $this->json($food);
     }
 
-
-    
-    
-
     #[Route('/search', name: 'app_food_search', methods: ['GET'])]
     public function search(Request $request, FoodRepository $foodRepository): Response
     {
-        $query = $request->query->get('q', '');
-        $results = $foodRepository->findBySearch($query);
-        
-        return $this->json($results);
+        try {
+            $query = $request->query->get('q', '');
+            
+            if (empty($query)) {
+                return $this->json([]);
+            }
+            
+            $results = $foodRepository->findBySearch($query);
+            
+            $data = array_map(function($food) {
+                return [
+                    'id' => $food->getId(),
+                    'name' => $food->getName(),
+                    'measure' => $food->getMeasure(),
+                    'grams' => $food->getGrams(),
+                    'calories' => $food->getCalories(),
+                    'protein' => $food->getProtein(),
+                    'fats' => $food->getFats(),
+                    'saturatedFats' => $food->getSaturatedFats(),
+                    'fibre' => $food->getFibre(),
+                    'carbohydrate' => $food->getCarbohydrate(),
+                    'sugar' => $food->getSugar(),
+                    'cholesterol' => $food->getCholesterol(),
+                    'sodium' => $food->getSodium(),
+                    'magnesium' => $food->getMagnesium(),
+                    'timesUsed' => $food->getTimesUsed()
+                ];
+            }, $results);
+            
+            return $this->json($data);
+        } catch (\Exception $e) {
+            // Log the error
+            error_log('Food search error: ' . $e->getMessage());
+            
+            // Return a more specific error response
+            return $this->json([
+                'error' => 'An error occurred while searching for foods',
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
-
 }

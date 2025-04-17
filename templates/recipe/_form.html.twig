@@ -21,19 +21,6 @@
             </div>
 
             <div class="form-group">
-                <label class="font-weight-bold">User</label>
-                <select name="user_id" class="form-control">
-                    <option value="">Select a user</option>
-                    {% for user in users %}
-                        <option value="{{ user.id }}" {% if recipe.user and recipe.user.id == user.id %}selected{% endif %}>
-                            {{ user.email }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <small class="form-text text-muted">Select a user to associate with this recipe</small>
-            </div>
-
-            <div class="form-group">
                 <label class="font-weight-bold">Ingredients</label>
                 <div class="ingredient-search-container mb-3">
                     <div class="input-group">
@@ -48,18 +35,133 @@
                 </div>
                 
                 <div id="selectedIngredients" class="mb-3">
-                    <div class="d-flex flex-wrap">
+                    <div class="ingredients-list">
                         {% for food in form.foods.vars.data %}
-                            <div class="selected-ingredient badge badge-info p-2 m-1" data-id="{{ food.id }}">
-                                {{ food.name }}
-                                <button type="button" class="btn-close btn-close-white ml-2 remove-ingredient" aria-label="Remove"></button>
-                                <input type="hidden" name="{{ form.foods.vars.full_name }}[]" value="{{ food.id }}">
+                            <div class="ingredient-item card mb-2" data-id="{{ food.id }}" 
+                                 data-calories="{{ food.calories|default(0) }}" 
+                                 data-protein="{{ food.protein|default(0) }}" 
+                                 data-carbs="{{ food.carbohydrate|default(0) }}" 
+                                 data-fats="{{ food.fats|default(0) }}"
+                                 data-fiber="{{ food.fiber|default(0) }}"
+                                 data-sugar="{{ food.sugar|default(0) }}"
+                                 data-sodium="{{ food.sodium|default(0) }}"
+                                 data-potassium="{{ food.potassium|default(0) }}">
+                                <div class="card-body p-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="ingredient-name font-weight-bold">{{ food.name }}</div>
+                                        <button type="button" class="btn-close remove-ingredient" aria-label="Remove"></button>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-3">
+                                            <div class="serving-size-container">
+                                                <label class="small text-muted">Serving:</label>
+                                                <input type="number" class="form-control form-control-sm serving-size" 
+                                                       name="serving_size[{{ food.id }}]" value="1" min="0.1" step="0.1">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="nutrition-info d-flex justify-content-between">
+                                                <div class="nutrition-item">
+                                                    <span class="small text-muted">Calories:</span>
+                                                    <span class="calories">{{ food.calories|default(0) }}</span>
+                                                </div>
+                                                <div class="nutrition-item">
+                                                    <span class="small text-muted">Protein:</span>
+                                                    <span class="protein">{{ food.protein|default(0) }}g</span>
+                                                </div>
+                                                <div class="nutrition-item">
+                                                    <span class="small text-muted">Carbs:</span>
+                                                    <span class="carbs">{{ food.carbohydrate|default(0) }}g</span>
+                                                </div>
+                                                <div class="nutrition-item">
+                                                    <span class="small text-muted">Fat:</span>
+                                                    <span class="fats">{{ food.fats|default(0) }}g</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="{{ form.foods.vars.full_name }}[]" value="{{ food.id }}">
+                                </div>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
                 
+                <!-- Nutrition Summary -->
+                <div id="nutritionSummary" class="nutrition-summary card mb-3" style="display: none;">
+                    <div class="card-header bg-primary text-white py-2">
+                        <h6 class="mb-0">Recipe Nutrition Summary</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <!-- Main Macros -->
+                        <div class="nutrition-section mb-3">
+                            <h6 class="text-muted mb-2 text-center">Main Macros</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                        <h4 class="total-calories mb-0 text-primary">0</h4>
+                                        <small class="text-muted">Calories</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                        <h4 class="total-protein mb-0 text-success">0g</h4>
+                                        <small class="text-muted">Protein</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                        <h4 class="total-carbs mb-0 text-info">0g</h4>
+                                        <small class="text-muted">Carbs</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                        <h4 class="total-fats mb-0 text-warning">0g</h4>
+                                        <small class="text-muted">Fat</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Nutrients -->
+                        <div class="nutrition-section">
+                            <h6 class="text-muted mb-2 text-center">Additional Nutrients</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                        <h4 class="total-fiber mb-0 text-secondary">0g</h4>
+                                        <small class="text-muted">Fiber</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                        <h4 class="total-sugar mb-0 text-danger">0g</h4>
+                                        <small class="text-muted">Sugar</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                        <h4 class="total-sodium mb-0 text-info">0mg</h4>
+                                        <small class="text-muted">Sodium</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="nutrition-summary-item text-center p-2 rounded bg-light">
+                                        <h4 class="total-potassium mb-0 text-success">0mg</h4>
+                                        <small class="text-muted">Potassium</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 {{ form_errors(form.foods, {'attr': {'class': 'text-danger'}}) }}
+                {# Hide the original foods field #}
+                <div style="display: none;">
+                    {{ form_widget(form.foods) }}
+                </div>
             </div>
 
             <div class="form-group text-right">
@@ -75,187 +177,377 @@
 {{ form_end(form) }}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ingredientSearch = document.getElementById('ingredientSearch');
-        const ingredientSearchResults = document.getElementById('ingredientSearchResults');
-        const addIngredientBtn = document.getElementById('addIngredientBtn');
-        const selectedIngredients = document.getElementById('selectedIngredients');
-        const foods = {{ foods|json_encode|raw }};
-        
+    (function() {
         let currentFocus = -1;
         let searchTimeout;
-        
-        // Function to search ingredients with debounce
-        function searchIngredients(query) {
-            clearTimeout(searchTimeout);
-            
-            if (query.length < 1) {
-                ingredientSearchResults.style.display = 'none';
+        let ingredientSearch, ingredientSearchResults, addIngredientBtn, selectedIngredients, nutritionSummary;
+
+        function initializeSearch() {
+            ingredientSearch = document.getElementById('ingredientSearch');
+            ingredientSearchResults = document.getElementById('ingredientSearchResults');
+            addIngredientBtn = document.getElementById('addIngredientBtn');
+            selectedIngredients = document.getElementById('selectedIngredients');
+            nutritionSummary = document.getElementById('nutritionSummary');
+
+            if (!ingredientSearch || !ingredientSearchResults || !addIngredientBtn || !selectedIngredients || !nutritionSummary) {
                 return;
             }
-            
-            searchTimeout = setTimeout(() => {
-                const results = foods.filter(food => 
-                    food.name.toLowerCase().includes(query.toLowerCase()) &&
-                    !isIngredientSelected(food.id)
-                );
+
+            // Function to calculate and update nutrition totals
+            function updateNutritionTotals() {
+                let totalCalories = 0;
+                let totalProtein = 0;
+                let totalCarbs = 0;
+                let totalFats = 0;
+                let totalFiber = 0;
+                let totalSugar = 0;
+                let totalSodium = 0;
+                let totalPotassium = 0;
                 
-                displaySearchResults(results);
-            }, 150); // Debounce time
-        }
-        
-        // Function to check if an ingredient is already selected
-        function isIngredientSelected(id) {
-            return document.querySelector(`.selected-ingredient[data-id="${id}"]`) !== null;
-        }
-        
-        // Function to display search results
-        function displaySearchResults(results) {
-            ingredientSearchResults.innerHTML = '';
-            currentFocus = -1;
-            
-            if (results.length === 0) {
-                ingredientSearchResults.innerHTML = '<div class="list-group-item">No ingredients found</div>';
-            } else {
-                results.forEach((food, index) => {
-                    const item = document.createElement('a');
-                    item.href = '#';
-                    item.className = 'list-group-item list-group-item-action';
-                    item.textContent = food.name;
-                    item.dataset.id = food.id;
-                    item.dataset.name = food.name;
-                    item.dataset.index = index;
+                const ingredients = document.querySelectorAll('.ingredient-item');
+                
+                // Show or hide nutrition summary based on whether there are ingredients
+                if (ingredients.length > 0) {
+                    nutritionSummary.style.display = 'block';
+                } else {
+                    nutritionSummary.style.display = 'none';
+                }
+                
+                ingredients.forEach(item => {
+                    const servingSize = parseFloat(item.querySelector('.serving-size').value) || 1;
+                    const calories = parseFloat(item.dataset.calories) || 0;
+                    const protein = parseFloat(item.dataset.protein) || 0;
+                    const carbs = parseFloat(item.dataset.carbs) || 0;
+                    const fats = parseFloat(item.dataset.fats) || 0;
+                    const fiber = parseFloat(item.dataset.fiber) || 0;
+                    const sugar = parseFloat(item.dataset.sugar) || 0;
+                    const sodium = parseFloat(item.dataset.sodium) || 0;
+                    const potassium = parseFloat(item.dataset.potassium) || 0;
                     
-                    item.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        addIngredient(food.id, food.name);
-                        ingredientSearch.value = '';
-                        ingredientSearchResults.style.display = 'none';
-                    });
-                    
-                    ingredientSearchResults.appendChild(item);
+                    totalCalories += calories * servingSize;
+                    totalProtein += protein * servingSize;
+                    totalCarbs += carbs * servingSize;
+                    totalFats += fats * servingSize;
+                    totalFiber += fiber * servingSize;
+                    totalSugar += sugar * servingSize;
+                    totalSodium += sodium * servingSize;
+                    totalPotassium += potassium * servingSize;
                 });
+                
+                // Update the summary display
+                document.querySelector('.total-calories').textContent = Math.round(totalCalories);
+                document.querySelector('.total-protein').textContent = Math.round(totalProtein) + 'g';
+                document.querySelector('.total-carbs').textContent = Math.round(totalCarbs) + 'g';
+                document.querySelector('.total-fats').textContent = Math.round(totalFats) + 'g';
+                document.querySelector('.total-fiber').textContent = Math.round(totalFiber) + 'g';
+                document.querySelector('.total-sugar').textContent = Math.round(totalSugar) + 'g';
+                document.querySelector('.total-sodium').textContent = Math.round(totalSodium) + 'mg';
+                document.querySelector('.total-potassium').textContent = Math.round(totalPotassium) + 'mg';
+            }
+
+            // Function to search ingredients with debounce
+            function searchIngredients(query) {
+                clearTimeout(searchTimeout);
+                
+                if (query.length < 1) {
+                    ingredientSearchResults.style.display = 'none';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    fetch(`/nutrition/food/search?q=${encodeURIComponent(query)}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.message || `HTTP error! status: ${response.status}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(results => {
+                            if (Array.isArray(results)) {
+                                displaySearchResults(results);
+                            } else {
+                                throw new Error('Invalid response format');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Search error:', error);
+                            ingredientSearchResults.innerHTML = `
+                                <div class="list-group-item text-danger">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    Error searching ingredients: ${error.message}
+                                </div>
+                            `;
+                            ingredientSearchResults.style.display = 'block';
+                        });
+                }, 150);
             }
             
-            ingredientSearchResults.style.display = 'block';
-        }
-        
-        // Function to add an ingredient
-        function addIngredient(id, name) {
-            if (isIngredientSelected(id)) return;
-            
-            const ingredientElement = document.createElement('div');
-            ingredientElement.className = 'selected-ingredient badge badge-info p-2 m-1';
-            ingredientElement.dataset.id = id;
-            ingredientElement.innerHTML = `
-                ${name}
-                <button type="button" class="btn-close btn-close-white ml-2 remove-ingredient" aria-label="Remove"></button>
-                <input type="hidden" name="{{ form.foods.vars.full_name }}[]" value="${id}">
-            `;
-            
-            const removeBtn = ingredientElement.querySelector('.remove-ingredient');
-            removeBtn.addEventListener('click', function() {
-                ingredientElement.remove();
-            });
-            
-            selectedIngredients.querySelector('.d-flex').appendChild(ingredientElement);
-            
-            // Focus back on search input after adding
-            ingredientSearch.focus();
-        }
-        
-        // Function to handle keyboard navigation
-        function handleKeyDown(e) {
-            const items = ingredientSearchResults.getElementsByClassName('list-group-item');
-            
-            if (items.length === 0) return;
-            
-            // Remove active class from all items
-            for (let i = 0; i < items.length; i++) {
-                items[i].classList.remove('active');
+            // Function to check if an ingredient is already selected
+            function isIngredientSelected(id) {
+                return document.querySelector(`.ingredient-item[data-id="${id}"]`) !== null;
             }
             
-            // Arrow down
-            if (e.key === 'ArrowDown') {
-                currentFocus++;
-                if (currentFocus >= items.length) currentFocus = 0;
-                items[currentFocus].classList.add('active');
-                items[currentFocus].scrollIntoView({ block: 'nearest' });
+            // Function to display search results
+            function displaySearchResults(results) {
+                ingredientSearchResults.innerHTML = '';
+                currentFocus = -1;
+                
+                if (results.length === 0) {
+                    ingredientSearchResults.innerHTML = '<div class="list-group-item">No ingredients found</div>';
+                } else {
+                    results.forEach((food, index) => {
+                        if (!isIngredientSelected(food.id)) {
+                            const item = document.createElement('a');
+                            item.href = '#';
+                            item.className = 'list-group-item list-group-item-action';
+                            item.textContent = food.name;
+                            item.dataset.id = food.id;
+                            item.dataset.name = food.name;
+                            item.dataset.index = index;
+                            
+                            item.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                addIngredient(food);
+                                ingredientSearch.value = '';
+                                ingredientSearchResults.style.display = 'none';
+                            });
+                            
+                            ingredientSearchResults.appendChild(item);
+                        }
+                    });
+                }
+                
+                ingredientSearchResults.style.display = 'block';
             }
-            // Arrow up
-            else if (e.key === 'ArrowUp') {
-                currentFocus--;
-                if (currentFocus < 0) currentFocus = items.length - 1;
-                items[currentFocus].classList.add('active');
-                items[currentFocus].scrollIntoView({ block: 'nearest' });
-            }
-            // Enter
-            else if (e.key === 'Enter' && currentFocus > -1) {
-                e.preventDefault();
-                const selectedItem = items[currentFocus];
-                addIngredient(
-                    selectedItem.dataset.id,
-                    selectedItem.dataset.name
-                );
-                ingredientSearch.value = '';
-                ingredientSearchResults.style.display = 'none';
-            }
-            // Escape
-            else if (e.key === 'Escape') {
-                ingredientSearchResults.style.display = 'none';
-            }
-        }
-        
-        // Event listeners
-        ingredientSearch.addEventListener('input', function() {
-            searchIngredients(this.value);
-        });
-        
-        ingredientSearch.addEventListener('focus', function() {
-            if (this.value.length >= 1) {
-                searchIngredients(this.value);
-            }
-        });
-        
-        ingredientSearch.addEventListener('keydown', handleKeyDown);
-        
-        document.addEventListener('click', function(e) {
-            if (!ingredientSearch.contains(e.target) && !ingredientSearchResults.contains(e.target)) {
-                ingredientSearchResults.style.display = 'none';
-            }
-        });
-        
-        // Add ingredient button
-        addIngredientBtn.addEventListener('click', function() {
-            const query = ingredientSearch.value.trim();
-            if (query.length < 1) return;
             
-            const results = foods.filter(food => 
-                food.name.toLowerCase().includes(query.toLowerCase()) &&
-                !isIngredientSelected(food.id)
-            );
-            
-            if (results.length > 0) {
-                addIngredient(results[0].id, results[0].name);
-                ingredientSearch.value = '';
-                ingredientSearchResults.style.display = 'none';
-            }
-        });
-        
-        // Remove ingredient buttons for existing ingredients
-        document.querySelectorAll('.remove-ingredient').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.closest('.selected-ingredient').remove();
-            });
-        });
-        
-        // Add keyboard shortcut for focusing search
-        document.addEventListener('keydown', function(e) {
-            // Ctrl+I or Cmd+I to focus ingredient search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
-                e.preventDefault();
+            // Function to add an ingredient
+            function addIngredient(food) {
+                if (isIngredientSelected(food.id)) return;
+                
+                const ingredientElement = document.createElement('div');
+                ingredientElement.className = 'ingredient-item card mb-2';
+                ingredientElement.dataset.id = food.id;
+                ingredientElement.dataset.calories = food.calories || 0;
+                ingredientElement.dataset.protein = food.protein || 0;
+                ingredientElement.dataset.carbs = food.carbohydrate || 0;
+                ingredientElement.dataset.fats = food.fats || 0;
+                ingredientElement.dataset.fiber = food.fiber || 0;
+                ingredientElement.dataset.sugar = food.sugar || 0;
+                ingredientElement.dataset.sodium = food.sodium || 0;
+                ingredientElement.dataset.potassium = food.potassium || 0;
+                
+                ingredientElement.innerHTML = `
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="ingredient-name font-weight-bold">${food.name}</div>
+                            <button type="button" class="btn-close remove-ingredient" aria-label="Remove"></button>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-3">
+                                <div class="serving-size-container">
+                                    <label class="small text-muted">Serving:</label>
+                                    <input type="number" class="form-control form-control-sm serving-size" 
+                                           name="serving_size[${food.id}]" value="1" min="0.1" step="0.1">
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="nutrition-info d-flex justify-content-between">
+                                    <div class="nutrition-item">
+                                        <span class="small text-muted">Calories:</span>
+                                        <span class="calories">${food.calories || 0}</span>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span class="small text-muted">Protein:</span>
+                                        <span class="protein">${food.protein || 0}g</span>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span class="small text-muted">Carbs:</span>
+                                        <span class="carbs">${food.carbohydrate || 0}g</span>
+                                    </div>
+                                    <div class="nutrition-item">
+                                        <span class="small text-muted">Fat:</span>
+                                        <span class="fats">${food.fats || 0}g</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="{{ form.foods.vars.full_name }}[]" value="${food.id}">
+                    </div>
+                `;
+                
+                const removeBtn = ingredientElement.querySelector('.remove-ingredient');
+                removeBtn.addEventListener('click', function() {
+                    ingredientElement.remove();
+                    updateNutritionTotals();
+                });
+                
+                const servingInput = ingredientElement.querySelector('.serving-size');
+                servingInput.addEventListener('input', function() {
+                    updateNutritionTotals();
+                });
+                
+                selectedIngredients.querySelector('.ingredients-list').appendChild(ingredientElement);
+                
+                // Update nutrition totals after adding an ingredient
+                updateNutritionTotals();
+                
+                // Focus back on search input after adding
                 ingredientSearch.focus();
             }
-        });
-    });
+            
+            // Function to handle keyboard navigation
+            function handleKeyDown(e) {
+                const items = ingredientSearchResults.getElementsByClassName('list-group-item');
+                
+                if (items.length === 0) return;
+                
+                // Remove active class from all items
+                for (let i = 0; i < items.length; i++) {
+                    items[i].classList.remove('active');
+                }
+                
+                // Arrow down
+                if (e.key === 'ArrowDown') {
+                    currentFocus++;
+                    if (currentFocus >= items.length) currentFocus = 0;
+                    items[currentFocus].classList.add('active');
+                    items[currentFocus].scrollIntoView({ block: 'nearest' });
+                }
+                // Arrow up
+                else if (e.key === 'ArrowUp') {
+                    currentFocus--;
+                    if (currentFocus < 0) currentFocus = items.length - 1;
+                    items[currentFocus].classList.add('active');
+                    items[currentFocus].scrollIntoView({ block: 'nearest' });
+                }
+                // Enter
+                else if (e.key === 'Enter' && currentFocus > -1) {
+                    e.preventDefault();
+                    const selectedItem = items[currentFocus];
+                    const foodId = selectedItem.dataset.id;
+                    
+                    // Fetch the full food data
+                    fetch(`/nutrition/food/id/${foodId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(food => {
+                            addIngredient(food);
+                            ingredientSearch.value = '';
+                            ingredientSearchResults.style.display = 'none';
+                        })
+                        .catch(error => {
+                            console.error('Error fetching food details:', error);
+                        });
+                }
+                // Escape
+                else if (e.key === 'Escape') {
+                    ingredientSearchResults.style.display = 'none';
+                }
+            }
+            
+            // Event listeners
+            ingredientSearch.addEventListener('input', function() {
+                searchIngredients(this.value);
+            });
+            
+            ingredientSearch.addEventListener('focus', function() {
+                if (this.value.length >= 1) {
+                    searchIngredients(this.value);
+                }
+            });
+            
+            ingredientSearch.addEventListener('keydown', handleKeyDown);
+            
+            document.addEventListener('click', function(e) {
+                if (!ingredientSearch.contains(e.target) && !ingredientSearchResults.contains(e.target)) {
+                    ingredientSearchResults.style.display = 'none';
+                }
+            });
+            
+            // Add ingredient button
+            addIngredientBtn.addEventListener('click', function() {
+                const query = ingredientSearch.value.trim();
+                if (query.length < 1) return;
+                
+                fetch(`/nutrition/food/search?q=${encodeURIComponent(query)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.message || `HTTP error! status: ${response.status}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(results => {
+                        if (Array.isArray(results) && results.length > 0) {
+                            // Fetch the full food data
+                            fetch(`/nutrition/food/id/${results[0].id}`)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP error! status: ${response.status}`);
+                                    }
+                                    return response.json();
+                                })
+                                .then(food => {
+                                    addIngredient(food);
+                                    ingredientSearch.value = '';
+                                    ingredientSearchResults.style.display = 'none';
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching food details:', error);
+                                });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        ingredientSearchResults.innerHTML = `
+                            <div class="list-group-item text-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Error searching ingredients: ${error.message}
+                            </div>
+                        `;
+                        ingredientSearchResults.style.display = 'block';
+                    });
+            });
+            
+            // Remove ingredient buttons for existing ingredients
+            document.querySelectorAll('.remove-ingredient').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('.ingredient-item').remove();
+                    updateNutritionTotals();
+                });
+            });
+            
+            // Add event listeners to existing serving size inputs
+            document.querySelectorAll('.serving-size').forEach(input => {
+                input.addEventListener('input', function() {
+                    updateNutritionTotals();
+                });
+            });
+            
+            // Add keyboard shortcut for focusing search
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+I or Cmd+I to focus ingredient search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+                    e.preventDefault();
+                    ingredientSearch.focus();
+                }
+            });
+            
+            // Initialize nutrition totals
+            updateNutritionTotals();
+        }
+
+        // Initialize on page load
+        initializeSearch();
+
+        // Re-initialize when Turbo navigates to the page
+        document.addEventListener('turbo:load', initializeSearch);
+    })();
 </script> 

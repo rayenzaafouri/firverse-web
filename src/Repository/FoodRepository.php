@@ -44,10 +44,10 @@ class FoodRepository extends ServiceEntityRepository
     public function findBySearch(string $query): array
     {
         return $this->createQueryBuilder('f')
-            ->where('f.name LIKE :query')
-            ->orWhere('f.measure LIKE :query')
+            ->where('LOWER(f.name) LIKE LOWER(:query)')
             ->setParameter('query', '%' . $query . '%')
             ->orderBy('f.name', 'ASC')
+            ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
