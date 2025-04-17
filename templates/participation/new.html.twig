@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Participation{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container participation-container" style="text-align: center;">
+    <!-- Back button -->
+    <div style="text-align: left; margin-left: 20px; margin-top: 20px;">
+        <a href="{{ path('app_participation_index') }}" class="btn btn-primary" style="margin-bottom: 20px;">← Back to Participations</a>
+    </div>
+    <h2>Register for: {{ event.name }}</h2>
+    <p>Event date: {{ event.date|date('Y-m-d') }}</p>
+
+
+    <div class="participation-form-container">
+        {{ include('participation/_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* Modern design for participation form */
+    .participation-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Participation title */
+    .participation-title {
+        font-size: 2em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    /* Form container */
+    .participation-form-container {
+        text-align: left;
+        font-size: 1.1em;
+        color: #444;
+    }
+
+    /* Form styling */
+    .participation-form-container form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .participation-form-container .form-group {
+        margin-bottom: 15px;
+    }
+
+    .participation-form-container label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .participation-form-container input,
+    .participation-form-container select,
+    .participation-form-container textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+
+    .participation-form-container button {
+        padding: 12px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .participation-form-container button:hover {
+        background-color: #218838;
+    }
+
+    /* Mobile responsive design */
+    @media (max-width: 768px) {
+        .participation-container {
+            padding: 20px;
+        }
+
+        .participation-title {
+            font-size: 1.6em;
+        }
+
+        .participation-form-container {
+            font-size: 1em;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,213 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Events Home{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    // Add JavaScript for search functionality (optional)
+    document.getElementById("searchEvent").addEventListener("input", function() {
+        var searchTerm = this.value.toLowerCase();
+        var eventCards = document.querySelectorAll(".event-card");
+
+        eventCards.forEach(function(card) {
+            var eventName = card.querySelector(".event-title").textContent.toLowerCase();
+            var eventLocation = card.querySelector(".event-location").textContent.toLowerCase();            
+            if (eventName.includes(searchTerm) || eventLocation.includes(searchTerm)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* Styles for the event page */
+    .events-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .event-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        background-color: #f9f9f9; /* Light background on hover */
+    }
+
+    .event-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        object-position: center;
+        transition: opacity 0.3s ease;
+    }
+
+    .event-image:hover {
+        opacity: 0.8;
+    }
+
+    .event-details {
+        padding: 15px;
+        text-align: left;
+    }
+
+    .event-title {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .event-date {
+        color: #777;
+        margin-bottom: 15px;
+        font-size: 1.1em;
+        text-align: center;
+    }
+
+    .event-description {
+        color: #555;
+        margin-bottom: 15px;
+        font-size: 1.1em;
+        line-height: 1.5;
+        word-wrap: break-word;
+    }
+
+    .event-location {
+        color: #007bff;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+
+    .event-price {
+        font-size: 1.3em;
+        color: #28a745;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .event-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.1em;
+        transition: background-color 0.3s ease;
+    }
+
+    .event-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Search bar styles */
+    .search-bar {
+        margin: 20px auto;
+        max-width: 400px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 1.1em;
+        width: 100%;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    .search-bar:focus {
+        border-color: #007bff;
+    }
+
+    /* Emoji Styles for search filters */
+    .search-icon {
+        margin-right: 8px;
+        font-size: 1.3em;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .events-container {
+            grid-template-columns: 1fr;
+        }
+
+        .event-title {
+            font-size: 1.6em;
+        }
+
+        .event-date {
+            font-size: 1em;
+        }
+
+        .event-description {
+            font-size: 1em;
+        }
+
+        .event-price {
+            font-size: 1.1em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container" data-context="events" style="text-align: center;">
+    <h1>Upcoming Events</h1>
+
+    <!-- Search Bar with Emojis -->
+    <input type="text" id="searchEvent" class="search-bar" placeholder="🔍 Search by name, 📍 location ...">
+
+    {% if eventsdata is not empty %}
+    <div class="events-container">
+        {% for event in eventsdata %}
+        <div class="event-card">
+            <a href="{{ path('event_detail', {'id': event.id}) }}" class="event-link">
+                {% if event.photo %}
+                    <img src="{{ asset('uploads/events/' ~ event.photo) }}" 
+                        alt="{{ event.name }}" 
+                        class="event-image"
+                        onerror="this.onerror=null;this.src='{{ asset('images/default-event.jpg') }}'">
+                {% else %}
+                    <img src="{{ asset('images/default-event.jpg') }}" 
+                        alt="Default event image" 
+                        class="event-image">
+                {% endif %}
+                <div class="event-title">{{ event.name }}</div>
+                <div class="event-details">
+                    <div class="event-date">📅 {{ event.date|date('F j, Y') }} at ⏰ {{ event.time|date('H:i') }}</div>
+                    <div class="event-location">📍 {{ event.location }}</div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No upcoming events at the moment.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

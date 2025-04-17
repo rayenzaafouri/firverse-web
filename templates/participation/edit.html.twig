@@ -1,0 +1,271 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Participation{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container dark-participation-container">
+    <!-- Back button -->
+    <div class="back-button-container">
+        <a href="{{ path('app_participation_index') }}" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Participations
+        </a>
+    </div>
+
+    <h2 class="text-center mb-4">Edit Participation</h2>
+
+    <div class="dark-card">
+        <div class="card-header">
+            <h3 class="mb-0">Update Registration #{{ participation.participationID }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form, {'attr': {'class': 'elegant-form'}}) }}
+                <div class="form-grid">
+                    {% for field in form %}
+                        {% if field.vars.name != '_token' %}
+                            <div class="form-group">
+                                {{ form_label(field, null, {'label_attr': {'class': 'form-label'}}) }}
+                                <div class="input-wrapper">
+                                    {% if field.vars.block_prefixes.1 == 'checkbox' %}
+                                        <div class="form-check">
+                                            {{ form_widget(field, {'attr': {'class': 'form-check-input'}}) }}
+                                            {{ form_label(field, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                        </div>
+                                    {% else %}
+                                        {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                                    {% endif %}
+                                    <div class="form-underline"></div>
+                                </div>
+                                {{ form_errors(field) }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-save"></i> {{ button_label|default('Update') }}
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+        <div class="card-footer">
+            {{ include('participation/_delete_form.html.twig') }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    /* Dark theme container */
+    .dark-participation-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #1e1e1e;
+        border-radius: 10px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        color: #e0e0e0;
+    }
+
+    /* Card styling */
+    .dark-card {
+        background-color: #2d2d2d;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        background-color: #92ff44;
+        color: #1a1a1a;
+        padding: 1.25rem;
+        border-radius: 8px 8px 0 0;
+        font-weight: 600;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .card-footer {
+        background-color: #252525;
+        padding: 1.25rem;
+        border-radius: 0 0 8px 8px;
+        text-align: right;
+    }
+
+    /* Button styling */
+    .btn-back {
+        background-color: #92ff44;
+        color: #1a1a1a;
+        border: none;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1.25rem;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .btn-back:hover {
+        background-color: #7ae030;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Elegant Form Styling */
+    .elegant-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #92ff44;
+        font-weight: 500;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .form-control {
+        background-color: transparent;
+        border: none;
+        border-bottom: 2px solid #444;
+        border-radius: 0;
+        color: #e0e0e0;
+        padding: 0.5rem 0;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: none;
+    }
+
+    .form-control:focus {
+        background-color: transparent;
+        border-bottom-color: #92ff44;
+        box-shadow: none;
+        outline: none;
+    }
+
+    .form-underline {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #92ff44;
+        transition: width 0.3s ease;
+    }
+
+    .form-control:focus ~ .form-underline {
+        width: 100%;
+    }
+
+    /* Checkbox styling */
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        margin-top: 0;
+        background-color: #333;
+        border: 2px solid #444;
+    }
+
+    .form-check-input:checked {
+        background-color: #92ff44;
+        border-color: #92ff44;
+    }
+
+    .form-check-label {
+        color: #e0e0e0;
+        font-weight: 400;
+    }
+
+    /* Submit button */
+    .btn-submit {
+        background-color: #92ff44;
+        color: #1a1a1a;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-submit:hover {
+        background-color: #7ae030;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Form errors */
+    .invalid-feedback {
+        color: #ff6b6b;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Delete form button */
+    .delete-form button {
+        background-color: transparent;
+        border: 2px solid #ff4444;
+        color: #ff4444;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1.25rem;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .delete-form button:hover {
+        background-color: #ff4444;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .dark-participation-container {
+            padding: 1.5rem;
+            margin: 1rem auto;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Participations{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container participation-container" style="text-align: center; background-color: #1e1e1e; color: #e0e0e0;">
+    <h2 style="color: #92ff44;">All Participations</h2>
+
+    <div class="participation-form-container">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover" style="background-color: #121212; border-color: #444;">
+                <thead>
+                    <tr>
+                        <th style="background-color: #2d2d2d; color: #92ff44;">ID</th>
+                        <th style="background-color: #2d2d2d; color: #92ff44;">Email</th>
+                        <th style="background-color: #2d2d2d; color: #92ff44;">Phone</th>
+                        <th style="background-color: #2d2d2d; color: #92ff44;">Gender</th>
+                        <th style="background-color: #2d2d2d; color: #92ff44;">Birth Date</th>
+                        <th style="background-color: #2d2d2d; color: #92ff44;">Type</th>
+                        <th style="background-color: #2d2d2d; color: #92ff44;">Participants</th>
+                        <th style="background-color: #2d2d2d; color: #92ff44;">Terms</th>
+                        <th style="background-color: #2d2d2d; color: #92ff44;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for participation in participations %}
+                    <tr>
+                        <td>{{ participation.participationID }}</td>
+                        <td>{{ participation.email }}</td>
+                        <td>{{ participation.phoneNumber }}</td>
+                        <td>{{ participation.gender }}</td>
+                        <td>{{ participation.dateOfBirth ? participation.dateOfBirth|date('Y-m-d') : '' }}</td>
+                        <td>{{ participation.participantType }}</td>
+                        <td>{{ participation.numberOfParticipants }}</td>
+                        <td>
+                            <span class="badge {{ participation.termsAccepted ? 'bg-success' : 'bg-danger' }}">
+                                {{ participation.termsAccepted ? 'Yes' : 'No' }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ path('app_participation_show', {'participationID': participation.participationID}) }}" 
+                                   class="btn btn-sm" style="background-color: #92ff44; color: #1a1a1a;">Show</a>
+                                <a href="{{ path('app_participation_edit', {'participationID': participation.participationID}) }}" 
+                                   class="btn btn-sm btn-outline-secondary" style="border-color: #92ff44; color: #92ff44;">Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center py-4">
+                            <div class="alert alert-dark" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0;">
+                                No participations found
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    /* Dark theme container styling */
+    .participation-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Dark table styling */
+    .table-dark {
+        background-color: #121212;
+        color: #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table-dark th {
+        border-color: #444;
+    }
+
+    .table-dark td {
+        border-color: #444;
+        vertical-align: middle;
+    }
+
+    .table-dark.table-hover tbody tr:hover {
+        background-color: rgba(146, 255, 68, 0.1);
+    }
+
+    /* Button styling */
+    .btn-group .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn-group .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Badge styling */
+    .badge {
+        padding: 5px 10px;
+        border-radius: 50px;
+        font-size: 0.85em;
+        font-weight: 500;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .participation-container {
+            padding: 20px;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .table th, .table td {
+            padding: 8px 10px;
+            font-size: 0.9em;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+            gap: 3px;
+        }
+    }
+</style>
+{% endblock %}

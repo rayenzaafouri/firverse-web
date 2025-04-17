@@ -6,7 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\EventRepository;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
@@ -29,7 +29,16 @@ class Event
         return $this;
     }
 
+    
+
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Event name cannot be blank.")]
+    #[Assert\Length(
+        min: 3,
+        max: 100,
+        minMessage: "Event name must be at least {{ limit }} characters long.",
+        maxMessage: "Event name cannot be longer than {{ limit }} characters."
+    )]
     private ?string $name = null;
 
     public function getName(): ?string
@@ -58,7 +67,16 @@ class Event
         return $this;
     }
 
+   
+
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: "Description cannot be blank.")]
+    #[Assert\Length(
+        min: 10,
+        max: 2000,
+        minMessage: "Description must be at least {{ limit }} characters long.",
+        maxMessage: "Description cannot be longer than {{ limit }} characters."
+    )]
     private ?string $description = null;
 
     public function getDescription(): ?string
@@ -73,6 +91,13 @@ class Event
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Location cannot be blank.")]
+    #[Assert\Length(
+        min: 5,
+        max: 255,
+        minMessage: "Location must be at least {{ limit }} characters long.",
+        maxMessage: "Location cannot be longer than {{ limit }} characters."
+    )]
     private ?string $location = null;
 
     public function getLocation(): ?string
@@ -87,7 +112,13 @@ class Event
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotBlank(message: "Date cannot be blank.")]
+    #[Assert\GreaterThanOrEqual(
+        "today",
+        message: "Event date must be today or in the future."
+    )]
     private ?\DateTimeInterface $date = null;
+    
 
     public function getDate(): ?\DateTimeInterface
     {
@@ -101,7 +132,13 @@ class Event
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Time cannot be blank.")]
+    #[Assert\Regex(
+        pattern: "/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/",
+        message: "Time must be in HH:MM format."
+    )]
     private ?string $time = null;
+    
 
     public function getTime(): ?string
     {
@@ -115,6 +152,8 @@ class Event
     }
 
     #[ORM\Column(type: 'float', nullable: false)]
+    #[Assert\NotBlank(message: "Price cannot be blank.")]
+    #[Assert\PositiveOrZero(message: "Price must be zero or positive.")]
     private ?float $price = null;
 
     public function getPrice(): ?float
@@ -173,6 +212,11 @@ class Event
     {
         $this->getParticipations()->removeElement($participation);
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name; // or any other string representation of your event
     }
 
 }

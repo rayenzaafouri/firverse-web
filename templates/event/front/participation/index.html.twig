@@ -1,0 +1,35 @@
+{# templates/event/front/events_home/reservation.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Reserve Spot{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+<div class="container" style="text-align: center; padding-top: 20px;">
+
+    <h1>Reserve Your Spot for {{ event.name }}</h1>
+
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_row(form.email) }}
+            {{ form_row(form.phoneNumber) }}
+            {{ form_row(form.gender) }}
+            {{ form_row(form.dateOfBirth) }}
+            {{ form_row(form.participantType) }}
+            {{ form_row(form.numberOfParticipants) }}
+            {{ form_row(form.termsAccepted) }}
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-success">Submit Reservation</button>
+        </div>
+    {{ form_end(form) }}
+
+    <div style="margin-top: 20px;">
+        <a href="{{ path('event_detail', {'id': event.id}) }}" class="btn btn-primary">Back to Event</a>
+    </div>
+
+</div>
+
+{% endblock %}

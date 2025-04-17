@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Participation Details{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container participation-container" style="text-align: center; background-color: #1e1e1e; color: #e0e0e0;">
+    <!-- Back button -->
+    <div style="text-align: left; margin-left: 20px; margin-top: 20px;">
+        <a href="{{ path('app_participation_index') }}" class="btn btn-primary" style="margin-bottom: 20px; background-color: #92ff44; border-color: #92ff44; color: #1a1a1a;">← Back to Participations</a>
+    </div>
+
+    <h2 style="color: #92ff44;">Participation Details</h2>
+
+    <div class="participation-form-container">
+        <div class="card shadow-sm mb-4" style="background-color: #2d2d2d; border: 1px solid #444;">
+            <div class="card-header" style="background-color: #92ff44; color: #1a1a1a;">
+                <h3 class="mb-0">Registration #{{ participation.participationID }}</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <span class="detail-label" style="color: #92ff44;">Email:</span>
+                            <span class="detail-value" style="color: #e0e0e0;">{{ participation.email }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" style="color: #92ff44;">Phone:</span>
+                            <span class="detail-value" style="color: #e0e0e0;">{{ participation.phoneNumber }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" style="color: #92ff44;">Gender:</span>
+                            <span class="detail-value" style="color: #e0e0e0;">{{ participation.gender }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" style="color: #92ff44;">Birth Date:</span>
+                            <span class="detail-value" style="color: #e0e0e0;">{{ participation.dateOfBirth ? participation.dateOfBirth|date('Y-m-d') : 'N/A' }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <span class="detail-label" style="color: #92ff44;">Participant Type:</span>
+                            <span class="detail-value" style="color: #e0e0e0;">{{ participation.participantType }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" style="color: #92ff44;">Number of Participants:</span>
+                            <span class="detail-value" style="color: #e0e0e0;">{{ participation.numberOfParticipants }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" style="color: #92ff44;">Terms Accepted:</span>
+                            <span class="detail-value badge {{ participation.termsAccepted ? 'bg-success' : 'bg-danger' }}">
+                                {{ participation.termsAccepted ? 'Yes' : 'No' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent" style="border-top: 1px solid #444;">
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ path('app_participation_edit', {'participationID': participation.participationID}) }}" 
+                       class="btn" style="background-color: #92ff44; border-color: #92ff44; color: #1a1a1a;">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    {{ include('participation/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+
+        {% if participation.event %}
+        <div class="card shadow-sm" style="background-color: #2d2d2d; border: 1px solid #444;">
+            <div class="card-header" style="background-color: #92ff44; color: #1a1a1a;">
+                <h4 class="mb-0">Event Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        {% if participation.event.photo %}
+                        <img src="{{ asset('uploads/events/' ~ participation.event.photo) }}" 
+                             class="img-fluid rounded" 
+                             alt="{{ participation.event.name }}"
+                             style="max-height: 150px; border: 2px solid #92ff44;">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        <h5 style="color: #92ff44;">{{ participation.event.name }}</h5>
+                        <p class="mb-1" style="color: #e0e0e0;">
+                            <i class="fas fa-calendar-alt" style="color: #92ff44;"></i> 
+                            {{ participation.event.date|date('F j, Y') }} at {{ participation.event.time }}
+                        </p>
+                        <p class="mb-1" style="color: #e0e0e0;">
+                            <i class="fas fa-map-marker-alt" style="color: #92ff44;"></i> 
+                            {{ participation.event.location }}
+                        </p>
+                        <p class="mb-0" style="color: #e0e0e0;">
+                            <i class="fas fa-tag" style="color: #92ff44;"></i> 
+                            ${{ participation.event.price }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    /* Consistent container styling */
+    .participation-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Detail item styling */
+    .detail-item {
+        padding: 12px 0;
+        border-bottom: 1px solid #444;
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        display: inline-block;
+        width: 160px;
+        text-align: left;
+    }
+
+    /* Card styling */
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .card-header {
+        border-radius: 8px 8px 0 0 !important;
+    }
+
+    /* Button styling with #92ff44 */
+    .btn-primary, .btn {
+        background-color: #92ff44;
+        border-color: #92ff44;
+        color: #1a1a1a;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover, .btn:hover {
+        background-color: #7ae030;
+        border-color: #7ae030;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Delete form styling */
+    .delete-form {
+        display: inline-block;
+    }
+
+    .delete-form button {
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        background: transparent;
+        transition: all 0.3s ease;
+    }
+
+    .delete-form button:hover {
+        background: #dc3545;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Form field styling */
+    .form-control {
+        background-color: #333;
+        border: 1px solid #444;
+        color: #e0e0e0;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        background-color: #3a3a3a;
+        border-color: #92ff44;
+        color: #e0e0e0;
+        box-shadow: 0 0 0 0.25rem rgba(146, 255, 68, 0.25);
+    }
+
+    .form-label {
+        color: #92ff44;
+        font-weight: 600;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .participation-container {
+            padding: 20px;
+        }
+        
+        .detail-label {
+            width: 120px;
+            font-size: 0.9em;
+        }
+        
+        .col-md-3, .col-md-6, .col-md-9 {
+            padding-bottom: 15px;
+        }
+    }
+</style>
+{% endblock %}
