@@ -25,7 +25,6 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
     $form->handleRequest($request);
 
     if ($form->isSubmitted()) {
-        // Validate the whole object
         $errors = $validator->validate($event);
         foreach ($errors as $error) {
             $propertyPath = $error->getPropertyPath();
@@ -35,7 +34,6 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
         }
     
         if ($form->isValid()) {
-            // Handle valid form submission
             $photoFile = $form->get('photo')->getData();
     
             if ($photoFile) {
@@ -57,7 +55,6 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
     
             return $this->redirectToRoute('app_event_index');
         } else {
-            // Log form-level errors
             foreach ($form->getErrors(true) as $error) {
                 error_log('Form Error: ' . $error->getMessage());
             }
@@ -73,7 +70,6 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
     #[Route('/events', name: 'app_event_index', methods: ['GET'])]
     public function indexback(EventRepository $eventRepository): Response
     {
-        // Get all events ordered by date (newest first)
         $events = $eventRepository->findBy([], ['date' => 'ASC']);
 
         return $this->render('event/back/index.html.twig', [
@@ -95,10 +91,8 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
         Event $event,
         EntityManagerInterface $entityManager
     ): Response {
-        // Get the parameter from the service container
         $eventsDirectory = $this->getParameter('events_directory');
         
-        // Store the current photo filename before handling the form
         $currentPhoto = $event->getPhoto();
         
         $form = $this->createForm(EventType::class, $event);
@@ -108,21 +102,17 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
             /** @var UploadedFile $photoFile */
             $photoFile = $form->get('photo')->getData();
             
-            // Handle file upload if a new photo was submitted
             if ($photoFile) {
                 $newFilename = uniqid().'.'.$photoFile->guessExtension();
                 
                 try {
-                    // Move the uploaded file
                     $photoFile->move(
                         $eventsDirectory,
                         $newFilename
                     );
                     
-                    // Update the entity with new filename
                     $event->setPhoto($newFilename);
                     
-                    // Delete the old photo file if it exists
                     if ($currentPhoto && file_exists($eventsDirectory.'/'.$currentPhoto)) {
                         unlink($eventsDirectory.'/'.$currentPhoto);
                     }
@@ -131,7 +121,6 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
                     return $this->redirectToRoute('app_event_edit', ['id' => $event->getId()]);
                 }
             } else {
-                // If no new photo uploaded, keep the existing one
                 $event->setPhoto($currentPhoto);
             }
     

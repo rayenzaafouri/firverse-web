@@ -216,7 +216,7 @@ class Event
 
     public function __toString(): string
     {
-        return $this->name; // or any other string representation of your event
+        return $this->name; 
     }
 
 }

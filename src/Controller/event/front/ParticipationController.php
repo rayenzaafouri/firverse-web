@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\event\front;
 
 use App\Entity\Participation;
 use App\Form\ParticipationType;
 use App\Repository\ParticipationRepository;
 use App\Repository\EventRepository;
-use Psr\Log\LoggerInterface;  // Add this line
+use Psr\Log\LoggerInterface; 
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,9 +48,8 @@ final class ParticipationController extends AbstractController
             if ($form->isValid()) {
                 $entityManager->persist($participation);
                 $entityManager->flush();
-                return $this->redirectToRoute('app_participation_index');
+                return $this->redirectToRoute('events_home');
             } else {
-                // Log all validation errors
                 $errors = [];
                 foreach ($form->getErrors(true) as $error) {
                     $errorMsg = sprintf(
@@ -60,14 +59,11 @@ final class ParticipationController extends AbstractController
                     );
                     $errors[] = $errorMsg;
                     
-                    // Log to Symfony logs
                     $logger->error($errorMsg);
                     
-                    // Output to terminal (STDOUT)
                     error_log($errorMsg);
                 }
     
-                // Debug dump (visible in profiler)
                 dump('Validation Errors:', $errors);
     
                 $this->addFlash('error', 'Please fix the validation errors');

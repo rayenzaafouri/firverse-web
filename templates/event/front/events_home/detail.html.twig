@@ -15,7 +15,11 @@
 
     <h1 class="event-title">{{ event.name }}</h1>
     
-    <img src="{{ asset('uploads/photos/' ~ event.photo) }}" alt="{{ event.name }}" class="event-image"/>
+    {# <img src="{{ asset('uploads/photos/' ~ event.photo) }}" alt="{{ event.name }}" class="event-image"/> #}
+<img src="{{ asset('uploads/events/' ~ event.photo) }}" 
+     alt="{{ event.name }}" 
+     class="event-image"
+     onerror="this.onerror=null;this.src='{{ asset('images/default-event.jpg') }}'">
 
     <div class="event-details">
         <p><strong>Date:</strong> 🗓️ {{ event.date|date('F j, Y') }} at {{ event.time }}</p>

@@ -27,8 +27,7 @@ class ParticipationType extends AbstractType
             'attr' => ['class' => 'form-control'],
             'label_attr' => ['class' => 'form-label'],
             'constraints' => [
-                new Assert\NotBlank(['message' => 'Email cannot be blank']),
-                new Assert\Email(['message' => 'Please enter a valid email address'])
+           
             ],
             'error_bubbling' => false
         ])
@@ -36,11 +35,7 @@ class ParticipationType extends AbstractType
             'attr' => ['class' => 'form-control'],
             'label_attr' => ['class' => 'form-label'],
             'constraints' => [
-                new Assert\NotBlank(['message' => 'Phone number cannot be blank']),
-                new Assert\Regex([
-                    'pattern' => '/^\+?[0-9]{10,15}$/',
-                    'message' => 'Please enter a valid phone number (10-15 digits, + prefix optional)'
-                ])
+             
                 ],
                 'error_bubbling' => false
         ])
@@ -53,7 +48,6 @@ class ParticipationType extends AbstractType
             'attr' => ['class' => 'form-control'],
             'label_attr' => ['class' => 'form-label'],
             'constraints' => [
-                new Assert\NotBlank(['message' => 'Please select a gender'])
             ],
             'error_bubbling' => false
         ])
@@ -62,11 +56,7 @@ class ParticipationType extends AbstractType
             'attr' => ['class' => 'form-control'],
             'label_attr' => ['class' => 'form-label'],
             'constraints' => [
-                new Assert\NotBlank(['message' => 'Please enter your date of birth']),
-                new Assert\LessThanOrEqual([
-                    'value' => 'today',
-                    'message' => 'Date of birth must be in the past'
-                ])
+            
                 ],
                 'error_bubbling' => false
         ])
@@ -78,7 +68,6 @@ class ParticipationType extends AbstractType
             'attr' => ['class' => 'form-control'],
             'label_attr' => ['class' => 'form-label'],
             'constraints' => [
-                new Assert\NotBlank(['message' => 'Please select participant type'])
             ],
             'error_bubbling' => false
         ])
@@ -86,8 +75,7 @@ class ParticipationType extends AbstractType
             'attr' => ['class' => 'form-control'],
             'label_attr' => ['class' => 'form-label'],
             'constraints' => [
-                new Assert\NotBlank(['message' => 'Please enter number of participants']),
-                new Assert\Positive(['message' => 'Number must be greater than zero'])
+              
             ],
             'error_bubbling' => false
         ])
@@ -96,7 +84,6 @@ class ParticipationType extends AbstractType
             'attr' => ['class' => 'form-check-input'],
             'label_attr' => ['class' => 'form-check-label'],
             'constraints' => [
-                new Assert\IsTrue(['message' => 'You must accept the terms and conditions'])
             ],
             'error_bubbling' => false
         ]);
@@ -106,7 +93,7 @@ class ParticipationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Participation::class,
-            'validation_groups' => ['Default'], // Make sure this is present
+            'validation_groups' => ['Default'], 
 
         ]);
     }

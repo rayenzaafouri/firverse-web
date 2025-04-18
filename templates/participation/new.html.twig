@@ -1,109 +1,259 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}New Participation{% endblock %}
-
-{% block body %}
-{% include 'navbar.html.twig' %}
-<div class="container participation-container" style="text-align: center;">
-    <!-- Back button -->
-    <div style="text-align: left; margin-left: 20px; margin-top: 20px;">
-        <a href="{{ path('app_participation_index') }}" class="btn btn-primary" style="margin-bottom: 20px;">← Back to Participations</a>
-    </div>
-    <h2>Register for: {{ event.name }}</h2>
-    <p>Event date: {{ event.date|date('Y-m-d') }}</p>
-
-
-    <div class="participation-form-container">
-        {{ include('participation/_form.html.twig') }}
-    </div>
-</div>
-{% endblock %}
-
-{% block stylesheets %}
-{{ parent() }}
-<style>
-    /* Modern design for participation form */
-    .participation-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 30px;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Participation title */
-    .participation-title {
-        font-size: 2em;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 30px;
-    }
-
-    /* Form container */
-    .participation-form-container {
-        text-align: left;
-        font-size: 1.1em;
-        color: #444;
-    }
-
-    /* Form styling */
-    .participation-form-container form {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .participation-form-container .form-group {
-        margin-bottom: 15px;
-    }
-
-    .participation-form-container label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .participation-form-container input,
-    .participation-form-container select,
-    .participation-form-container textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 1em;
-    }
-
-    .participation-form-container button {
-        padding: 12px 20px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 1.1em;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-top: 10px;
-    }
-
-    .participation-form-container button:hover {
-        background-color: #218838;
-    }
-
-    /* Mobile responsive design */
-    @media (max-width: 768px) {
+{# templates/participation/test_form.html.twig #}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register for Event</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Modern design for participation form */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        
         .participation-container {
-            padding: 20px;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
-        .participation-title {
-            font-size: 1.6em;
+        /* Back button */
+        .back-button {
+            text-align: left;
+            margin-left: 20px;
+            margin-top: 20px;
         }
 
+        /* Participation title */
+        h2 {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Event date */
+        .event-date {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Form container */
         .participation-form-container {
+            text-align: left;
+            font-size: 1.1em;
+            color: #444;
+        }
+
+        /* Form styling */
+        .participation-form-container form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             font-size: 1em;
         }
-    }
-</style>
-{% endblock %}
+
+        /* Error styling */
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+        
+        .invalid-feedback {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        /* Terms checkbox styling */
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+        }
+        
+        .form-check-label {
+            font-weight: normal;
+            margin-bottom: 0;
+        }
+
+        /* Submit button */
+        .btn-submit {
+            padding: 12px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+
+        /* Mobile responsive design */
+        @media (max-width: 768px) {
+            .participation-container {
+                padding: 20px;
+                margin: 15px;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="participation-container">
+        <!-- Back button -->
+        <div class="back-button">
+            <a href="{{ path('app_participation_index') }}" class="btn btn-primary">← Back to Participations</a>
+        </div>
+        
+        <h2>Register for: {{ event.name }}</h2>
+        <p class="event-date">Event date: {{ event.date|date('Y-m-d') }}</p>
+
+        <div class="participation-form-container">
+            {{ form_start(form) }}
+            
+            {# Display global form errors #}
+            {% if form.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+            
+            {# Email #}
+            <div class="form-group">
+                {{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.email, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.email.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.email) }}
+                </div>
+            </div>
+            
+            {# Phone Number #}
+            <div class="form-group">
+                {{ form_label(form.phoneNumber, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.phoneNumber, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.phoneNumber.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.phoneNumber) }}
+                </div>
+            </div>
+            
+            {# Gender #}
+            <div class="form-group">
+                {{ form_label(form.gender, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.gender, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.gender.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.gender) }}
+                </div>
+            </div>
+            
+            {# Date of Birth #}
+            <div class="form-group">
+                {{ form_label(form.dateOfBirth, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.dateOfBirth, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.dateOfBirth.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.dateOfBirth) }}
+                </div>
+            </div>
+            
+            {# Participant Type #}
+            <div class="form-group">
+                {{ form_label(form.participantType, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.participantType, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.participantType.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.participantType) }}
+                </div>
+            </div>
+            
+            {# Number of Participants #}
+            <div class="form-group">
+                {{ form_label(form.numberOfParticipants, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.numberOfParticipants, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.numberOfParticipants.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.numberOfParticipants) }}
+                </div>
+            </div>
+            
+            {# Terms Accepted #}
+            <div class="form-group form-check">
+                {{ form_widget(form.termsAccepted, {
+                    'attr': {
+                        'class': 'form-check-input' ~ (form.termsAccepted.vars.errors|length ? ' is-invalid' : '')
+                    }
+                }) }}
+                {{ form_label(form.termsAccepted, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.termsAccepted) }}
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-submit">Register</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
