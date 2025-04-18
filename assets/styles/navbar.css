@@ -1,120 +1,253 @@
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=all');
-
-
 body {
     padding-top: 6rem;
-}
-
-
-
-.fitverse-navbar {
+  }
+  
+  .fitverse-navbar {
+    z-index: 9999;
     min-height: 6rem;
     background-color: #222529 !important;
-    border-bottom: 4px solid #9FF856;
-    transition: border .5s linear;
-
-
+    border-bottom: 4px solid #9ff856;
+    transition: border 0.5s linear;
     position: fixed;
     width: 100lvw;
     top: 0px;
     backdrop-filter: blur(15px);
-
-    .navbar-brand>img {
-        width: 10rem;
-        margin: 0 2rem;
+  
+    .navbar-brand > img {
+      width: 10rem;
+      margin: 0 2rem;
     }
-
+  
     .nav-link {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-
-        span.material-symbols-outlined {
-            font-size: 1.7rem;
-        }
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+  
+      span.material-symbols-outlined {
+        font-size: 1.7rem;
+      }
     }
-
+  
     .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      gap: 1rem;
+  
+      width: 4.5rem;
+  
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+  
+      * {
+        transition: color 0.5s linear;
+      }
+    }
+  
+    .nav-item.gym:hover,
+    .nav-item.gym.active {
+      * {
+        color: #3478f6;
+      }
+    }
+  
+    .nav-item.nutrition:hover,
+    .nav-item.nutrition.active {
+      * {
+        color: #aec867;
+      }
+    }
+  
+    .nav-item.exercise:hover,
+    .nav-item.exercise.active {
+      * {
+        color: #69d2c8;
+      }
+    }
+  
+    .nav-item.shop:hover,
+    .nav-item.shop.active {
+      * {
+        color: #f09a37;
+      }
+    }
+  
+    .nav-item.events:hover,
+    .nav-item.events.active {
+      * {
+        color: #eb4e3d;
+      }
+    }
+  
+    .nav-item:not(.active) {
+      transition: all 0.33s linear;
+      position: relative;
+      scale: 0.8;
+    }
+  
+    .user-nav-menu {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      width: 15rem;
+      cursor: pointer;
+      position: absolute;
+      right: 1rem;
+  
+      .user-badge {
+        border: 2px solid grey;
+        border-radius: 100%;
+        padding: 1rem;
+      }
+    }
+  
+    .user-nav-menu.open {
+      background-color: white;
+      color: black;
+      border-top-right-radius: 0.33rem;
+      border-top-left-radius: 0.33rem;
+  
+      box-shadow: -4px 0 6px -1px rgba(0, 0, 0, 0.1),
+        /* left */ 4px 0 6px -1px rgba(0, 0, 0, 0.1),
+        /* right */ 0 -4px 6px -1px rgba(0, 0, 0, 0.1); /* top */
+    }
+  
+    .navbar-collapse.collapse.show {
+      align-items: center;
+    }
+  
+    .user-nav-menu-content {
+      position: absolute;
+      z-index: 1001;
+      width: 15rem;
+      right: 1rem;
+      top: 5rem;
+      cursor: pointer;
+      border-top-right-radius: 0.33rem;
+      border-top-left-radius: 0.33rem;
+  
+      padding: 0 0.5rem 1rem 0.5rem;
+  
+      ul {
+        list-style-type: none;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: fit-content;
+        padding: 0;
+        flex-direction: column;
         gap: 1rem;
-
-        width: 4.5rem;
-
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
-
-        * {
-            transition: color .5s linear;
-        }
-
-    }
-
-    .nav-item.gym:hover, .nav-item.gym.active {
-
-        * {
-
-            color: #3478F6;
-        }
-
-    }
-
-    .nav-item.nutrition:hover, .nav-item.nutrition.active {
-
-        * {
-
-            color: #AEC867;
-        }
-    }
-
-    .nav-item.exercise:hover, .nav-item.exercise.active {
-
-        * {
-
-            color: #69D2C8;
-        }
-    }
-
-    .nav-item.shop:hover, .nav-item.shop.active {
-        * {
-
-            color: #F09A37;
-
-        }
-    }
-
-    .nav-item.events:hover, .nav-item.events.active {
-        * {
-
-            color: #EB4E3D;
-        }
-    }
-
-    .nav-item:not(.active) {
-        transition: all .33s linear;
-        position: relative;
-        scale: 0.8;
-    }
-
-    .user-menu {
-        display: flex;
-        flex-direction: row;
-        gap: .5rem;
-        align-items: center;
-
-        .user-badge {
-            border: 2px solid grey;
+  
+        li > a {
+          text-decoration: none;
+          font-size: 1rem;
+          line-height: 1rem;
+          display: grid;
+          gap: 0.7rem;
+  
+          grid-template-columns: 1fr 8rem 1fr;
+          align-items: center;
+          padding: 0 1rem;
+          color: unset;
+  
+          span.material-symbols-outlined:first-of-type {
             border-radius: 100%;
-            padding: 1rem;
+            background-color: #e4e5ea;
+            color: #55575a;
+            padding: 0.33rem;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
         }
+        li {
+          transition: all 0.33s;
+          opacity: 0;
+        }
+  
+        li:hover {
+          transform: scale(1.03);
+        }
+      }
+      display: none;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  
+      .logout-btn {
+        a {
+          all: unset;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
     }
-
-
-
-
-    .navbar-collapse.collapse.show {
-        align-items: center;
+  
+    .user-nav-menu-content.open {
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+  
+      li,
+      button {
+        animation: navbarItemFade 0.5s ease-in-out forwards;
+      }
     }
-}
+  }
+  
+  @keyframes navbarItemFade {
+    from {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .admin-offcanvas{
+    padding-top: 6rem!important;
+  }
+  
+  
+  .navbar-admin-toggle{
+      all: unset;
+      img{
+          width: 10rem;
+          margin: 0 2rem;
+      }
+  }
+  
+  aside{
+    ul{
+      list-style-type:none;
+      li{
+        a{
+          display: none;
+          width: fit-content;
+          text-decoration: none;
+          color: unset;
+          align-items: center;
+          justify-content: center;
+          display: flex;
+          gap: .5rem;
+        }
+      }
+    }
+  }
+  
+  
+  .fitverse-navbar.admin{
+    span.admin-badge{
+      color:white;
+      position: relative;
+      right: 1rem;
+    }
+  }
