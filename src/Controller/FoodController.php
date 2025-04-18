@@ -30,6 +30,15 @@ final class FoodController extends AbstractController
         ]);
     }
 
+    #[Route('/view-only', name: 'app_food_view_only', methods: ['GET'])]
+    public function viewOnly(FoodRepository $foodRepository): Response
+    {
+        $food = $foodRepository->findAll();
+        return $this->render('food/view_only.html.twig', [
+            'food' => $food,
+        ]);
+    }
+
     #[Route('/new', name: 'app_food_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
