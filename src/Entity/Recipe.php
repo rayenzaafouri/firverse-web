@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -29,7 +30,9 @@ class Recipe
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $name = null;
+#[Assert\NotBlank]
+#[Assert\Length(min: 3, max: 40, minMessage: 'Recipe name must be at least {{ limit }} characters', maxMessage: 'Recipe name cannot be longer than {{ limit }} characters')]
+private ?string $name = null;
 
     public function getName(): ?string
     {

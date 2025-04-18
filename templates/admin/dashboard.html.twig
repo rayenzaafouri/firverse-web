@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-center align-items-center mb-4">
+        <h2 class="mb-0">Admin Dashboard</h2>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-5 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                    <a href="{{ path('app_food_index') }}" class="btn btn-primary btn-lg w-75 mb-3">
+                        <i class="fas fa-utensils me-2"></i> Manage Foods
+                    </a>
+                    <p class="text-muted">View, create, edit, and delete all food items in your nutrition database.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                    <a href="{{ path('app_admin_recipe_index') }}" class="btn btn-success btn-lg w-75 mb-3">
+                        <i class="fas fa-book me-2"></i> Manage Recipes
+                    </a>
+                    <p class="text-muted">View, create, edit, and delete recipes for your users or admins.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
