@@ -88,73 +88,83 @@
 
                             <!-- Items List -->
                             <ul class="list-group">
+                                {% set meal_food_ids = mealFoods[meal_type]|default([]) %}
                                 {% for food in nutrition.foods %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="mb-1">
-                                                {{ food.name }}
-                                                <span class="badge bg-primary">Food</span>
-                                            </h5>
-                                            <div class="nutrition-info">
-                                                <small class="text-muted">
-                                                    Calories: {{ food.calories|default(0) }} |
-                                                    Protein: {{ food.protein|default(0) }}g |
-                                                    Carbs: {{ food.carbohydrate|default(0) }}g |
-                                                    Fat: {{ food.fats|default(0) }}g
-                                                </small>
+                                    {% if food.id in meal_food_ids %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h5 class="mb-1">
+                                                    {{ food.name }}
+                                                    <span class="badge bg-primary">Food</span>
+                                                </h5>
+                                                <div class="nutrition-info">
+                                                    <small class="text-muted">
+                                                        Calories: {{ food.calories|default(0) }} |
+                                                        Protein: {{ food.protein|default(0) }}g |
+                                                        Carbs: {{ food.carbohydrate|default(0) }}g |
+                                                        Fat: {{ food.fats|default(0) }}g
+                                                    </small>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <form action="{{ path('app_daily_nutrition_remove_food', {
-                                            'date': nutrition.date|date('Y-m-d'),
-                                            'foodId': food.id,
-                                            'mealType': meal_type
-                                        }) }}" method="post" class="d-inline">
-                                            <input type="hidden" name="_method" value="POST">
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                Remove
-                                            </button>
-                                        </form>
-                                    </li>
+                                            <form action="{{ path('app_daily_nutrition_remove_food', {
+                                                'date': nutrition.date|date('Y-m-d'),
+                                                'foodId': food.id,
+                                                'mealType': meal_type
+                                            }) }}" method="post" class="d-inline">
+                                                <input type="hidden" name="_method" value="POST">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    Remove
+                                                </button>
+                                            </form>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
+                                {% set meal_recipe_ids = mealRecipes[meal_type]|default([]) %}
                                 {% for recipe in nutrition.recipes %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="mb-1">
-                                                {{ recipe.name }}
-                                                <span class="badge bg-success">Recipe</span>
-                                            </h5>
-                                            <div class="nutrition-info">
-                                                <small class="text-muted">
-                                                    {% set totalCalories = 0 %}
-                                                    {% set totalProtein = 0 %}
-                                                    {% set totalCarbs = 0 %}
-                                                    {% set totalFats = 0 %}
-                                                    {% for food in recipe.foods %}
-                                                        {% set totalCalories = totalCalories + (food.calories|default(0)) %}
-                                                        {% set totalProtein = totalProtein + (food.protein|default(0)) %}
-                                                        {% set totalCarbs = totalCarbs + (food.carbohydrate|default(0)) %}
-                                                        {% set totalFats = totalFats + (food.fats|default(0)) %}
-                                                    {% endfor %}
-                                                    Calories: {{ totalCalories|round }} |
-                                                    Protein: {{ totalProtein|round }}g |
-                                                    Carbs: {{ totalCarbs|round }}g |
-                                                    Fat: {{ totalFats|round }}g
-                                                </small>
+                                    {% if recipe.id in meal_recipe_ids %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h5 class="mb-1">
+                                                    {{ recipe.name }}
+                                                    <span class="badge bg-success">Recipe</span>
+                                                </h5>
+                                                <div class="nutrition-info">
+                                                    <small class="text-muted">
+                                                        {% set totalCalories = 0 %}
+                                                        {% set totalProtein = 0 %}
+                                                        {% set totalCarbs = 0 %}
+                                                        {% set totalFats = 0 %}
+                                                        {% for food in recipe.foods %}
+                                                            {% set totalCalories = totalCalories + (food.calories|default(0)) %}
+                                                            {% set totalProtein = totalProtein + (food.protein|default(0)) %}
+                                                            {% set totalCarbs = totalCarbs + (food.carbohydrate|default(0)) %}
+                                                            {% set totalFats = totalFats + (food.fats|default(0)) %}
+                                                        {% endfor %}
+                                                        Calories: {{ totalCalories|round }} |
+                                                        Protein: {{ totalProtein|round }}g |
+                                                        Carbs: {{ totalCarbs|round }}g |
+                                                        Fat: {{ totalFats|round }}g
+                                                    </small>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <form action="{{ path('app_daily_nutrition_remove_recipe', {
-                                            'date': nutrition.date|date('Y-m-d'),
-                                            'recipeId': recipe.id,
-                                            'mealType': meal_type
-                                        }) }}" method="post" class="d-inline">
-                                            <input type="hidden" name="_method" value="POST">
-                                            <button type="submit" class="btn btn-sm btn-danger">
+                                            <form action="{{ path('app_daily_nutrition_remove_recipe', {
+                                                'date': nutrition.date|date('Y-m-d'),
+                                                'recipeId': recipe.id,
+                                                'mealType': meal_type
+                                            }) }}" method="post" class="d-inline">
+                                                <input type="hidden" name="_method" value="POST">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    Remove
+                                                </button>
+                                            </form>
+                                        </li>
+                                    {% endif %}
                                                 Remove
                                             </button>
                                         </form>
                                     </li>
                                 {% endfor %}
-                                {% if nutrition.foods|length == 0 and nutrition.recipes|length == 0 %}
+                                {% if (meal_food_ids is empty) and (meal_recipe_ids is empty) %}
                                     <li class="list-group-item">No items added</li>
                                 {% endif %}
                             </ul>
