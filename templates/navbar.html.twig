@@ -1,5 +1,20 @@
+
+{% block stylesheets %}
+	
+
+
+	<link rel="stylesheet" href="{{ asset('styles/navbar.css') }}">
+	<link rel="stylesheet" href="{{ asset('/styles/navbar.css') }}">
+
+
+{% endblock %}
+
+
+
+{% block body %}
+    
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fitverse-navbar shadow" data-controller="navbar">
-	<a class="navbar-brand" href="/"><img src="/fitverse-white.png"></a>
+	<a class="navbar-brand" href="{{ path('admin_dashboard') }}"><img src="/fitverse-white.png"></a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
@@ -208,3 +223,6 @@
 
 
 </script>
+
+
+{% endblock %}

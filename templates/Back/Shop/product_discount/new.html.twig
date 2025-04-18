@@ -1,13 +1,54 @@
-{# templates/Back/Shop/product_discount/new.html.twig #}
 {% extends 'base.html.twig' %}
-{% block body %}
-{{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
 
-  {% include 'navbar-admin.html.twig' %}
-  <div class="container py-5">
+{% block title %}Create New Discount{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+<div class="container py-5">
     <h1 class="text-center mb-4">Add New Discount</h1>
+
     <div class="card shadow p-4">
-      {{ include('Back/Shop/product_discount/_form.html.twig') }}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        <div class="form-group">
+            {{ form_label(form.product) }}
+            {{ form_widget(form.product, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.product) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.discount_percentage) }}
+            {{ form_widget(form.discount_percentage, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.discount_percentage) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.valid_from) }}
+            {{ form_widget(form.valid_from, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.valid_from) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.valid_until) }}
+            {{ form_widget(form.valid_until, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.valid_until) }}
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <button class="btn btn-success mt-3">Save</button>
+            <a href="{{ path('app_product_discount_index') }}" class="btn btn-secondary mt-3 ms-2">Cancel</a>
+        </div>
+
+        {{ form_end(form) }}
     </div>
-  </div>
+</div>
 {% endblock %}

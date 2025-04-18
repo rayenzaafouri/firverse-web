@@ -27,6 +27,9 @@
         font-size: 0.8em;
         margin-left: 0.5em;
     }
+    .text-success {
+        color: #28a745 !important;
+    }
 </style>
 {% endblock %}
 {% block body %}
@@ -129,12 +132,10 @@
         {% endif %}
         
         <div class="text-right font-weight-bold mt-4">
-            {% if productDiscountTotal > 0 %}
-                <p class="text-success">Product discounts saved: {{ productDiscountTotal|number_format(2) }} TND</p>
-            {% endif %}
+
             
             {% if app.session.get('coupon') %}
-                <p class="text-secondary">Coupon "{{ coupon.code }}" applied: -{{ coupon.discount }}% ({{ couponDiscount|number_format(2) }} TND)</p>
+                <h6 class="text-success">Coupon "{{ coupon.code }}" applied: -{{ coupon.discount }}% ({{ couponDiscount|number_format(2) }} TND)</h6>
             {% endif %}
             
             <h4>Total ({{ cartItems|length }} items): {{ finalTotal|number_format(2) }} TND</h4>

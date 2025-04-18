@@ -144,11 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     {# Action Buttons Row #}
     <div class="d-flex justify-content-between mb-4">
-        <a href="{{ path('cart_index') }}" class="btn btn-primary">
-            View Cart
-        </a>
         
-        <div class="col-md-3">
+        
+        <div class="col-md-3  align-items-right">
             <select id="categorySelect" class="form-select">
                 <option value="">All Categories</option>
                 {% for category in categories %}

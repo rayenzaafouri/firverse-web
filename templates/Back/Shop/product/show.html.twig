@@ -3,7 +3,7 @@
 {% block title %}View Product{% endblock %}
 
 {% block body %}
-{% include 'navbar-admin.html.twig' %}
+{% include 'navbar.html.twig' %}
 
 <div class="container py-5">
 
@@ -19,15 +19,15 @@
                 <p class="text-muted">{{ product.brand }}</p>
                 <p>{{ product.description }}</p>
 
-                     <p class="badge badge-primary">Price: {{ product.price|number_format(2) }} TND</p>
+                     <p class="badge bg-primary">Price: {{ product.price|number_format(2) }} TND</p>
                 
 
                 
-                    <p class="badge badge-info">Stock: {{ product.stock }}</p>
+                    <p class="badge bg-info">Stock: {{ product.stock }}</p>
                 
 
                 
-                    <p class="badge badge-secondary">Category: {{ product.category.name }}</p>
+                    <p class="badge bg-secondary">Category: {{ product.category.name }}</p>
                 
 
                 <div class="mt-4">

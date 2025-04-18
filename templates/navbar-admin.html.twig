@@ -11,7 +11,7 @@
 
 		<div class="user-nav-menu navbar-text">
 			<div class="user-display">
-				<span>{{  app.user.first_name ~ " " ~  app.user.last_name  }}</span>
+				<span>{{  app.user.first_name ~ " " ~  app.user.first_name  }}</span>
 			</div>
 			<div class="user-badge">
 				<span>{{ app.user.first_name|slice(0, 1) }}</span>
@@ -52,50 +52,3 @@
 		</button>
 	</div>
 </nav>
-
-<div class="container">
-	<aside>
-		<ul>
-			<li>
-
-				<a class="btn" data-toggle="collapse" href="#collapseExercise" role="button" aria-expanded="false">
-					<span class="material-symbols-outlined">fitness_center</span>
-					<span>Exercise Management</span>
-				</a>
-				<ul
-					class="collapse" id="collapseExercise">
-					<li>
-						<a class="btn " href="/admin/exercise/add">Add exercise</a>
-					</li>
-					<li>
-						<a class="btn" href="/admin/exercise/add">Manage exercises</a>
-					</li>
-
-				</ul>
-			</li>
-			<li>
-				<a class="btn" data-toggle="collapse" href="#collapseShop" role="button" aria-expanded="false">
-					<span class="material-symbols-outlined">Shopping_Cart</span>
-					<span>Shop Management</span>
-				</a>
-				<ul
-					class="collapse" id="collapseShop">
-					<li>
-						<a class="btn " href="{{ path('app_product_index') }}">Manage Products</a>
-					</li>
-					<li>
-						<a class="btn" href="{{ path('app_category_index') }}">Manage Categories</a>
-					</li>
-					<li>
-						<a class="btn" href="{{ path('app_coupon_index') }}">Manage Coupons</a>
-					</li>
-					<li>
-						<a class="btn" href="{{ path('app_product_discount_index') }}">Manage Discounts</a>
-					</li>
-
-				</ul>
-		</ul>
-
-
-	</aside>
-</div>

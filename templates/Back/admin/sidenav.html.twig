@@ -1,0 +1,111 @@
+<aside>
+	<img src="/fitverse-white.png" alt="The Fitverse logo" class="logo">
+
+
+<div class="container">
+
+	<ul>
+		<li>
+			<a class="btn text-white" data-toggle="collapse" href="#collapseUser" role="button" aria-expanded="false">
+				<img src="{{ asset('images/landing/user.png') }}" alt="User icon">
+				<span>User Management</span>
+			</a>
+			<ul class="collapse" id="collapseUser">
+				<li>
+					<a class="btn text-white" href="/admin/exercise/add">Create a new user</a>
+				</li>
+				<li>
+					<a class="btn text-white" href="/admin/exercise/">Manage users</a>
+				</li>
+				<li>
+					<a class="btn text-white" href="/admin/">Edit default preferences</a>
+				</li>
+			</ul>
+		</li>
+
+		<li>
+			<a class="btn text-white" data-toggle="collapse" href="#collapseExercise" role="button" aria-expanded="false">
+				<img src="{{ asset('images/landing/exercice.png') }}" alt="Exercise icon">
+				<span>Exercise Management</span>
+			</a>
+			<ul class="collapse" id="collapseExercise">
+				<li>
+					<a class="btn text-white" href="/admin/exercise/add">Add exercise</a>
+				</li>
+				<li>
+					<a class="btn text-white" href="/admin/exercise/">Manage exercises</a>
+				</li>
+				<li>
+					<a class="btn text-white" href="/admin/workout/add">Add new workout</a>
+				</li>
+			</ul>
+		</li>
+
+		<li>
+			<a class="btn text-white" data-toggle="collapse" href="#collapseGym" role="button" aria-expanded="false">
+				<img src="{{ asset('images/landing/gyms.png') }}" alt="Workout icon">
+				<span>Gym Management</span>
+			</a>
+			<ul class="collapse" id="collapseGym">
+				<li>
+					<a class="btn text-white" href="/admin/workout/add">Add a gym</a>
+				</li>
+				<li>
+					<a class="btn text-white" href="/admin/workout/">Manage gyms</a>
+				</li>
+			</ul>
+		</li>
+
+		<li>
+			<a class="btn text-white" data-toggle="collapse" href="#collapsedEvents" role="button" aria-expanded="false">
+				<img src="{{ asset('images/landing/events.png') }}" alt="Events icon">
+				<span>Events Management</span>
+			</a>
+			<ul class="collapse" id="collapsedEvents">
+				<li>
+					<a class="btn text-white" href="/admin/event/add">Create a new event</a>
+				</li>
+				<li>
+					<a class="btn text-white" href="/admin/events/">Manage events</a>
+				</li>
+			</ul>
+		</li>
+
+        <li>
+		
+					<a class="btn text-white" data-toggle="collapse" href="#collapsedEvents" role="button" aria-expanded="false">
+				<img src="{{ asset('images/landing/shop.png') }}" alt="Shop icon">
+				<span>Events Management</span>
+			</a>
+                    <li>
+						<a class="btn text-white" href="{{ path('app_product_index') }}">Manage Products</a>
+					</li>
+					<li>
+						<a class="btn text-white" href="{{ path('app_category_index') }}">Manage Categories</a>
+					</li>
+					<li>
+						<a class="btn text-white" href="{{ path('app_coupon_index') }}">Manage Coupons</a>
+					</li>
+					<li>
+						<a class="btn text-white" href="{{ path('app_product_discount_index') }}">Manage Discounts</a>
+					</li>
+
+				
+                </li>
+	</ul>
+
+
+	
+
+	<div class="aside-bottom">
+		<span class="material-symbols-outlined">
+			shield_person
+		</span>
+		<span>Testeur Tounsi</span>
+		<a href="logout" class="btn text-white">
+			<span class="material-symbols-outlined">
+				logout
+			</span>
+		</a>
+	</div>
+</aside>
