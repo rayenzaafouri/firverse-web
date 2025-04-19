@@ -123,6 +123,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+    document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.wishlist-toggle').forEach(icon => {
+        icon.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            const productId = icon.dataset.productId;
+
+            try {
+                const res = await fetch(`/wishlist/wishlist/toggle/${productId}`);
+                const data = await res.json();
+
+                // Toggle heart style
+                if (data.status === 'added') {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas', 'text-danger');
+                } else {
+                    icon.classList.remove('fas', 'text-danger');
+                    icon.classList.add('far', 'text-danger');
+                }
+
+                // Show toast where clicked
+                showToast(data.status === 'added' ? '✅ Added to wishlist' : '❌ Removed from wishlist', e.pageX, e.pageY);
+            } catch (err) {
+                showToast('Error updating wishlist', e.pageX, e.pageY);
+            }
+        });
+    });
+
+    function showToast(message, x, y) {
+        const toast = document.createElement('div');
+        toast.textContent = message;
+        toast.style.position = 'absolute';
+        toast.style.left = `${x}px`;
+        toast.style.top = `${y - 40}px`; // slightly above the icon
+        toast.style.backgroundColor = '#333';
+        toast.style.color = '#fff';
+        toast.style.padding = '10px 20px';
+        toast.style.borderRadius = '5px';
+        toast.style.fontSize = '14px';
+        toast.style.zIndex = 9999;
+        toast.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+        toast.style.transition = 'opacity 0.3s';
+        toast.style.opacity = '1';
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => toast.style.opacity = '0', 500);
+        setTimeout(() => toast.remove(), 2000);
+    }
+});
+
 </script>
 {% endblock %}
 
@@ -159,6 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {# Products Grid #}
     <div class="row g-4">
         {% for product in products %}
+
             {% set discount = 0 %}
             {% set now = "now"|date('U') %}
 
@@ -171,6 +223,18 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 product-card" 
                  data-name="{{ product.name }}" data-category="{{ product.category.name }}">
                 <div class="card h-100 shadow-sm position-relative">
+                    {% set isWishlisted = false %}
+                        {% for w in app.user.getWishlists %}
+                            {% if w.product.id == product.id %}
+                                {% set isWishlisted = true %}
+                            {% endif %}
+                        {% endfor %}
+
+                    <i class="wishlist-toggle fa-heart {{ isWishlisted ? 'fas text-danger' : 'far text-danger' }}"
+                        data-product-id="{{ product.id }}"
+                        style="position: absolute; top: 10px; right: 10px; font-size: 1.7rem; cursor: pointer;"></i>
+
+
                     {% if discount > 0 %}
                         <span class="badge bg-danger position-absolute discount-badge">
                             <div>{{ discount }}% Discount </div>

@@ -90,7 +90,17 @@ class Product
     /**
      * @return Collection<int, ProductDiscount>
      */
-    
+    #[ORM\OneToMany(targetEntity: OrderDetail::class, mappedBy: 'product')]
+    private Collection $orderDetails;
+
+    public function getOrderDetails(): Collection
+    {
+        if (!$this->orderDetails instanceof Collection) {
+            $this->orderDetails = new ArrayCollection();
+        }
+        return $this->orderDetails;
+    }
+
     public function getId(): ?int { return $this->id; }
     public function getName(): ?string { return $this->name; }
     public function setName(string $name): static { $this->name = $name; return $this; }

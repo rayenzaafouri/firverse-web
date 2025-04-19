@@ -21,6 +21,7 @@ class Wishlist
 
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $addedAt = null;
+    #[ORM\UniqueConstraint(name: 'user_product_unique', columns: ['user_id', 'product_id'])]
 
     public function getProduct(): ?Product
     {

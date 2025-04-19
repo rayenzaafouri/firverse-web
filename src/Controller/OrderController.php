@@ -12,12 +12,21 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/order')]
-final class OrderController extends AbstractController{
-    #[Route(name: 'app_order_index', methods: ['GET'])]
+final class OrderController extends AbstractController
+{
+    #[Route('/order', name: 'app_order_index', methods: ['GET'])]
     public function index(OrderRepository $orderRepository): Response
     {
-        return $this->render('order/index.html.twig', [
+        $user = $this->getUser();
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+        return $this->render('Back/Shop/order/index.html.twig', [
             'orders' => $orderRepository->findAll(),
+        ]);
+        }
+
+        return $this->render('Front/Shop/order.html.twig', [
+        'orders' => $orderRepository->findBy(['user' => $user]),
         ]);
     }
 
@@ -44,7 +53,16 @@ final class OrderController extends AbstractController{
     #[Route('/{id}', name: 'app_order_show', methods: ['GET'])]
     public function show(Order $order): Response
     {
-        return $this->render('order/show.html.twig', [
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->render('Back/Shop/order/show.html.twig', [
+                'order' => $order,
+            ]);
+        }
+        if ($order->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->render('Front/Shop/show.html.twig', [
             'order' => $order,
         ]);
     }
@@ -61,7 +79,7 @@ final class OrderController extends AbstractController{
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('order/edit.html.twig', [
+        return $this->render('Back/Shop/order/edit.html.twig', [
             'order' => $order,
             'form' => $form,
         ]);

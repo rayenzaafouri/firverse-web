@@ -141,15 +141,27 @@
             <h4>Total ({{ cartItems|length }} items): {{ finalTotal|number_format(2) }} TND</h4>
         </div>
         
-        <form action="{{ path('checkout') }}" method="POST" class="text-right mt-3">
-            <input type="hidden" name="token" value="{{ csrf_token('checkout') }}">
-            <button type="submit" class="btn d-inline-flex align-items-center border border-warning text-dark font-weight-bold bg-warning rounded-pill px-4 py-1 row justify-content-center mb-4" style="border-radius: 200rem !important;border-width: 3px !important;">
-                Proceed to Checkout
-            </button>
-        </form>
+        <div class="text-right mt-3">
+            <form action="{{ path('checkout') }}" method="POST" style="display: inline;" id="checkout-form">
+                <input type="hidden" name="_token" value="{{ csrf_token('checkout') }}">
+                <button type="submit" class="btn d-inline-flex align-items-center border border-warning text-dark font-weight-bold bg-warning rounded-pill px-4 py-1 row justify-content-center mb-4" style="border-radius: 200rem !important;border-width: 3px !important;">
+                    Proceed to Checkout
+                </button>
+            </form>
+        </div>
     {% else %}
         <p class="text-center text-muted">Your cart is empty.</p>
     {% endif %}
 </div>
 </body>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            console.log('Form submitted');
+        });
+    </script>
 {% endblock %}

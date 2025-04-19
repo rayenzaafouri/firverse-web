@@ -1,9 +1,82 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Payment Cancelled{% endblock %}
+
 {% block body %}
-    <div class="container mt-5">
-        <div class="alert alert-warning">
-            Payment was canceled. You can try again if you wish.
+{% include 'navbar.html.twig' %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg animate__animated animate__fadeInUp">
+                <div class="card-header bg-warning text-dark py-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                        <h2 class="h4 mb-0">Payment Cancelled</h2>
+                    </div>
+                </div>
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-times-circle text-warning" style="font-size: 5rem;"></i>
+                    </div>
+                    <h3 class="h3 mb-3">Your payment was not completed</h3>
+                    <p class="lead text-muted mb-4">
+                        Don't worry! Your cart items are still saved. You can try the payment again or contact our support team if you need assistance.
+                    </p>
+                    
+                    <div class="border-top pt-4 mt-4">
+                        <div class="row">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <a href="{{ path('shop_home') }}" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-home me-2"></i> Continue Shopping
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{{ path('cart_index') }}" class="btn btn-warning w-100">
+                                    <i class="fas fa-shopping-cart me-2"></i> Return to Cart
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">
+                        Need help? Contact our support team at support@example.com
+                    </small>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+    <style>
+        .card {
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .card-header {
+            border-radius: 0 !important;
+        }
+        .animate__fadeInUp {
+            animation-duration: 0.5s;
+        }
+        .text-warning {
+            color: #ffc107 !important;
+        }
+        .btn-warning {
+            color: #212529;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-warning:hover {
+            color: #212529;
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+    </style>
 {% endblock %}

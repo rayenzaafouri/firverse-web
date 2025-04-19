@@ -10,6 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
+use Stripe\Exception\ApiErrorException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/')]
 class CartController extends AbstractController
@@ -30,6 +34,11 @@ class CartController extends AbstractController
             }
         }
 
+    // ✅ If cart is empty, clear coupon
+        if (empty($cartWithData)) {
+            $session->remove('coupon');
+        }
+
         $total = array_reduce($cartWithData, function ($total, $item) {
             return $total + ($item['product']->getPrice() * $item['quantity']);
         }, 0);
@@ -37,6 +46,7 @@ class CartController extends AbstractController
         return $this->render('Front/Shop/cart.html.twig', [
             'cartItems' => $cartWithData,
             'total' => $total,
+            'stripe_public_key' => $this->getParameter('stripe_public_key'),
         ]);
     }
 

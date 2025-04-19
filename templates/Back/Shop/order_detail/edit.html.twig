@@ -3,6 +3,8 @@
 {% block title %}Edit OrderDetail{% endblock %}
 
 {% block body %}
+{% include 'navbar.html.twig' %}
+
     <h1>Edit OrderDetail</h1>
 
     {{ include('order_detail/_form.html.twig', {'button_label': 'Update'}) }}

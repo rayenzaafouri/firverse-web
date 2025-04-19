@@ -14,7 +14,7 @@
 
     <div class="card shadow p-4">
         <h4>Product: {{ product_discount.product.name }}</h4>
-        <p><strong>Discount: </strong>{{ product_discount.discountPercentage }}</p>
+        <p><strong>Discount: </strong>{{ product_discount.discountPercentage }} %</p>
         <p><strong>Valid From: </strong>{{ product_discount.validFrom ? product_discount.validFrom|date('Y-m-d') : '-' }}</p>
         <p><strong>Valid Until: </strong>{{ product_discount.validUntil ? product_discount.validUntil|date('Y-m-d') : '-' }}</p>
         

@@ -1,3 +1,3 @@
 parameters:
-    stripe_public_key: '%env(pk_test_51Qwm6yG2v8TGz3VWuHZRZMMFhcOqTuPLvzLc6PdFgF6jAbZVgcoGMyUyjR0xdCLS8Sx0i4AI3msa8iogpvwhw5TD007DZh1QmD)%'
-    stripe_secret_key: '%env(sk_test_51Qwm6yG2v8TGz3VWDphJSGZigzB30TtZMSFJY7kGJdmlVV616fS2xFvb4q4y7paJvO1D0128jqsaaOIq4IptkXxT0063bpVoGc)%'
+    stripe_public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'

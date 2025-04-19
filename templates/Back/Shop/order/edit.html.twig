@@ -3,6 +3,8 @@
 {% block title %}Edit Order{% endblock %}
 
 {% block body %}
+{% include 'navbar.html.twig' %}
+
     <h1>Edit Order</h1>
 
     {{ include('order/_form.html.twig', {'button_label': 'Update'}) }}
