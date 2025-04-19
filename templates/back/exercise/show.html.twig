@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Exercise {% endblock %}
+
+{% block body %}
+    <h1>Exercice</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ exercice.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ exercice.title }}</td>
+            </tr>
+            <tr>
+                <th>Steps</th>
+                <td>{{ exercice.steps }}</td>
+            </tr>
+            <tr>
+                <th>Sets</th>
+                <td>{{ exercice.sets }}</td>
+            </tr>
+            <tr>
+                <th>Reps</th>
+                <td>{{ exercice.reps }}</td>
+            </tr>
+            <tr>
+                <th>Grips</th>
+                <td>{{ exercice.grips }}</td>
+            </tr>
+            <tr>
+                <th>Difficulty</th>
+                <td>{{ exercice.difficulty }}</td>
+            </tr>
+            <tr>
+                <th>Body_map_front</th>
+                <td>{{ exercice.bodyMapFront }}</td>
+            </tr>
+            <tr>
+                <th>Body_map_back</th>
+                <td>{{ exercice.bodyMapBack }}</td>
+            </tr>
+            <tr>
+                <th>Video_url</th>
+                <td>{{ exercice.videoUrl }}</td>
+            </tr>
+            <tr>
+                <th>M_primary</th>
+                <td>{{ exercice.mPrimary ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>M_secondary</th>
+                <td>{{ exercice.mSecondary ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>M_tertiary</th>
+                <td>{{ exercice.mTertiary ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Equipment</th>
+                <td>{{ exercice.equipment }}</td>
+            </tr>
+            <tr>
+                <th>Push</th>
+                <td>{{ exercice.push ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Pull</th>
+                <td>{{ exercice.pull ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_exercice_index') }}">Browse Exercise</a>
+
+    <a href="{{ path('app_exercice_edit', {'id': exercice.id}) }}">edit</a>
+
+    {{ include('/back/exercise/_delete_form.html.twig') }}
+{% endblock %}

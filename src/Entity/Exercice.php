@@ -6,6 +6,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
+
 
 use App\Repository\ExerciceRepository;
 
@@ -16,6 +20,7 @@ class Exercice
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+
     private ?int $id = null;
 
     public function getId(): ?int
@@ -30,6 +35,18 @@ class Exercice
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Exercise title is required")]
+    #[Assert\Length(
+        min: 5,
+        max: 100,
+        minMessage: "Exercise title must be at least {{ limit }} characters long",
+        maxMessage: "Exercise title cannot be longer than {{ limit }} characters"
+    )]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9\s\-_,\.;:()]+$/',
+        message: "Exercise title can only contain letters, numbers, spaces and basic punctuation"
+    )]
+
     private ?string $title = null;
 
     public function getTitle(): ?string
@@ -44,6 +61,9 @@ class Exercice
     }
 
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: "Exercise steps are required")]
+    #[Assert\Json(message: "Steps must be a valid JSON string")]
+    #[Assert\Callback([self::class, 'validateSteps'])]
     private ?string $steps = null;
 
     public function getSteps(): ?string
@@ -58,6 +78,18 @@ class Exercice
     }
 
     #[ORM\Column(type: 'integer', nullable: false)]
+    #[Assert\NotBlank(message: "Number of sets is required")]
+    #[Assert\Type(
+        type: 'integer',
+        message: "The value {{ value }} is not a valid integer."
+    )]
+    #[Assert\Positive(
+        message: "Number of sets must be a positive number (1 or more)"
+    )]
+    #[Assert\LessThanOrEqual(
+        value: 100,
+        message: "Number of sets cannot exceed {{ compared_value }}"
+    )]
     private ?int $sets = null;
 
     public function getSets(): ?int
@@ -72,6 +104,18 @@ class Exercice
     }
 
     #[ORM\Column(type: 'integer', nullable: false)]
+    #[Assert\NotBlank(message: "Number of reps is required")]
+    #[Assert\Type(
+        type: 'integer',
+        message: "The value {{ value }} is not a valid integer."
+    )]
+    #[Assert\Positive(
+        message: "Number of reps must be a positive number (1 or more)"
+    )]
+    #[Assert\LessThanOrEqual(
+        value: 100,
+        message: "Number of reps cannot exceed {{ compared_value }}"
+    )]
     private ?int $reps = null;
 
     public function getReps(): ?int
@@ -85,7 +129,15 @@ class Exercice
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\Type(
+        type: 'string',
+        message: "Grip must be a text value"
+    )]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9\s\-_,\.;:()]*$/',
+        message: "Grip can only contain letters, numbers, spaces and basic punctuation (-_,.;:())"
+    )]
     private ?string $grips = null;
 
     public function getGrips(): ?string
@@ -100,6 +152,11 @@ class Exercice
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Difficulty level is required")]
+    #[Assert\Choice(
+        choices: ["beginner", "intermediate", "advanced", "novice"],
+        message: "Invalid difficulty level. Must be one of: Beginner, Intermediate, Advanced, Novice"
+    )]
     private ?string $difficulty = null;
 
     public function getDifficulty(): ?string
@@ -114,8 +171,13 @@ class Exercice
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Front body map URL is required")]
+    #[Assert\Url(
+        message: "The front body map must be a valid URL",
+        protocols: ["http", "https"],
+        relativeProtocol: false
+    )]
     private ?string $body_map_front = null;
-
     public function getBody_map_front(): ?string
     {
         return $this->body_map_front;
@@ -128,6 +190,12 @@ class Exercice
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Rear body map URL is required")]
+    #[Assert\Url(
+        message: "The rear body map must be a valid URL",
+        protocols: ["http", "https"],
+        relativeProtocol: false
+    )]
     private ?string $body_map_back = null;
 
     public function getBody_map_back(): ?string
@@ -142,6 +210,12 @@ class Exercice
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Youtube embed URL is required")]
+    #[Assert\Url(
+        message: "Youtube embed URL must be a valid URL",
+        protocols: ["http", "https"],
+        relativeProtocol: false
+    )]
     private ?string $video_url = null;
 
     public function getVideo_url(): ?string
@@ -198,6 +272,7 @@ class Exercice
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Callback([self::class, 'validateEquipment'])]
     private ?string $equipment = null;
 
     public function getEquipment(): ?string
@@ -311,4 +386,124 @@ class Exercice
         return $this;
     }
 
+
+
+
+
+    // JSON Steps custom validator
+
+    public static function validateSteps($steps, ExecutionContextInterface $context, $payload)
+    {
+        if (null === $steps || '' === $steps) {
+            return;
+        }
+
+        $decoded = json_decode($steps, true);
+
+        if (!is_array($decoded)) {
+            $context->buildViolation('Steps must be a JSON array of objects')
+                ->atPath('steps')
+                ->addViolation();
+            return;
+        }
+
+        foreach ($decoded as $index => $step) {
+            if (!is_array($step)) {
+                $context->buildViolation(sprintf('Step #%d must be an object', $index + 1))
+                    ->atPath('steps')
+                    ->addViolation();
+                continue;
+            }
+
+            // Validate text property
+            if (!array_key_exists('text', $step)) {
+                $context->buildViolation(sprintf('Step #%d is missing required "text" property', $index + 1))
+                    ->atPath('steps')
+                    ->addViolation();
+            } elseif (empty($step['text'])) {
+                $context->buildViolation(sprintf('Step #%d text cannot be empty', $index + 1))
+                    ->atPath('steps')
+                    ->addViolation();
+            } elseif (!is_string($step['text'])) {
+                $context->buildViolation(sprintf('Step #%d text must be a string', $index + 1))
+                    ->atPath('steps')
+                    ->addViolation();
+            }
+
+            // Validate video property
+            if (!array_key_exists('video', $step)) {
+                $context->buildViolation(sprintf('Step #%d is missing required "video" property', $index + 1))
+                    ->atPath('steps')
+                    ->addViolation();
+            } elseif (!filter_var($step['video'], FILTER_VALIDATE_URL)) {
+                $context->buildViolation(sprintf('Step #%d video must be a valid URL', $index + 1))
+                    ->atPath('steps')
+                    ->addViolation();
+            }
+
+            // Reject additional properties
+            $allowedProperties = ['text', 'video'];
+            $extraProperties = array_diff(array_keys($step), $allowedProperties);
+            if (!empty($extraProperties)) {
+                $context->buildViolation(sprintf(
+                    'Step #%d contains invalid properties: %s. Only "text" and "video" are allowed',
+                    $index + 1,
+                    implode(', ', $extraProperties)
+                ))
+                    ->atPath('steps')
+                    ->addViolation();
+            }
+        }
+    }
+
+
+
+    // JSON Equipment custom validator
+    public static function validateEquipment($equipment, ExecutionContextInterface $context): void
+    {
+        // Allow null/empty
+        if (null === $equipment || '' === $trimmed = trim($equipment)) {
+            return;
+        }
+
+        // Handle raw JSON (e.g., `["1","2","3"]`) 
+        // or JS-style strings (e.g., `"['1','2','3']"`)
+        $decoded = null;
+
+        // Case 1: Input is already valid JSON (no outer quotes)
+        if (str_starts_with($trimmed, '[') && str_ends_with($trimmed, ']')) {
+            $decoded = json_decode($trimmed, true);
+        }
+        // Case 2: Input is a quoted JSON string (e.g., `"["1","2","3"]"`)
+        elseif (str_starts_with($trimmed, '"[') && str_ends_with($trimmed, ']"')) {
+            $unquoted = substr($trimmed, 1, -1); // Remove outer quotes
+            $decoded = json_decode($unquoted, true);
+        }
+        // Case 3: JavaScript-style array (e.g., `"['1','2','3']"`)
+        elseif (preg_match('/^\[.*\]$/', trim($trimmed, "'\""))) {
+            $jsArray = trim($trimmed, "'\""); // Remove outer quotes
+            $decoded = json_decode(str_replace("'", '"', $jsArray), true);
+        }
+
+        // Validate JSON decoding
+        if (!is_array($decoded)) {
+            $context->buildViolation('Equipment must be a valid array format: ["1","2","3"] or \'["1","2","3"]\'')
+                ->atPath('equipment')
+                ->addViolation();
+            return;
+        }
+
+        // Validate numbers (1-17)
+        foreach ($decoded as $index => $item) {
+            if (!ctype_digit($item)) {
+                $context->buildViolation(sprintf('Item #%d must be an integer (got "%s")', $index + 1, $item))
+                    ->atPath('equipment')
+                    ->addViolation();
+            } elseif (($num = (int)$item) < 1 || $num > 17) {
+                $context->buildViolation(sprintf('Item #%d must be between 1-17 (got %d)', $index + 1, $num))
+                    ->atPath('equipment')
+                    ->addViolation();
+            }
+        }
+    }
 }
