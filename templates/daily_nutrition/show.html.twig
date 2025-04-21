@@ -50,7 +50,8 @@
             <h1 class="mb-0">Nutrition for {{ nutrition.date|date('Y-m-d') }}</h1>
             <div>
                 <a href="{{ path('app_recipe_index') }}" class="btn btn-info me-2">Check Recipes</a>
-                <a href="{{ path('app_food_view_only') }}" class="btn btn-primary">Food</a>
+                <a href="{{ path('app_food_view_only') }}" class="btn btn-primary me-2">Food</a>
+                <a href="{{ path('app_waterconsumption_show', {'date': nutrition.date|date('Y-m-d')}) }}" class="btn btn-outline-info">Hydration</a>
             </div>
         </div>
 
@@ -169,10 +170,10 @@
             </div>
         {% endfor %}
 
-        <!-- Nutrition Summary -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
+        <!-- Nutrition Summary and Water Consumption (aligned) -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 mx-auto">
+                <div class="card mb-4">
                     <div class="card-header">
                         <h3>Daily Nutrition Summary</h3>
                     </div>
@@ -252,6 +253,55 @@
             </div>
         </div>
     </div>
+
+    <!-- Water Consumption Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">Water Consumption <small class="text-white-50" style="font-size:0.7em">(2L goal)</small></h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Amount Consumed:</strong>
+                        <span id="water-amount-display">{{ waterconsumption.amountConsumed ?? 0 }}</span> liters
+                    </div>
+                    <div class="mb-3">
+                        <div class="progress" style="height: 25px;">
+                            {% set goal = 2 %}
+                            {% set consumed = waterconsumption.amountConsumed ?? 0 %}
+                            {% set percent = (consumed / goal * 100) > 100 ? 100 : (consumed / goal * 100) %}
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ percent }}%;" aria-valuenow="{{ consumed }}" aria-valuemin="0" aria-valuemax="{{ goal }}">
+                                {{ percent|round(0, 'floor') }}%
+                            </div>
+                        </div>
+                        <small class="text-muted">Goal: 2 liters</small>
+                    </div>
+                    <form method="POST" action="{{ path('app_waterconsumption_update', {'date': nutrition.date|date('Y-m-d')}) }}" id="water-form">
+                        <div class="input-group mb-3" style="max-width: 400px;">
+                            <input type="number" name="amount_consumed" id="water-amount-input" class="form-control" step="0.01" min="0" value="{{ waterconsumption.amountConsumed ?? 0 }}" required>
+                            <span class="input-group-text">liters</span>
+                            <button class="btn btn-primary" type="submit">Update</button>
+                        </div>
+                        <div class="btn-group mb-2" role="group">
+                            <button type="button" class="btn btn-outline-info" onclick="incrementWater(0.25)">+250ml</button>
+                            <button type="button" class="btn btn-outline-info" onclick="incrementWater(0.5)">+500ml</button>
+                            <button type="button" class="btn btn-outline-info" onclick="incrementWater(0.75)">+750ml</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function incrementWater(amount) {
+            const input = document.getElementById('water-amount-input');
+            let current = parseFloat(input.value) || 0;
+            current += amount;
+            input.value = current.toFixed(2);
+            document.getElementById('water-amount-display').innerText = input.value;
+        }
+    </script>
 {% endblock %}
 
 {% block javascripts %}

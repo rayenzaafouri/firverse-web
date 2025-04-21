@@ -5,9 +5,11 @@ namespace App\Controller;
 use App\Entity\Nutrition;
 use App\Entity\Food;
 use App\Entity\Recipe;
+use App\Entity\Waterconsumption;
 use App\Repository\NutritionRepository;
 use App\Repository\FoodRepository;
 use App\Repository\RecipeRepository;
+use App\Repository\WaterconsumptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,12 +28,12 @@ class DailyNutritionController extends AbstractController
     ) {}
 
     #[Route('/', name: 'app_daily_nutrition_index', methods: ['GET'])]
-    public function index(NutritionRepository $nutritionRepository): Response
+    public function index(NutritionRepository $nutritionRepository, WaterconsumptionRepository $waterconsumptionRepository): Response
     {
         // Get today's date
         $today = new \DateTime();
         
-        // Create nutrition records for the last 10 days if they don't exist
+        // Create nutrition and waterconsumption records for the last 10 days if they don't exist
         for ($i = 0; $i < 10; $i++) {
             $date = clone $today;
             $date->modify("-{$i} days");
@@ -40,17 +42,27 @@ class DailyNutritionController extends AbstractController
                 'user_id' => self::DEFAULT_USER_ID,
                 'date' => $date
             ]);
-            
             if (!$existingNutrition) {
                 $nutrition = new Nutrition();
                 $nutrition->setDate($date);
                 $nutrition->setUserId(self::DEFAULT_USER_ID);
-                
                 $this->entityManager->persist($nutrition);
             }
+
+            // Waterconsumption check
+            $existingWater = $waterconsumptionRepository->findOneBy([
+                'user' => self::DEFAULT_USER_ID,
+                'ConsumptionDate' => $date
+            ]);
+            if (!$existingWater) {
+                $water = new Waterconsumption();
+                $water->setUser($this->entityManager->getReference('App\\Entity\\User', self::DEFAULT_USER_ID));
+                $water->setConsumptionDate($date);
+                $water->setAmountConsumed(0);
+                $this->entityManager->persist($water);
+            }
         }
-        
-        // Flush all new nutrition records at once
+        // Flush all new records at once
         $this->entityManager->flush();
 
         // Get all nutrition records for the user
@@ -104,7 +116,7 @@ class DailyNutritionController extends AbstractController
     }
 
     #[Route('/{date}', name: 'app_daily_nutrition_show', methods: ['GET'])]
-    public function show(string $date, NutritionRepository $nutritionRepository, FoodRepository $foodRepository, RecipeRepository $recipeRepository, SessionInterface $session): Response
+    public function show(string $date, NutritionRepository $nutritionRepository, FoodRepository $foodRepository, RecipeRepository $recipeRepository, WaterconsumptionRepository $waterconsumptionRepository, SessionInterface $session): Response
     {
         $dateObj = \DateTime::createFromFormat('Y-m-d', $date);
         
@@ -122,8 +134,21 @@ class DailyNutritionController extends AbstractController
             $nutrition = new Nutrition();
             $nutrition->setDate($dateObj);
             $nutrition->setUserId(self::DEFAULT_USER_ID);
-            
             $this->entityManager->persist($nutrition);
+            $this->entityManager->flush();
+        }
+
+        // Fetch or create Waterconsumption for this date
+        $waterconsumption = $waterconsumptionRepository->findOneBy([
+            'user' => self::DEFAULT_USER_ID,
+            'ConsumptionDate' => $dateObj
+        ]);
+        if (!$waterconsumption) {
+            $waterconsumption = new \App\Entity\Waterconsumption();
+            $waterconsumption->setUser($this->entityManager->getReference('App\\Entity\\User', self::DEFAULT_USER_ID));
+            $waterconsumption->setConsumptionDate($dateObj);
+            $waterconsumption->setAmountConsumed(0);
+            $this->entityManager->persist($waterconsumption);
             $this->entityManager->flush();
         }
 
@@ -172,6 +197,7 @@ class DailyNutritionController extends AbstractController
             'meal_types' => self::MEAL_TYPES,
             'mealFoods' => $mealFoods[$date] ?? [],
             'mealRecipes' => $mealRecipes[$date] ?? [],
+            'waterconsumption' => $waterconsumption,
         ]);
     }
 

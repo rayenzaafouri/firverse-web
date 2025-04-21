@@ -16,6 +16,26 @@ class WaterconsumptionRepository extends ServiceEntityRepository
         parent::__construct($registry, Waterconsumption::class);
     }
 
+    /**
+     * @param int $userId
+     * @return Waterconsumption[] Returns an array of Waterconsumption objects for the last 10 days (including today), ordered by date ascending.
+     */
+    public function findLast10DaysForUser(int $userId): array
+    {
+        $today = new \DateTime();
+        $startDate = (clone $today)->modify('-9 days')->setTime(0,0,0);
+        $endDate = (clone $today)->setTime(23,59,59);
+        return $this->createQueryBuilder('w')
+            ->andWhere('w.user = :userId')
+            ->andWhere('w.ConsumptionDate BETWEEN :start AND :end')
+            ->setParameter('userId', $userId)
+            ->setParameter('start', $startDate)
+            ->setParameter('end', $endDate)
+            ->orderBy('w.ConsumptionDate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Waterconsumption[] Returns an array of Waterconsumption objects
     //     */
