@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     categoryFilterItems.forEach(item => {
+        item.style.cursor = 'pointer';
         item.addEventListener('click', e => {
             currentCategory = item.dataset.category;
             applyFilters();
@@ -131,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sortItems.forEach(item => {
+        item.style.cursor = 'pointer';
         item.addEventListener('click', () => {
             currentSort = item.dataset.sort;
             applyFilters();
