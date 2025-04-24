@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails - {{ gym.name }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-section {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 15px;
+            color: #343a40;
+            border: 2px solid #28a745;
+        }
+
+        .form-section h2 {
+            color: #28a745;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .list-group-item strong {
+            color: #155724;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .gym-image {
+            display: block;
+            margin: 0 auto 20px auto;
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% include 'navbar.html.twig' %}
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="form-container py-5">
+        <div class="form-section">
+            <h2>{{ gym.name }}</h2>
+
+            {% if gym.image %}
+<img src="{{ gym.image }}" alt="{{ gym.name }}" class="gym-image">
+            {% endif %}
+
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><strong>Adresse :</strong> {{ gym.adresse }}</li>
+                <li class="list-group-item"><strong>Téléphone :</strong> {{ gym.phone }}</li>
+                <li class="list-group-item"><strong>Email :</strong> {{ gym.email }}</li>
+                <li class="list-group-item"><strong>Capacité :</strong> {{ gym.capacity }}</li>
+                <li class="list-group-item"><strong>Note :</strong> {{ gym.rating }}</li>
+                <li class="list-group-item"><strong>Créée le :</strong> {{ gym.createdAt ? gym.createdAt|date('Y-m-d H:i') : 'N/A' }}</li>
+            </ul>
+
+            <a href="{{ path('gym_front_list') }}" class="btn btn-secondary">← Retour à la liste</a>
+        </div>
+    </div>
+{% endblock %}
