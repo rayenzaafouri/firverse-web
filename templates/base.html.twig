@@ -122,10 +122,22 @@
 
 {% for message in app.flashes('error_message') %}
         <script>
+		//Toast system
         document.addEventListener("DOMContentLoaded",(event)=>{
             showToast("error","{{ message }}")
         })
-    </script>
+    	</script>
+
+
+		<script>
+		//Bootstrap tooltips initialization
+		const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+		const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+		</script>
+
+
+
+
 {% endfor %}
 
 

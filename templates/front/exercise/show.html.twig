@@ -10,7 +10,6 @@
 {{ parent() }} 
 <script>
 
-
 const iconMap = {
   "1": "barbell.png",
   "2": "dumbells.png",
@@ -33,31 +32,21 @@ const iconMap = {
 
 
 
-
-
-
 document.addEventListener("DOMContentLoaded",(event)=>{
 
-    let equipment = JSON.parse(new DOMParser().parseF romString("{{ exercice.equipment }}", "text/html").documentElement.textContent)
+
+    
+
+    let equipment = JSON.parse(new DOMParser().parseFromString("{{ exercice.equipment }}", "text/html").documentElement.textContent)
     const targetDiv = document.querySelector(".equipment-icons")
 
     equipment.forEach(item => {
         let image = document.createElement("img")
         image.src = "/icons/" + iconMap[item]
+        image.alt = iconMap[item]
         targetDiv.appendChild(image)
 
     })
-
-
-
-
-
-
-        
-
-
-
-
 })
 
 
@@ -114,6 +103,7 @@ document.addEventListener("DOMContentLoaded",(event)=>{
 {% include 'navbar.html.twig' %} 
 
 <body data-context="exercise">
+
     <div class="exercise-view">
 
         <div class="equipment-icons">
@@ -328,6 +318,7 @@ document.addEventListener("DOMContentLoaded",(event)=>{
 
     <a href="{{ path('app_exercice_index') }}">Browse Exercises</a>
 
+    
 </body>
 
 {% endblock %}
