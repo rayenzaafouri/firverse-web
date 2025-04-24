@@ -41,16 +41,16 @@
 		</li>
 
 		<li>
-			<a class="btn text-white" data-toggle="collapse" href="#collapseGym" role="button" aria-expanded="false">
+			<a class="btn text-white" data-bs-toggle="collapse" href="#collapseGym" role="button" aria-expanded="false">
 				<img src="{{ asset('images/landing/gyms.png') }}" alt="Workout icon">
 				<span>Gym Management</span>
 			</a>
 			<ul class="collapse" id="collapseGym">
 				<li>
-					<a class="btn text-white" href="/admin/workout/add">Add a gym</a>
+					<a class="btn text-white" href="{{ path('app_gym_index')}}">Manage gyms</a>
 				</li>
 				<li>
-					<a class="btn text-white" href="/admin/workout/">Manage gyms</a>
+					<a class="btn text-white" href="{{ path('app_membership_index')}}">Manage memberships</a>
 				</li>
 			</ul>
 		</li>
