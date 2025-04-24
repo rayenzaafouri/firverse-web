@@ -77,7 +77,7 @@ class ExerciceType extends AbstractType
                     'Rotating Grip' => 'rotating',
                 ],
                 'placeholder' => 'Pick a grip',
-                'empty_data' => ''
+                'empty_data' => 'overhand'
             ])
             ->add('difficulty', ChoiceType::class, [
                 'label' => 'Difficulty',
@@ -85,8 +85,8 @@ class ExerciceType extends AbstractType
                     'class' => 'form-control dropdown-toggle' 
                 ],
                 'choices' => [
-                    'Novice' => 'novice',
                     'Beginner' => 'beginner',
+                    'Novice' => 'novice',
                     'Intermediate' => 'intermediate',
                     'Advanced' => 'advanced',
                 ],
@@ -175,6 +175,7 @@ class ExerciceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Exercice::class,
+            'csrf_protection' => false
         ]);
     }
 }

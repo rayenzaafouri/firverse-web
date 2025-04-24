@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Exercice index
+{% endblock %}
+
+
+{% block body %}
+
+	<h1>Exercice index</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Title</th>
+				<th>Steps</th>
+				<th>Sets</th>
+				<th>Reps</th>
+				<th>Grips</th>
+				<th>Difficulty</th>
+				<th>Front body map</th>
+				<th>Rear body map</th>
+				<th>Video guide</th>
+				<th>Impact</th>
+				<th>Equipment</th>
+				<th>Push</th>
+				<th>Pull</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for exercice in exercices %}
+				<tr>
+					<td>{{ exercice.id }}</td>
+					<td>{{ exercice.title }}</td>
+					<td>{{ exercice.steps }}</td>
+					<td>{{ exercice.sets }}</td>
+					<td>{{ exercice.reps }}</td>
+					<td>{{ exercice.grips }}</td>
+					<td>{{ exercice.difficulty }}</td>
+					<td>{{ exercice.bodyMapFront }}</td>
+					<td>{{ exercice.bodyMapBack }}</td>
+					<td>{{ exercice.videoUrl }}</td>
+
+
+					<td>
+						{% if exercice.mPrimary %}
+							<span class="badge text-bg-secondary">Primary</span>
+						{% endif %}
+						{% if exercice.mSecondary %}
+							<span class="badge text-bg-secondary">Secondary</span>
+						{% endif %}
+						{% if exercice.mPrimary %}
+							<span class="badge text-bg-secondary">Tertiary</span>
+						{% endif %}
+					</td>
+				</tr>
+			</td>
+
+            
+			<td>{{ exercice.equipment }}</td>
+
+			<td>
+
+				{% if exercice.push  %}
+					<span class="badge text-bg-secondary">Push</span>
+				{% endif %}
+
+				{% if exercice.pull  %}
+					<span class="badge text-bg-secondary">Push</span>
+				{% endif %}
+			</td>
+		</tbody>
+	</td>
+
+
+	<td>{{ exercice.pull ? 'Yes' : 'No' }}</td>
+	<td>
+		<a href="{{ path('app_exercice_show_admin', {'id': exercice.id}) }}">show</a>
+		<a href="{{ path('app_exercice_edit', {'id': exercice.id}) }}">edit</a>
+	</td>
+</tr>{% else %}
+<tr>
+	<td colspan="17">no records found</td>
+</tr>{% endfor %}</tbody></table><a href="{{ path('app_exercice_new') }}">Create new</a>{% endblock %}

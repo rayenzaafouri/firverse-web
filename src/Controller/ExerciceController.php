@@ -40,7 +40,7 @@ final class ExerciceController extends AbstractController
     #[Route('/admin/exercises',name: 'app_exercice_index_admin', methods: ['GET'])]
     public function adminIndex(ExerciceRepository $exerciceRepository): Response
     {
-        return $this->render('front/exercise/showAll.html.twig', [
+        return $this->render('back/admin/showAll.html.twig', [
             'exercices' => $exerciceRepository->findAll(),
         ]);
     }
@@ -48,13 +48,15 @@ final class ExerciceController extends AbstractController
     #[Route('/admin/exercise/new', name: 'app_exercice_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $exercice = new Exercice();
+        $exercice = new Exercice(); 
         $form = $this->createForm(ExerciceType::class, $exercice);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($exercice);
             $entityManager->flush();
+
+            $this->addFlash('success_message', $exercice->getTitle() . ' created successfully');
 
             return $this->redirectToRoute('app_exercice_index_admin', [], Response::HTTP_SEE_OTHER);
         }
@@ -71,8 +73,11 @@ final class ExerciceController extends AbstractController
     #[Route('/admin/exercise/{id}/', name: 'app_exercice_show_admin', methods: ['GET'])]
     public function showAdmin(Exercice $exercice): Response
     {
+
+        
         return $this->render('/back/exercise/show.html.twig', [
             'exercice' => $exercice,
+
         ]);
     }
 
@@ -85,6 +90,8 @@ final class ExerciceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success_message',  $exercice->getTitle() . ' updated successfully');
+
             return $this->redirectToRoute('app_exercice_index_admin', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -92,6 +99,8 @@ final class ExerciceController extends AbstractController
             'exercice' => $exercice,
             'form' => $form,
         ]);
+
+
     }
 
     #[Route('/admin/exercise/{id}/delete', name: 'app_exercice_delete', methods: ['POST'])]
@@ -100,9 +109,10 @@ final class ExerciceController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$exercice->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($exercice);
             $entityManager->flush();
+            $this->addFlash('success_message', $exercice->getTitle() . ' deleted successfully');
         }
 
-        return $this->redirectToRoute('app_exercice_index_admin', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_exercice_index_admin', ["submit"=>"success"], Response::HTTP_SEE_OTHER);
     }
 
     public function resolveEquipmentId($id){

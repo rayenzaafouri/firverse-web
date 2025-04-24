@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Exercise {% endblock %}
+{% block title %} {{ exercice.title }} details {% endblock %}
 
 {% block body %}
-    <h1>Exercice</h1>
+    <h1>{{ exercice.title }}</h1>
 
     <table class="table">
         <tbody>
