@@ -20,12 +20,12 @@ final class OrderController extends AbstractController
         $user = $this->getUser();
 
         if ($this->isGranted('ROLE_ADMIN')) {
-        return $this->render('Back/Shop/order/index.html.twig', [
+        return $this->render('back/shop/order/index.html.twig', [
             'orders' => $orderRepository->findAll(),
         ]);
         }
 
-        return $this->render('Front/Shop/order.html.twig', [
+        return $this->render('front/shop/order.html.twig', [
         'orders' => $orderRepository->findBy(['user' => $user]),
         ]);
     }
@@ -40,6 +40,9 @@ final class OrderController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($order);
             $entityManager->flush();
+            $this->addFlash('success-message', 'Order created successfully!');
+            $this->addFlash('error-message', 'Order created successfully!');
+            $this->addFlash('info-message', 'Order created successfully!');
 
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -54,7 +57,7 @@ final class OrderController extends AbstractController
     public function show(Order $order): Response
     {
         if ($this->isGranted('ROLE_ADMIN')) {
-            return $this->render('Back/Shop/order/show.html.twig', [
+            return $this->render('back/shop/order/show.html.twig', [
                 'order' => $order,
             ]);
         }
@@ -62,7 +65,7 @@ final class OrderController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        return $this->render('Front/Shop/show.html.twig', [
+        return $this->render('front/shop/show.html.twig', [
             'order' => $order,
         ]);
     }
@@ -79,7 +82,7 @@ final class OrderController extends AbstractController
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('Back/Shop/order/edit.html.twig', [
+        return $this->render('back/shop/order/edit.html.twig', [
             'order' => $order,
             'form' => $form,
         ]);

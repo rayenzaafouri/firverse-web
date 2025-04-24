@@ -22,7 +22,7 @@ class UserOrderController extends AbstractController
 
         $orders = $orderRepository->findBy(['user' => $user], ['orderDate' => 'DESC']);
 
-        return $this->render('Front/Shop/user_orders.html.twig', [
+        return $this->render('front/shop/user_orders.html.twig', [
             'orders' => $orders,
         ]);
     }

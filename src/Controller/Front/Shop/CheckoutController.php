@@ -194,13 +194,13 @@ class CheckoutController extends AbstractController
             $this->addFlash('success', 'Order completed! Check your email for confirmation.');
         }
 
-        return $this->render('Front/Shop/success.html.twig');
+        return $this->render('front/shop/success.html.twig');
     }
 
     #[Route('/checkout/cancel', name: 'checkout_cancel')]
     public function cancel(): Response
     {
-        return $this->render('Front/Shop/cancel.html.twig');
+        return $this->render('front/shop/cancel.html.twig');
     }
 
     #[Route('/stripe-test')]

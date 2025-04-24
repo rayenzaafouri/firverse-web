@@ -31,7 +31,7 @@
                 <td class="d-flex justify-content-center gap-2">
                         <a href="{{ path('app_coupon_show', {'id': coupon.id}) }}" class="btn btn-sm btn-primary mr-1">View</a>
                         <a href="{{ path('app_coupon_edit', {'id': coupon.id}) }}" class="btn btn-sm btn-warning mr-1">Edit</a>
-                        {{ include('Back/Shop/coupon/_delete_form.html.twig')}}
+                        {{ include('back/shop/coupon/_delete_form.html.twig')}}
                     </td>
                     <td>{{ coupon.code }}</td>
                     <td>{{ coupon.discount_percentage }}</td>

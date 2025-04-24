@@ -19,7 +19,7 @@ final class CategoryController extends AbstractController
     #[Route(name: 'app_category_index', methods: ['GET'])]
     public function index(CategoryRepository $categoryRepository): Response
     {
-        return $this->render('Back/Shop/category/index.html.twig', [
+        return $this->render('back/shop/category/index.html.twig', [
             'category' => $categoryRepository->findAll(),
         ]);
     }
@@ -38,7 +38,7 @@ final class CategoryController extends AbstractController
             return $this->redirectToRoute('app_category_index');
         }
 
-        return $this->render('Back/Shop/category/new.html.twig', [
+        return $this->render('back/shop/category/new.html.twig', [
             'category' => $category,
             'form' => $form,
         ]);
@@ -47,7 +47,7 @@ final class CategoryController extends AbstractController
     #[Route('/{id}', name: 'app_category_show', methods: ['GET'])]
     public function show(Category $category): Response
     {
-        return $this->render('Back/Shop/category/show.html.twig', [
+        return $this->render('back/shop/category/show.html.twig', [
             'category' => $category,
         ]);
     }
@@ -69,7 +69,7 @@ public function edit(Request $request, Category $category, EntityManagerInterfac
         return $this->redirectToRoute('app_category_index');
     }
 
-    return $this->render('Back/Shop/category/edit.html.twig', [
+    return $this->render('back/shop/category/edit.html.twig', [
         'category' => $category,
         'form' => $form,
     ]);

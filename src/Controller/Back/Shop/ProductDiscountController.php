@@ -16,7 +16,7 @@ final class ProductDiscountController extends AbstractController{
     #[Route(name: 'app_product_discount_index', methods: ['GET'])]
     public function index(ProductDiscountRepository $productDiscountRepository): Response
     {
-        return $this->render('Back/Shop/product_discount/index.html.twig', [
+        return $this->render('back/shop/product_discount/index.html.twig', [
             'product_discounts' => $productDiscountRepository->findAll(),
         ]);
     }
@@ -35,7 +35,7 @@ final class ProductDiscountController extends AbstractController{
             return $this->redirectToRoute('app_product_discount_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('Back/Shop/product_discount/new.html.twig', [
+        return $this->render('back/shop/product_discount/new.html.twig', [
             'product_discount' => $productDiscount,
             'form' => $form,
         ]);
@@ -44,7 +44,7 @@ final class ProductDiscountController extends AbstractController{
     #[Route('/{id}', name: 'app_product_discount_show', methods: ['GET'])]
     public function show(ProductDiscount $productDiscount): Response
     {
-        return $this->render('Back/Shop/product_discount/show.html.twig', [
+        return $this->render('back/shop/product_discount/show.html.twig', [
             'product_discount' => $productDiscount,
         ]);
     }
@@ -61,7 +61,7 @@ final class ProductDiscountController extends AbstractController{
             return $this->redirectToRoute('app_product_discount_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('Back/Shop/product_discount/edit.html.twig', [
+        return $this->render('back/shop/product_discount/edit.html.twig', [
             'product_discount' => $productDiscount,
             'form' => $form,
         ]);

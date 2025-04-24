@@ -27,7 +27,7 @@ final class WishlistController extends AbstractController{
         // Get products from wishlist to display (optional but better UX)
         $products = array_map(fn($w) => $w->getProduct(), $wishlists);
 
-        return $this->render('Front/Shop/index.html.twig', [
+        return $this->render('front/shop/index.html.twig', [
             'wishlists' => $wishlists,
             'products' => $products,
             'categories' => $categoryRepository->findAll(),
@@ -135,7 +135,7 @@ public function adminIndex(WishlistRepository $repo): Response
         ->getQuery()
         ->getResult();
 
-    return $this->render('Back/Shop/wishlist/index.html.twig', [
+    return $this->render('back/shop/wishlist/index.html.twig', [
         'wishlists' => $wishlists,
     ]);
 }

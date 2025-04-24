@@ -17,7 +17,7 @@ final class ProductController extends AbstractController{
     #[Route(name: 'app_product_index', methods: ['GET'])]
     public function index(ProductRepository $productRepository,CategoryRepository $categoryRepository): Response
     {
-        return $this->render('Back/Shop/product/index.html.twig', [
+        return $this->render('back/shop/product/index.html.twig', [
             'products' => $productRepository->findAll(),
             'categories' => $categoryRepository->findAll(),
         ]);
@@ -37,7 +37,7 @@ final class ProductController extends AbstractController{
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('Back/Shop/product/new.html.twig', [
+        return $this->render('back/shop/product/new.html.twig', [
             'product' => $product,
             'form' => $form,
         ]);
@@ -52,7 +52,7 @@ final class ProductController extends AbstractController{
             throw $this->createNotFoundException('The product does not exist.');
         }
 
-        return $this->render('Back/Shop/product/show.html.twig', [
+        return $this->render('back/shop/product/show.html.twig', [
             'product' => $product,
         ]);
     }
@@ -69,7 +69,7 @@ final class ProductController extends AbstractController{
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('Back/Shop/product/edit.html.twig', [
+        return $this->render('back/shop/product/edit.html.twig', [
             'product' => $product,
             'form' => $form,
         ]);

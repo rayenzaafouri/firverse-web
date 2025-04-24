@@ -14,7 +14,7 @@ class ShopController extends AbstractController
     #[Route('/', name: 'shop_home')]
     public function index(ProductRepository $productRepository, CategoryRepository $categoryRepository): Response
     {
-        return $this->render('Front/Shop/index.html.twig', [
+        return $this->render('front/shop/index.html.twig', [
             'products' => $productRepository->findAll(),
             'categories' => $categoryRepository->findAll(),
 

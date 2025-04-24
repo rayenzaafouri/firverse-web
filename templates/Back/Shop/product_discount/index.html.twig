@@ -34,7 +34,7 @@
                     <td class="d-flex justify-content-center gap-2">
                         <a href="{{ path('app_product_discount_show', {'id': product_discounts.id}) }}" class="btn btn-sm btn-primary mr-1">View</a>
                         <a href="{{ path('app_product_discount_edit', {'id': product_discounts.id}) }}" class="btn btn-sm btn-warning mr-1">Edit</a>
-                        {{ include('Back/Shop/product_discount/_delete_form.html.twig', { product_discounts: product_discounts }) }}
+                        {{ include('back/shop/product_discount/_delete_form.html.twig', { product_discounts: product_discounts }) }}
                     </td>
                     <td>{{ product_discounts.id }}</td>
                     <td>{{ product_discounts.product.name }}</td>

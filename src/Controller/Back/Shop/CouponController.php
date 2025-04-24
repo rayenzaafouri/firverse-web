@@ -16,7 +16,7 @@ final class CouponController extends AbstractController{
     #[Route(name: 'app_coupon_index', methods: ['GET'])]
     public function index(CouponRepository $couponRepository): Response
     {
-        return $this->render('Back/Shop/coupon/index.html.twig', [
+        return $this->render('back/shop/coupon/index.html.twig', [
             'coupons' => $couponRepository->findAll(),
         ]);
     }
@@ -35,7 +35,7 @@ final class CouponController extends AbstractController{
             return $this->redirectToRoute('app_coupon_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('Back/Shop/coupon/new.html.twig', [
+        return $this->render('back/shop/coupon/new.html.twig', [
             'coupon' => $coupon,
             'form' => $form,
         ]);
@@ -44,7 +44,7 @@ final class CouponController extends AbstractController{
     #[Route('/{id}', name: 'app_coupon_show', methods: ['GET'])]
     public function show(Coupon $coupon): Response
     {
-        return $this->render('Back/Shop/coupon/show.html.twig', [
+        return $this->render('back/shop/coupon/show.html.twig', [
             'coupon' => $coupon,
         ]);
     }
@@ -61,7 +61,7 @@ final class CouponController extends AbstractController{
             return $this->redirectToRoute('app_coupon_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('Back/Shop/coupon/edit.html.twig', [
+        return $this->render('back/shop/coupon/edit.html.twig', [
             'coupon' => $coupon,
             'form' => $form,
         ]);

@@ -43,7 +43,7 @@ class CartController extends AbstractController
             return $total + ($item['product']->getPrice() * $item['quantity']);
         }, 0);
 
-        return $this->render('Front/Shop/cart.html.twig', [
+        return $this->render('front/shop/cart.html.twig', [
             'cartItems' => $cartWithData,
             'total' => $total,
             'stripe_public_key' => $this->getParameter('stripe_public_key'),
