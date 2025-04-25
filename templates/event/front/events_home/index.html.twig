@@ -47,10 +47,12 @@
 
             noResult.style.display = found ? "none" : "block";
         }
-  // 🔁 Rechercher dynamiquement à la frappe
+       // 🔁 Rechercher dynamiquement à la frappe
         searchInput.addEventListener("input", filterEvents);
+        // 📅 Filtrer 
         filterBtn.addEventListener("click", filterEvents);
     });
+
 </script>
 {% endblock %}
 
@@ -240,12 +242,88 @@
         color: #999;
         margin-top: 20px;
     }
+    /* Sidebar styles */
+.sidebar {
+    position: fixed;
+    top: 20%;
+    right: 0;
+    width: 60px;
+    background-color: #fff;
+    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 20px 10px;
+    z-index: 100;
+}
+
+.sidebar-icon {
+    text-align: center;
+    font-size: 1.2em;
+    color: #333;
+    margin: 10px 0;
+    text-decoration: none;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.sidebar-icon:hover {
+    color: #007bff;
+}
+
+.sidebar-icon i {
+    display: block;
+    font-size: 2em;
+    margin-bottom: 5px;
+}
+
+/* Optional: Adjust size for mobile view */
+@media (max-width: 768px) {
+    .sidebar {
+        top: 15%;
+        width: 50px;
+    }
+    .sidebar-icon i {
+        font-size: 1.5em;
+    }
+}
+.fav-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #ccc;  /* Default star color */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.fav-btn.active {
+    color: #f39c12; /* Yellow color for active favorite */
+}
+
+.fav-btn:hover {
+    color: #f39c12; /* Hover effect to show yellow when hovering over */
+}
+
+
 </style>
 {% endblock %}
 
 {% block body %}
 {% include 'navbar.html.twig' %}
+
 <div class="container" data-context="events" style="text-align: center;">
+<div class="sidebar">
+    <a href="#" class="sidebar-icon" id="passedEvents">
+        <i class="fas fa-check-circle"></i> Déjà Passé
+    </a>
+    <a href="#" class="sidebar-icon" id="favorites">
+        <i class="fas fa-star"></i> Favoris
+    </a>
+    <a href="#" class="sidebar-icon" id="participated">
+        <i class="fas fa-user-check"></i> Participé
+    </a>
+</div>
     <h1>Upcoming Events</h1>
 
     <!-- Search Bar with Emojis -->
@@ -275,10 +353,11 @@
     {% if eventsdata is not empty %}
     <div class="events-container">
         {% for event in eventsdata %}
+        
         <div class="event-card"
              data-date="{{ event.date|date('Y-m-d') }}"
              data-price="{{ event.price }}">
-            <a href="{{ path('event_detail', {'id': event.id}) }}" class="event-link">
+            <a href="{{ path('event_detail', {'id': event.id}) }}" class="event-link"> 
                 {% if event.photo %}
                     <img src="{{ asset('uploads/events/' ~ event.photo) }}" 
                          alt="{{ event.name }}" 
@@ -290,18 +369,25 @@
                          class="event-image">
                 {% endif %}
                 <div class="event-title">{{ event.name }}</div>
+                 <button class="fav-btn" data-event-id="{{ event.id }}">
+        <i class="fas fa-star"></i>  <!-- Default star icon -->
+    </button>
                 <div class="event-details">
                     <div class="event-date">📅 {{ event.date|date('F j, Y') }} ⏰ {{ event.time|date('H:i') }}</div>
                     <div class="event-location">📍 {{ event.location }}</div>
                     <div class="event-price">💸 {{ event.price }} TND</div>
                 </div>
-             </a>
+            </a>
+          
         </div>
         {% endfor %}
     </div>
+    
     <div id="noResult" class="no-result" style="display: none;">❌ Aucun événement trouvé avec ces critères !</div>
     {% else %}
     <p>No upcoming events at the moment.</p>
     {% endif %}
 </div>
+
+
 {% endblock %}

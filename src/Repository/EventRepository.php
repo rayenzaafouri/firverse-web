@@ -35,6 +35,16 @@ class EventRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getResult();
     }
+       // Méthode pour récupérer les événements passés
+       public function findByDateBefore(\DateTime $currentDate)
+       {
+           return $this->createQueryBuilder('e')
+               ->andWhere('e.date < :currentDate')
+               ->setParameter('currentDate', $currentDate)
+               ->orderBy('e.date', 'DESC')
+               ->getQuery()
+               ->getResult();
+       }
 
     // Exemple de méthode existante, tu peux les laisser commentées si tu n'en as pas besoin.
     /*

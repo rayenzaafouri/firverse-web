@@ -62,8 +62,9 @@ class ParticipationType extends AbstractType
         ])
         ->add('participantType', ChoiceType::class, [
             'choices' => [
-                'Individual' => 'Individual',
-                'Group' => 'Group',
+                'Student' => 'Student',
+                'Professional' => 'Professional',
+                'Guest' => 'Guest',
             ],
             'attr' => ['class' => 'form-control'],
             'label_attr' => ['class' => 'form-label'],
@@ -71,6 +72,7 @@ class ParticipationType extends AbstractType
             ],
             'error_bubbling' => false
         ])
+        
         ->add('numberOfParticipants', IntegerType::class, [
             'attr' => ['class' => 'form-control'],
             'label_attr' => ['class' => 'form-label'],

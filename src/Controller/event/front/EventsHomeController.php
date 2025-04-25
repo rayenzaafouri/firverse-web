@@ -31,7 +31,21 @@ class EventsHomeController extends AbstractController
             'event' => $event,
         ]);
     }
+   #[Route('/events/passed', name: 'events_passed')]
+    public function passedEvents(EventRepository $eventRepository): Response
+    {
+        // Récupérer la date actuelle
+        $currentDate = new \DateTime();
+        
+        // Filtrer les événements passés
+        $passedEvents = $eventRepository->createQueryBuilder('e')
+            ->where('e.date < :currentDate')
+            ->setParameter('currentDate', $currentDate)
+            ->getQuery()
+            ->getResult();
 
-    
-
+        return $this->render('/event/front/events_home/passed_events.html.twig', [
+            'passedEvents' => $passedEvents,
+        ]);
+    }
 }
