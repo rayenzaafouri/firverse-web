@@ -1,9 +1,32 @@
-{% extends 'base.html.twig' %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
 
 {% block title %}New Exercice{% endblock %}
 
-{% block body %}
-    <h1>Create new Exercice</h1>
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_exercice_index') }}">Exercises</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">List</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script></script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Create new Exercice</h1>
 
     {{ include('/back/exercise/_form.html.twig') }}
 
