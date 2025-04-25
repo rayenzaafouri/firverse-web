@@ -5,20 +5,51 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
-    // Add JavaScript for search functionality (optional)
-    document.getElementById("searchEvent").addEventListener("input", function() {
-        var searchTerm = this.value.toLowerCase();
-        var eventCards = document.querySelectorAll(".event-card");
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchEvent");
+        const monthFilter = document.getElementById("monthFilter");
+        const yearFilter = document.getElementById("yearFilter");
+        const minPriceFilter = document.getElementById("minPrice");
+        const maxPriceFilter = document.getElementById("maxPrice");
+        const filterBtn = document.getElementById("filterBtn");
+        const eventCards = document.querySelectorAll(".event-card");
+        const noResult = document.getElementById("noResult");
 
-        eventCards.forEach(function(card) {
-            var eventName = card.querySelector(".event-title").textContent.toLowerCase();
-            var eventLocation = card.querySelector(".event-location").textContent.toLowerCase();            
-            if (eventName.includes(searchTerm) || eventLocation.includes(searchTerm)) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
-        });
+        function filterEvents() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedMonth = parseInt(monthFilter.value);
+            const selectedYear = parseInt(yearFilter.value);
+            const minPrice = parseFloat(minPriceFilter.value) || 0;
+            const maxPrice = parseFloat(maxPriceFilter.value) || Infinity;
+
+            let found = false;
+
+            eventCards.forEach(function (card) {
+                const eventName = card.querySelector(".event-title").textContent.toLowerCase();
+                const eventLocation = card.querySelector(".event-location").textContent.toLowerCase();
+                const eventDate = new Date(card.dataset.date);
+                const eventMonth = eventDate.getMonth() + 1;
+                const eventYear = eventDate.getFullYear();
+                const eventPrice = parseFloat(card.dataset.price) || 0;
+
+                const matchesSearch = eventName.includes(searchTerm) || eventLocation.includes(searchTerm);
+                const matchesMonth = !selectedMonth || eventMonth === selectedMonth;
+                const matchesYear = !selectedYear || eventYear === selectedYear;
+                const matchesPrice = eventPrice >= minPrice && eventPrice <= maxPrice;
+
+                if (matchesSearch && matchesMonth && matchesYear && matchesPrice) {
+                    card.style.display = "block";
+                    found = true;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            noResult.style.display = found ? "none" : "block";
+        }
+  // 🔁 Rechercher dynamiquement à la frappe
+        searchInput.addEventListener("input", filterEvents);
+        filterBtn.addEventListener("click", filterEvents);
     });
 </script>
 {% endblock %}
@@ -170,6 +201,45 @@
             font-size: 1.1em;
         }
     }
+    /* Filters */
+        .filters-container {
+        margin: 20px auto;
+        max-width: 900px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .filter-input {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 1em;
+        min-width: 150px;
+    }
+
+    .filter-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .filter-button:hover {
+        background-color: #0056b3;
+    }
+
+    .no-result {
+        text-align: center;
+        font-size: 1.2em;
+        color: #999;
+        margin-top: 20px;
+    }
 </style>
 {% endblock %}
 
@@ -181,33 +251,57 @@
     <!-- Search Bar with Emojis -->
     <input type="text" id="searchEvent" class="search-bar" placeholder="🔍 Search by name, 📍 location ...">
 
+    <!-- Filters -->
+    <div class="filters-container">
+        <select id="monthFilter" class="filter-input">
+            <option value="">📅 Filter by Month</option>
+            {% for i in 1..12 %}
+                <option value="{{ i }}">{{ date('2000-' ~ i ~ '-01')|date('F') }}</option>
+            {% endfor %}
+        </select>
+
+        <select id="yearFilter" class="filter-input">
+            <option value="">📆 Filter by Year</option>
+            {% for i in 2024..2030 %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="number" id="minPrice" class="filter-input" placeholder="💰 Min Price (TND)">
+        <input type="number" id="maxPrice" class="filter-input" placeholder="💰 Max Price (TND)">
+    <button id="filterBtn" class="filter-button">Filtrer</button>
+    </div>
+
     {% if eventsdata is not empty %}
     <div class="events-container">
         {% for event in eventsdata %}
-        <div class="event-card">
+        <div class="event-card"
+             data-date="{{ event.date|date('Y-m-d') }}"
+             data-price="{{ event.price }}">
             <a href="{{ path('event_detail', {'id': event.id}) }}" class="event-link">
                 {% if event.photo %}
                     <img src="{{ asset('uploads/events/' ~ event.photo) }}" 
-                        alt="{{ event.name }}" 
-                        class="event-image"
-                        onerror="this.onerror=null;this.src='{{ asset('images/default-event.jpg') }}'">
+                         alt="{{ event.name }}" 
+                         class="event-image"
+                         onerror="this.onerror=null;this.src='{{ asset('images/default-event.jpg') }}'">
                 {% else %}
                     <img src="{{ asset('images/default-event.jpg') }}" 
-                        alt="Default event image" 
-                        class="event-image">
+                         alt="Default event image" 
+                         class="event-image">
                 {% endif %}
                 <div class="event-title">{{ event.name }}</div>
                 <div class="event-details">
-                    <div class="event-date">📅 {{ event.date|date('F j, Y') }} at ⏰ {{ event.time|date('H:i') }}</div>
+                    <div class="event-date">📅 {{ event.date|date('F j, Y') }} ⏰ {{ event.time|date('H:i') }}</div>
                     <div class="event-location">📍 {{ event.location }}</div>
+                    <div class="event-price">💸 {{ event.price }} TND</div>
                 </div>
-            </a>
+             </a>
         </div>
         {% endfor %}
     </div>
+    <div id="noResult" class="no-result" style="display: none;">❌ Aucun événement trouvé avec ces critères !</div>
     {% else %}
     <p>No upcoming events at the moment.</p>
     {% endif %}
 </div>
-
 {% endblock %}
