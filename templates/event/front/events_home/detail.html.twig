@@ -23,7 +23,9 @@
 
     <div class="event-details">
         <p><strong>Date:</strong> 🗓️ {{ event.date|date('F j, Y') }} at {{ event.time }}</p>
-        <p><strong>Location:</strong> 📍 {{ event.location }}</p>
+ <p><strong>Location:</strong> 📍 
+            <a href="#" id="location-link">{{ event.location }}</a>
+        </p>
         <p><strong>Description:</strong> 📝 {{ event.description }}</p>
         <p><strong>Price:</strong> 💰 {{ event.price }}  D.T</p>
     </div>
@@ -32,15 +34,98 @@
     <a href="{{ path('app_participation_new', {'event_id': event.id}) }}" class="btn btn-primary">
         Reserve this event
     </a>
-    
 
+</div>
+<div id="geo-message" class="geo-message" style="display:none;">
+    <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
+    <span>Nous sommes ici, bienvenue !</span>
 </div>
 
 {% endblock %}
 
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationLink = document.getElementById('location-link');
+        const eventLocation = "{{ event.location }}"; // Adresse de l'événement
+
+        locationLink.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            // Utilisez l'API Geocoding pour obtenir les coordonnées de l'adresse
+            const apiKey = 'AIzaSyCc-Wlcr47oT5EDZW7DJA5CLLNXCGxfKs0'; // Remplacez par votre clé API Google
+            const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(eventLocation)}&key=${apiKey}`;
+
+            fetch(geocodeUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "OK") {
+                        // Récupérer la latitude et la longitude
+                        const lat = data.results[0].geometry.location.lat;
+                        const lng = data.results[0].geometry.location.lng;
+
+                        // Ouvrir Google Maps avec les coordonnées
+                          // Créer l'URL de Google Maps avec l'option "marcher"
+                    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`;
+
+                    // Ouvrir Google Maps avec l'option de marche
+                    window.open(googleMapsUrl, '_blank');
+                     // Afficher le message de géolocalisation
+                            const geoMessage = document.getElementById('geo-message');
+                            geoMessage.style.display = 'block';
+                            setTimeout(() => {
+                                geoMessage.style.display = 'none';
+                            }, 5000); // Masquer après 5 secondes
+                    } else if (data.status === "ZERO_RESULTS") {
+                        alert("Aucune adresse trouvée pour cette localisation.");
+                    } else if (data.status === "OVER_QUERY_LIMIT") {
+                        alert("Limite de requêtes dépassée. Veuillez réessayer plus tard.");
+                    } else if (data.status === "REQUEST_DENIED") {
+                        alert("Accès refusé à l'API. Vérifiez votre clé API.");
+                    } else if (data.status === "INVALID_REQUEST") {
+                        alert("Requête invalide. Vérifiez l'adresse fournie.");
+                    } else {
+                        alert("Adresse introuvable !");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Une erreur est survenue.");
+                });
+        });
+    });
+</script>
+{% endblock %}
 {% block stylesheets %}
 {{ parent() }}
 <style>
+  /* Style pour le message de géolocalisation */
+#geo-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-size: 1.2em;
+    display: none; /* Initialement caché */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#geo-message i {
+    color: red;
+    margin-right: 10px;
+    font-size: 1.5em;
+}
+
+
+        /* Customize for mobile responsiveness */
+        @media (max-width: 768px) {
+            #geo-message {
+                font-size: 1em;
+            }
+        }
     /* Modern design for event detail page */
     .event-detail-container {
         max-width: 800px;
