@@ -26,6 +26,14 @@ final class ExerciceController extends AbstractController
     }
 
 
+    
+    #[Route('/admin/exercises/dashboard', name: 'exercise_admin_dashboard', methods: ['GET'])]
+    public function dashboard(): Response
+    {
+        return $this->render('/back/exercise/dashboard.html.twig');
+    }
+
+
     #[Route('/exercises',name: 'app_exercice_index', methods: ['GET'])]
     public function userIndex(ExerciceRepository $exerciceRepository): Response
     {

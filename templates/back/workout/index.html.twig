@@ -1,0 +1,87 @@
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
+
+{% block title %}Exercise Details{% endblock %}
+
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_workout_index_admin') }}">Workouts</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">List</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script></script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+
+	.table{
+		text-align: center;
+        vertical-align: middle;
+	}
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<a class="btn btn-secondary" href="{{ path('app_workout_new') }}"><i class="fa-solid fa-plus"></i>  Create new</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Featured</th>
+                <th>Enabled</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for workout in workouts %}
+            <tr>
+                <td>{{ workout.id }}</td>
+                <td>{{ workout.label }}</td>
+                <td>{{ workout.description }}</td>
+                <td>{{ workout.featured ? '✅' : '❌' }}</td>
+                <td>{{ workout.enabled ? '✅' : '❌' }}</td>
+                <td>
+                    <a class="btn btn-success" href="{{ path('app_workout_show', {'id': workout.id}) }}"><i class="fa-solid fa-eye"></i> Show</a>
+                    <a  class="btn btn-danger" href="{{ path('app_workout_edit', {'id': workout.id}) }}"><i class="fa-solid fa-pen"></i> Manage</a>
+
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

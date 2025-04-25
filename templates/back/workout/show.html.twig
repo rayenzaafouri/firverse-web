@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Workout{% endblock %}
+
+{% block body %}
+    <h1>Workout</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ workout.id }}</td>
+            </tr>
+            <tr>
+                <th>Label</th>
+                <td>{{ workout.label }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ workout.description }}</td>
+            </tr>
+            <tr>
+                <th>Img</th>
+                <td>{{ workout.img }}</td>
+            </tr>
+            <tr>
+                <th>Featured</th>
+                <td>{{ workout.featured ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Enabled</th>
+                <td>{{ workout.enabled ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Exercises</th>
+                <td>{{ workout.exercises }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_workout_index_admin') }}">back to list</a>
+
+    <a href="{{ path('app_workout_edit', {'id': workout.id}) }}">edit</a>
+
+    {{ include('/back/workout/_delete_form.html.twig') }}
+{% endblock %}

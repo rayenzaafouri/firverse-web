@@ -1,0 +1,183 @@
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
+
+{% block title %}New workout plan{% endblock %}
+
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_workout_index_admin') }}">Workout</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">New</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById("exerciseModal");
+
+        // Attach click events when modal is shown
+        modal.addEventListener('shown.bs.modal', () => {
+            prepForm();
+            attachClickEvents();
+        });
+    });
+
+    function attachClickEvents() {
+        const targetElts = document.querySelectorAll(".exercise-choice");
+        targetElts.forEach(element => {
+            element.addEventListener("click", (event) => {
+                exerciseChoice_onclick(event);
+            });
+        });
+    }
+
+    function exerciseChoice_onclick(e) {
+        const exercise = extractDataFromDiv(e.target.closest(".exercise-choice"));
+        const card = generateCard(exercise);
+        document.querySelector(".exercises-container").appendChild(card);
+    }
+
+    function extractDataFromDiv(div) {
+        const id = div.getAttribute("data-id");
+        const title = div.getAttribute("data-title");
+        return { id, title };
+    }
+
+    function generateCard(exercise) {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.style.width = '18rem';
+        card.style.margin = '0.5rem';
+
+        const cardHeader = document.createElement('div');
+        cardHeader.classList.add('card-header');
+        cardHeader.innerHTML = `Exercise ID: <strong>${exercise.id}</strong>`;
+
+        const cardBody = document.createElement('div');
+        cardBody.classList.add('card-body');
+
+        const cardTitle = document.createElement('h5');
+        cardTitle.classList.add('card-title');
+        cardTitle.innerText = exercise.title;
+
+        const removeButton = document.createElement('button');
+        removeButton.classList.add('btn', 'btn-danger');
+        removeButton.innerText = 'Remove';
+        removeButton.onclick = function () {
+            card.remove();
+        };
+
+        cardBody.appendChild(cardTitle);
+        cardBody.appendChild(removeButton);
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+
+        return card;
+    }
+
+    function collectAllExercises() {
+        const exercises = [];
+        const exerciseElements = document.querySelectorAll(".exercise-choice");
+        exerciseElements.forEach(element => {
+            const exercise = extractDataFromDiv(element);
+            exercises.push({ "id": exercise.id });
+        });
+
+        console.log(exercises);
+        pushToTextArea(exercises);
+        return exercises;
+    }
+
+    function pushToTextArea(exercises) {
+        document.querySelector("#workout_exercises").value = JSON.stringify(exercises);
+    }
+
+
+    function prepForm() {
+        const form = document.querySelector('form[name="workout"]');
+
+        if (!form) {
+            console.error("Workout form not found.");
+            return;
+        }
+
+        // Disable HTML5 validation
+        form.setAttribute('novalidate', 'novalidate');
+
+        // Attach submit event if not already attached
+        form.addEventListener('submit', (e) => {
+            collectAllExercises(); // Ensure hidden exercises field is populated
+        });
+    }
+
+
+
+</script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .exercise-choice {
+        border: 1px solid grey;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 0.375rem;
+        padding: 0.33rem;
+        transition: transform 0.33s ease, filter 0.33s ease, padding 0.33s ease, background 0.33s ease;
+    }
+
+    .exercise-choice:hover {
+        cursor: pointer;
+        transform: translateY(-0.33rem);
+        padding: 0.5rem;
+        background: #f8f9fa;
+    }
+
+    .exercises-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    #workout_exercises{
+        display: none;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+{{ include('/back/workout/_form.html.twig') }}
+
+
+<div class="exercises-container"></div>
+
+<div class="modal fade" id="exerciseModal" tabindex="-1" aria-labelledby="exerciseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exerciseModalLabel">Choose exercise</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for exercice in exercices %}
+                    <div class="exercise-choice" data-id="{{ exercice.id }}" data-title="{{ exercice.title }}">
+                        <span class="badge text-bg-dark">ID:{{ exercice.id }}</span>
+                        <span>{{ exercice.title }}</span>
+                    </div>
+                {% else %}
+                    <p>No exercises found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

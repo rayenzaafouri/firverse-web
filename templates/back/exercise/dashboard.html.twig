@@ -1,0 +1,52 @@
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
+
+{% block title %}Exercise Details
+{% endblock %}
+
+{% block header %}
+
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a href="{{ path('app_exercice_index_admin') }}">Exercises</a>
+			</li>
+			<li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+		</ol>
+	</nav>
+
+{% endblock %}
+
+
+{% block javascripts %}
+	{{ parent() }}
+	</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+	{{ parent() }}
+	{# Your CSS goes here #}
+
+{% endblock %}
+
+
+{% block content %}
+
+
+
+
+	<div class="header">
+
+
+	</div>
+
+	<div>	
+		<ul>
+					<a href="/admin/exercises">Exercice Management</a>
+					<a href="/admin/workouts">Workout Management</a>
+		</ul>
+	</div>
+
+
+{% endblock %}
