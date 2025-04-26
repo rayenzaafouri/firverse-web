@@ -125,7 +125,7 @@ class Participation
 
     #[ORM\Column(name: 'participantType', type: 'string', nullable: true)]
     #[Assert\NotBlank(message: 'Participant type cannot be blank.')]
-    #[Assert\Choice(choices: ['Individual', 'Group'], message: 'Choose a valid participant type.')]
+    #[Assert\Choice(choices: ['Student','Professional', 'Guest'], message: 'Choose a valid participant type.')]
     private ?string $participantType = null;
 
     public function getParticipantType(): ?string
