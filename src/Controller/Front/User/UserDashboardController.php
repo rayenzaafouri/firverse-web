@@ -2,6 +2,7 @@
 
 namespace App\Controller\Front\User;
 
+use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,8 +10,11 @@ use Symfony\Component\Routing\Attribute\Route;
 final class UserDashboardController extends AbstractController
 {
     #[Route('/home', name: 'user_dashboard')]
-    public function index(): Response
+    public function index(ProductRepository $productRepository): Response
     {
-        return $this->render('/front/user/dashboard.html.twig');
+        $discountedProducts = $productRepository->findDiscountedProducts(); 
+        return $this->render('/front/user/dashboard.html.twig', [
+            'discountedProducts' => $discountedProducts,
+        ]);
     }
 }

@@ -140,40 +140,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     searchInput.addEventListener('input', () => {
-        const query = searchInput.value.toLowerCase();
-        searchResults.innerHTML = '';
-        if (query.length === 0) {
-            searchResults.style.display = 'none';
-            applyFilters();
-            return;
+    const query = searchInput.value.toLowerCase();
+    searchResults.innerHTML = '';
+    if (query.length === 0) {
+        searchResults.style.display = 'none';
+        applyFilters();
+        return;
+    }
+
+    let matches = 0;
+    cards.forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        if (name.includes(query)) {
+            const item = document.createElement('div');
+            item.className = 'list-group-item';
+            item.textContent = card.dataset.name;
+            item.onclick = () => {
+                searchInput.value = card.dataset.name;
+                searchResults.style.display = 'none';
+                currentCategory = '';
+                currentSort = '';
+                applyFilters();
+                // Scroll to product
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Highlight effect
+                card.classList.add('highlight');
+                setTimeout(() => card.classList.remove('highlight'), 2000);
+            };
+            searchResults.appendChild(item);
+            matches++;
         }
-
-        let matches = 0;
-        cards.forEach(card => {
-            const name = card.dataset.name.toLowerCase();
-            if (name.includes(query)) {
-                const item = document.createElement('div');
-                item.className = 'list-group-item';
-                item.textContent = card.dataset.name;
-                item.onclick = () => {
-                    searchInput.value = card.dataset.name;
-                    searchResults.style.display = 'none';
-                    currentCategory = '';
-                    currentSort = '';
-                    applyFilters();
-                    // Scroll to the product
-                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // Add highlight effect
-                    card.classList.add('highlight');
-                    setTimeout(() => card.classList.remove('highlight'), 2000);
-                };
-                searchResults.appendChild(item);
-                matches++;
-            }
-        });
-
-        searchResults.style.display = matches > 0 ? 'block' : 'none';
     });
+
+    searchResults.style.display = matches > 0 ? 'block' : 'none';
+
+    // Dynamically filter without needing to click
+    currentCategory = '';
+    applyFilters();
+});
 
     // Close search results when clicking outside
     document.addEventListener('click', (e) => {
@@ -221,10 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (res.ok) {
                     showToast('🛒 Product added to cart', x, y);
                 } else {
-                    showToast('❌ Failed to add to cart', x, y);
+                    showToast('Failed to add to cart', x, y);
                 }
             } catch {
-                showToast('❌ Error while adding to cart', x, y);
+                showToast('Error while adding to cart', x, y);
             }
         });
     });
@@ -318,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             {% endif %}
 
                             <div class="d-flex gap-5">
-                                <form method="POST" action="{{ path('cart_add', {'id': product.id}) }}" class="d-inline">
+                                <form method="POST" action="{{ path('cart_add', {'id': product.id}) }}" class="d-inline cart-form">
                                     <input type="hidden" name="_token" value="{{ csrf_token('add' ~ product.id) }}">
                                     <button type="submit" class="btn btn-success btn-sm flex-grow-1">
                                         <i class="bi bi-cart-plus me-1"></i> Add to cart

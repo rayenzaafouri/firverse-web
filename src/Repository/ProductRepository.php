@@ -40,5 +40,17 @@ class ProductRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findDiscountedProducts(): array
+{
+    $qb = $this->createQueryBuilder('p')
+        ->innerJoin('p.productDiscounts', 'd')
+        ->addSelect('d')
+        ->where('d.valid_from <= :now')
+        ->andWhere('d.valid_until >= :now')
+        ->setParameter('now', new \DateTime());
+
+    return $qb->getQuery()->getResult();
+}
+
     
 }

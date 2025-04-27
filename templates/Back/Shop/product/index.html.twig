@@ -4,10 +4,26 @@
 {% block stylesheets %}
 <style>
 .transparent-container {
-  background: transparent; /* or any desired background */
-  img {
-  mix-blend-mode: multiply;
-    }
+    background: transparent;
+}
+.transparent-container img {
+    mix-blend-mode: multiply;
+}
+
+/* NEW: Style the button group inside table */
+.action-buttons {
+    display: flex;
+    gap: 0.3rem;
+    justify-content: center;
+}
+
+/* NEW: Make the Name column smaller */
+table th:nth-child(4),
+table td:nth-child(4) {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 </style>
 {% endblock %}
@@ -66,13 +82,17 @@
     <tbody>
     {% for product in products %}
         <tr class="product-row" data-name="{{ product.name|lower }}" data-category="{{ product.category ? product.category.name : '' }}">
-            <td> 
-                <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-sm btn-primary">View</a>
-                <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-warning">Edit</a>
-                {{ include('back/shop/product/_delete_form.html.twig') }}
+            <td>
+                <div class="action-buttons">
+                    <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-sm btn-primary">View</a>
+                    <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-warning">Edit</a>
+                    {{ include('back/shop/product/_delete_form.html.twig') }}
+                </div>
             </td>
             <td>{{ product.id }}</td>
-            <td class="transparent-container"><img src="{{ product.imageUrl }}" class="card-img-top" style="height: 100px; object-fit: contain;"></td>
+            <td class="transparent-container">
+                <img src="{{ product.imageUrl }}" class="card-img-top" style="height: 100px; object-fit: contain;">
+            </td>
             <td>{{ product.name }}</td>
             <td>{{ product.brand }}</td>
             <td>{{ product.price|number_format(2) }}</td>
@@ -103,6 +123,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const categoryFilters = document.querySelectorAll('.category-filter');
     let currentCategory = '';
 
+    function filterProducts() {
+        const searchQuery = searchInput.value.toLowerCase();
+        
+        let visibleRows = 0;
+
+        productRows.forEach(row => {
+            const matchesSearch = searchQuery === '' || row.dataset.name.includes(searchQuery);
+            const matchesCategory = currentCategory === '' || row.dataset.category === currentCategory;
+            
+            if (matchesSearch && matchesCategory) {
+                row.style.display = '';
+                visibleRows++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        if (visibleRows === 0) {
+            // Optionally: show a "no products" message dynamically
+        }
+    }
+
     function updateSearchResults(query) {
         searchResults.innerHTML = '';
         
@@ -116,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
         productRows.forEach(row => {
             const name = row.dataset.name;
             if (name.includes(query)) {
-                if (matches < 20) { // Limit to 20 items max for performance
+                if (matches < 20) {
                     const item = document.createElement('div');
                     item.className = 'list-group-item';
                     item.style.cursor = 'pointer';
@@ -124,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.onclick = function() {
                         searchInput.value = row.querySelector('td:nth-child(4)').textContent;
                         searchResults.style.display = 'none';
+                        currentCategory = '';
                         filterProducts();
                         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         row.classList.add('highlight');
@@ -137,20 +180,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (matches > 0) {
             searchResults.style.display = 'block';
-            searchResults.style.maxHeight = '160px'; // Show ~4 items at a time
+            searchResults.style.maxHeight = '160px';
         } else {
             searchResults.style.display = 'none';
         }
     }
 
-    // Search on input
+    // Make search completely dynamic
     searchInput.addEventListener('input', function() {
-        updateSearchResults(this.value.toLowerCase());
-    });
-
-    // Search on button click
-    searchButton.addEventListener('click', function() {
-        updateSearchResults(searchInput.value.toLowerCase());
+        const query = this.value.toLowerCase();
+        updateSearchResults(query);
         filterProducts();
     });
 
@@ -163,22 +202,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Combined filter function
-    function filterProducts() {
-        const searchQuery = searchInput.value.toLowerCase();
-        
-        productRows.forEach(row => {
-            const matchesSearch = searchQuery === '' || row.dataset.name.includes(searchQuery);
-            const matchesCategory = currentCategory === '' || row.dataset.category === currentCategory;
-            
-            if (matchesSearch && matchesCategory) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
-
     // Close search results when clicking outside
     document.addEventListener('click', function(e) {
         if (!searchInput.contains(e.target) && 
@@ -187,15 +210,8 @@ document.addEventListener('DOMContentLoaded', function() {
             searchResults.style.display = 'none';
         }
     });
-
-    // Press Enter to search
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            updateSearchResults(this.value.toLowerCase());
-            filterProducts();
-        }
-    });
 });
+
 </script>
 
 {% endblock %}
