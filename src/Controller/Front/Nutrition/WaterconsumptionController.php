@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/waterconsumption')]
+#[Route('/nutrition/waterconsumption')]
 class WaterconsumptionController extends AbstractController
 {
     private const DEFAULT_USER_ID = 35; // Hardcoded user id as per requirements
@@ -18,6 +18,13 @@ class WaterconsumptionController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {}
+
+    #[Route('/', name: 'app_waterconsumption_index', methods: ['GET'])]
+    public function index(): Response
+    {
+        $today = new \DateTime();
+        return $this->redirectToRoute('app_waterconsumption_show', ['date' => $today->format('Y-m-d')]);
+    }
 
     #[Route('/{date}', name: 'app_waterconsumption_show', methods: ['GET'])]
     public function show(string $date, WaterconsumptionRepository $waterconsumptionRepository): Response

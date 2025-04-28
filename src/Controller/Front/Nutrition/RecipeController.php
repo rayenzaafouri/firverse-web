@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
-#[Route('/recipe')]
+#[Route('/nutrition/recipe')]
 class RecipeController extends AbstractController
 {
     // Hardcoded user ID for all recipes

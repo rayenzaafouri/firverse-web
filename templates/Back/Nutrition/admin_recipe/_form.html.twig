@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        fetch(`/admin/recipe/food-search?q=${encodeURIComponent(query)}`)
+        fetch(`/admin/recipe/search-foods?q=${encodeURIComponent(query)}`)
             .then(response => response.json())
             .then(data => {
                 foodSearchResults.innerHTML = '';
@@ -170,57 +170,60 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateSelectedIngredientsDisplay() {
         selectedIngredients.innerHTML = '';
         selectedFoods.forEach(foodId => {
-            fetch(`/admin/recipe/food/${foodId}`)
+            fetch(`/admin/recipe/search-foods?q=${foodId}`)
                 .then(response => response.json())
-                .then(food => {
-                    const card = document.createElement('div');
-                    card.className = 'card mb-2';
-                    card.innerHTML = `
-                        <div class="card-body p-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-0">${food.name}</h6>
-                                    <div class="serving-size-container d-inline-block ml-2">
-                                        <input type="number" class="form-control form-control-sm serving-size" 
-                                               name="serving_size[${food.id}]" value="1" min="0.1" step="0.1" 
-                                               style="width: 60px; display: inline-block;"
-                                               onchange="updateNutritionTotals()">
-                                        <span class="serving-unit ml-1">serving</span>
+                .then(foods => {
+                    if (foods.length > 0) {
+                        const food = foods[0];
+                        const card = document.createElement('div');
+                        card.className = 'card mb-2';
+                        card.innerHTML = `
+                            <div class="card-body p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">${food.name}</h6>
+                                        <div class="serving-size-container d-inline-block ml-2">
+                                            <input type="number" class="form-control form-control-sm serving-size" 
+                                                   name="serving_size[${food.id}]" value="1" min="0.1" step="0.1" 
+                                                   style="width: 60px; display: inline-block;"
+                                                   onchange="updateNutritionTotals()">
+                                            <span class="serving-unit ml-1">serving</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="removeFood(${food.id})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-3">
+                                        <small class="text-muted">Calories:</small>
+                                        <span class="calories">${food.calories}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <small class="text-muted">Protein:</small>
+                                        <span class="protein">${food.protein}g</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <small class="text-muted">Carbs:</small>
+                                        <span class="carbs">${food.carbohydrate}g</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <small class="text-muted">Fat:</small>
+                                        <span class="fat">${food.fats}g</span>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-danger" onclick="removeFood(${food.id})">
-                                    <i class="fas fa-times"></i>
-                                </button>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-3">
-                                    <small class="text-muted">Calories:</small>
-                                    <span class="calories">${food.calories}</span>
-                                </div>
-                                <div class="col-3">
-                                    <small class="text-muted">Protein:</small>
-                                    <span class="protein">${food.protein}g</span>
-                                </div>
-                                <div class="col-3">
-                                    <small class="text-muted">Carbs:</small>
-                                    <span class="carbs">${food.carbs}g</span>
-                                </div>
-                                <div class="col-3">
-                                    <small class="text-muted">Fat:</small>
-                                    <span class="fat">${food.fat}g</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    card.setAttribute('data-calories', food.calories);
-                    card.setAttribute('data-protein', food.protein);
-                    card.setAttribute('data-carbs', food.carbs);
-                    card.setAttribute('data-fat', food.fat);
-                    card.setAttribute('data-fiber', food.fiber);
-                    card.setAttribute('data-sugar', food.sugar);
-                    card.setAttribute('data-sodium', food.sodium);
-                    card.setAttribute('data-potassium', food.potassium);
-                    selectedIngredients.appendChild(card);
+                        `;
+                        card.setAttribute('data-calories', food.calories);
+                        card.setAttribute('data-protein', food.protein);
+                        card.setAttribute('data-carbs', food.carbohydrate);
+                        card.setAttribute('data-fat', food.fats);
+                        card.setAttribute('data-fiber', food.fiber);
+                        card.setAttribute('data-sugar', food.sugar);
+                        card.setAttribute('data-sodium', food.sodium);
+                        card.setAttribute('data-potassium', food.potassium);
+                        selectedIngredients.appendChild(card);
+                    }
                 });
         });
     }
@@ -260,17 +263,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('totalSodium').textContent = Math.round(totalSodium) + 'mg';
         document.getElementById('totalPotassium').textContent = Math.round(totalPotassium) + 'mg';
 
-        // Show/hide nutrition summary based on whether there are ingredients
-        document.getElementById('nutritionSummary').style.display = 
-            selectedFoods.size > 0 ? 'block' : 'none';
+        document.getElementById('nutritionSummary').style.display = selectedFoods.size > 0 ? 'block' : 'none';
     }
-
-    // Close search results when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!foodSearch.contains(e.target) && !foodSearchResults.contains(e.target)) {
-            foodSearchResults.style.display = 'none';
-        }
-    });
 });
 </script>
 {% endblock %} 

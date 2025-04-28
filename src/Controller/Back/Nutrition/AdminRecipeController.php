@@ -33,6 +33,30 @@ class AdminRecipeController extends AbstractController
         ]);
     }
 
+    #[Route('/search-foods', name: 'app_admin_recipe_search_foods', methods: ['GET'])]
+    public function searchFoods(Request $request, FoodRepository $foodRepository): Response
+    {
+        $query = $request->query->get('q', '');
+        $foods = $foodRepository->findByNameLike($query);
+        
+        $results = array_map(function($food) {
+            return [
+                'id' => $food->getId(),
+                'name' => $food->getName(),
+                'calories' => $food->getCalories(),
+                'protein' => $food->getProtein(),
+                'carbohydrate' => $food->getCarbohydrate(),
+                'fats' => $food->getFats(),
+                'fiber' => $food->getFibre(),
+                'sugar' => $food->getSugar(),
+                'sodium' => $food->getSodium(),
+                'potassium' => $food->getMagnesium()
+            ];
+        }, $foods);
+        
+        return $this->json($results);
+    }
+
     #[Route('/new', name: 'app_admin_recipe_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, FoodRepository $foodRepository, UserRepository $userRepository): Response
     {
@@ -52,17 +76,45 @@ class AdminRecipeController extends AbstractController
             
             // Process the foods data from the form
             $foodIds = $request->request->all('recipe')['foods'] ?? [];
+            $servingSizes = $request->request->all('serving_size') ?? [];
             
-            // Add foods
+            // Add foods with their serving sizes
             foreach ($foodIds as $foodId) {
                 $food = $foodRepository->find($foodId);
                 if ($food) {
-                    $recipe->addFood($food);
+                    $servingSize = isset($servingSizes[$foodId]) ? (int)round($servingSizes[$foodId]) : 1;
+                    $recipe->addFood($food, $servingSize);
                 }
             }
             
             $entityManager->persist($recipe);
             $entityManager->flush();
+
+            // After recipe is persisted, create RecipeFood entries
+            foreach ($foodIds as $foodId) {
+                if (isset($servingSizes[$foodId])) {
+                    $servingSize = (int)round($servingSizes[$foodId]);
+                    
+                    // Delete existing entry if any
+                    $entityManager->getConnection()->executeStatement(
+                        'DELETE FROM recipe_food WHERE recipe_id = :recipe_id AND food_id = :food_id',
+                        [
+                            'recipe_id' => $recipe->getId(),
+                            'food_id' => $foodId
+                        ]
+                    );
+                    
+                    // Insert new entry
+                    $entityManager->getConnection()->executeStatement(
+                        'INSERT INTO recipe_food (recipe_id, food_id, servings) VALUES (:recipe_id, :food_id, :servings)',
+                        [
+                            'recipe_id' => $recipe->getId(),
+                            'food_id' => $foodId,
+                            'servings' => $servingSize
+                        ]
+                    );
+                }
+            }
 
             return $this->redirectToRoute('app_admin_recipe_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -90,6 +142,16 @@ class AdminRecipeController extends AbstractController
         $form = $this->createForm(RecipeType::class, $recipe);
         $form->handleRequest($request);
 
+        // Load existing serving sizes
+        $existingServingSizes = [];
+        $stmt = $entityManager->getConnection()->executeQuery(
+            'SELECT food_id, servings FROM recipe_food WHERE recipe_id = :recipe_id',
+            ['recipe_id' => $recipe->getId()]
+        );
+        while ($row = $stmt->fetchAssociative()) {
+            $existingServingSizes[$row['food_id']] = $row['servings'];
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             // Always use the hardcoded user ID
             $user = $userRepository->find(self::DEFAULT_USER_ID);
@@ -101,6 +163,29 @@ class AdminRecipeController extends AbstractController
             $foodIds = $request->request->all('recipe')['foods'] ?? [];
             $servingSizes = $request->request->all('serving_size') ?? [];
             
+            // Get current food IDs from recipe_food table
+            $currentFoodIds = [];
+            $stmt = $entityManager->getConnection()->executeQuery(
+                'SELECT food_id FROM recipe_food WHERE recipe_id = :recipe_id',
+                ['recipe_id' => $recipe->getId()]
+            );
+            while ($row = $stmt->fetchAssociative()) {
+                $currentFoodIds[] = $row['food_id'];
+            }
+            
+            // Delete foods that are no longer in the recipe
+            foreach ($currentFoodIds as $foodId) {
+                if (!in_array($foodId, $foodIds)) {
+                    $entityManager->getConnection()->executeStatement(
+                        'DELETE FROM recipe_food WHERE recipe_id = :recipe_id AND food_id = :food_id',
+                        [
+                            'recipe_id' => $recipe->getId(),
+                            'food_id' => $foodId
+                        ]
+                    );
+                }
+            }
+            
             // Clear existing foods
             foreach ($recipe->getFoods() as $food) {
                 $recipe->removeFood($food);
@@ -110,12 +195,38 @@ class AdminRecipeController extends AbstractController
             foreach ($foodIds as $foodId) {
                 $food = $foodRepository->find($foodId);
                 if ($food) {
-                    $servingSize = $servingSizes[$foodId] ?? 1;
-                    $recipe->addFood($food, floatval($servingSize));
+                    $servingSize = isset($servingSizes[$foodId]) ? (int)round($servingSizes[$foodId]) : 1;
+                    $recipe->addFood($food, $servingSize);
                 }
             }
             
             $entityManager->flush();
+
+            // After recipe is updated, update RecipeFood entries
+            foreach ($foodIds as $foodId) {
+                if (isset($servingSizes[$foodId])) {
+                    $servingSize = (int)round($servingSizes[$foodId]);
+                    
+                    // Delete existing entry if any
+                    $entityManager->getConnection()->executeStatement(
+                        'DELETE FROM recipe_food WHERE recipe_id = :recipe_id AND food_id = :food_id',
+                        [
+                            'recipe_id' => $recipe->getId(),
+                            'food_id' => $foodId
+                        ]
+                    );
+                    
+                    // Insert new entry
+                    $entityManager->getConnection()->executeStatement(
+                        'INSERT INTO recipe_food (recipe_id, food_id, servings) VALUES (:recipe_id, :food_id, :servings)',
+                        [
+                            'recipe_id' => $recipe->getId(),
+                            'food_id' => $foodId,
+                            'servings' => $servingSize
+                        ]
+                    );
+                }
+            }
 
             return $this->redirectToRoute('app_admin_recipe_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -125,6 +236,7 @@ class AdminRecipeController extends AbstractController
             'form' => $form,
             'foods' => $foodRepository->findAll(),
             'users' => $userRepository->findAll(),
+            'existingServingSizes' => $existingServingSizes,
         ]);
     }
 
@@ -138,21 +250,5 @@ class AdminRecipeController extends AbstractController
         }
 
         return $this->redirectToRoute('app_admin_recipe_index', [], Response::HTTP_SEE_OTHER);
-    }
-
-    #[Route('/search-foods', name: 'app_admin_recipe_search_foods', methods: ['GET'])]
-    public function searchFoods(Request $request, FoodRepository $foodRepository): Response
-    {
-        $query = $request->query->get('q', '');
-        $foods = $foodRepository->findByNameLike($query);
-        
-        $results = array_map(function($food) {
-            return [
-                'id' => $food->getId(),
-                'name' => $food->getName(),
-            ];
-        }, $foods);
-        
-        return $this->json($results);
     }
 } 
