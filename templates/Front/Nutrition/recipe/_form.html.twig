@@ -357,11 +357,22 @@
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" name="{{ form.foods.vars.full_name }}[]" value="${food.id}">
                         </div>
                     </div>
                 `;
 
-                selectedIngredients.querySelector('.ingredients-list').insertAdjacentHTML('beforeend', ingredientHtml);
+                const ingredientsList = selectedIngredients.querySelector('.ingredients-list');
+                if (!ingredientsList) {
+                    // If the ingredients list doesn't exist, create it
+                    const newIngredientsList = document.createElement('div');
+                    newIngredientsList.className = 'ingredients-list';
+                    selectedIngredients.appendChild(newIngredientsList);
+                    newIngredientsList.insertAdjacentHTML('beforeend', ingredientHtml);
+                } else {
+                    ingredientsList.insertAdjacentHTML('beforeend', ingredientHtml);
+                }
+
                 ingredientSearch.value = '';
                 ingredientSearchResults.style.display = 'none';
                 updateNutritionTotals();
