@@ -116,10 +116,9 @@ class DailyNutritionController extends AbstractController
     }
 
     #[Route('/{date}', name: 'app_daily_nutrition_show', methods: ['GET'])]
-    public function show(string $date, NutritionRepository $nutritionRepository, FoodRepository $foodRepository, RecipeRepository $recipeRepository, WaterconsumptionRepository $waterconsumptionRepository, SessionInterface $session): Response
+    public function show(string $date, FoodRepository $foodRepository, RecipeRepository $recipeRepository, NutritionRepository $nutritionRepository, SessionInterface $session): Response
     {
         $dateObj = \DateTime::createFromFormat('Y-m-d', $date);
-        
         if (!$dateObj) {
             throw $this->createNotFoundException('Invalid date format');
         }
@@ -130,98 +129,57 @@ class DailyNutritionController extends AbstractController
         ]);
 
         if (!$nutrition) {
-            // Create new nutrition record if it doesn't exist
             $nutrition = new Nutrition();
-            $nutrition->setDate($dateObj);
             $nutrition->setUserId(self::DEFAULT_USER_ID);
+            $nutrition->setDate($dateObj);
+            $nutrition->setEntityManager($this->entityManager);
             $this->entityManager->persist($nutrition);
             $this->entityManager->flush();
+        } else {
+            $nutrition->setEntityManager($this->entityManager);
         }
 
-        // Fetch or create Waterconsumption for this date
-        $waterconsumption = $waterconsumptionRepository->findOneBy([
-            'user' => self::DEFAULT_USER_ID,
-            'ConsumptionDate' => $dateObj
-        ]);
-        if (!$waterconsumption) {
-            $waterconsumption = new \App\Entity\Waterconsumption();
-            $waterconsumption->setUser($this->entityManager->getReference('App\\Entity\\User', self::DEFAULT_USER_ID));
-            $waterconsumption->setConsumptionDate($dateObj);
-            $waterconsumption->setAmountConsumed(0);
-            $this->entityManager->persist($waterconsumption);
-            $this->entityManager->flush();
-        }
-
-        // Get all available foods and recipes
         $foods = $foodRepository->findAll();
         $recipes = $recipeRepository->findAll();
 
-        // Get per-meal foods/recipes from session
-        $mealFoods = $session->get('mealFoods', []);
-        $mealRecipes = $session->get('mealRecipes', []);
-
-        // For foods: If any food in nutrition is not in any meal, put it in breakfast
-        $currentMealFoods = $mealFoods[$date] ?? [];
-        $allMappedFoodIds = [];
-        foreach ($currentMealFoods as $ids) {
-            $allMappedFoodIds = array_merge($allMappedFoodIds, $ids);
+        // Get foods and recipes for each meal type
+        $mealFoods = [];
+        $mealRecipes = [];
+        foreach (Nutrition::MEAL_TYPES as $mealType) {
+            $mealFoods[$mealType] = $nutrition->getFoodsByMealType($mealType);
+            $mealRecipes[$mealType] = $nutrition->getRecipesByMealType($mealType);
         }
-        $allMappedFoodIds = array_unique($allMappedFoodIds);
-        foreach ($nutrition->getFoods() as $food) {
-            if (!in_array($food->getId(), $allMappedFoodIds)) {
-                $mealFoods[$date]['breakfast'][] = $food->getId();
-                $mealFoods[$date]['breakfast'] = array_unique($mealFoods[$date]['breakfast']);
-            }
-        }
-        // For recipes: If any recipe in nutrition is not in any meal, put it in breakfast
-        $currentMealRecipes = $mealRecipes[$date] ?? [];
-        $allMappedRecipeIds = [];
-        foreach ($currentMealRecipes as $ids) {
-            $allMappedRecipeIds = array_merge($allMappedRecipeIds, $ids);
-        }
-        $allMappedRecipeIds = array_unique($allMappedRecipeIds);
-        foreach ($nutrition->getRecipes() as $recipe) {
-            if (!in_array($recipe->getId(), $allMappedRecipeIds)) {
-                $mealRecipes[$date]['breakfast'][] = $recipe->getId();
-                $mealRecipes[$date]['breakfast'] = array_unique($mealRecipes[$date]['breakfast']);
-            }
-        }
-        // Save back to session
-        $session->set('mealFoods', $mealFoods);
-        $session->set('mealRecipes', $mealRecipes);
 
         return $this->render('Front/Nutrition/daily_nutrition/show.html.twig', [
             'nutrition' => $nutrition,
             'foods' => $foods,
             'recipes' => $recipes,
-            'meal_types' => self::MEAL_TYPES,
-            'mealFoods' => $mealFoods[$date] ?? [],
-            'mealRecipes' => $mealRecipes[$date] ?? [],
-            'waterconsumption' => $waterconsumption,
+            'meal_types' => Nutrition::MEAL_TYPES,
+            'mealFoods' => $mealFoods,
+            'mealRecipes' => $mealRecipes,
         ]);
     }
 
     #[Route('/{date}/add-item/{mealType}', name: 'app_daily_nutrition_add_item', methods: ['POST'])]
     public function addItem(Request $request, string $date, string $mealType, FoodRepository $foodRepository, RecipeRepository $recipeRepository, NutritionRepository $nutritionRepository, SessionInterface $session): Response
     {
-        if (!in_array($mealType, self::MEAL_TYPES)) {
+        if (!in_array($mealType, Nutrition::MEAL_TYPES)) {
             throw $this->createNotFoundException('Invalid meal type');
         }
 
+        $type = $request->request->get('type');
+        $id = $request->request->get('id');
+        $serving = (int)$request->request->get('serving', 1);
+
+        if (!$type || !$id) {
+            throw $this->createNotFoundException('Missing required parameters');
+        }
+
         $dateObj = \DateTime::createFromFormat('Y-m-d', $date);
-        
         if (!$dateObj) {
             throw $this->createNotFoundException('Invalid date format');
         }
 
-        $selectedItem = $request->request->get('selected_item');
-        if (!$selectedItem) {
-            throw $this->createNotFoundException('No item selected');
-        }
-
-        // Parse the selected item (format: "type_id")
-        list($type, $id) = explode('_', $selectedItem);
-        
         $nutrition = $nutritionRepository->findOneBy([
             'user_id' => self::DEFAULT_USER_ID,
             'date' => $dateObj
@@ -229,8 +187,11 @@ class DailyNutritionController extends AbstractController
 
         if (!$nutrition) {
             $nutrition = new Nutrition();
-            $nutrition->setDate($dateObj);
             $nutrition->setUserId(self::DEFAULT_USER_ID);
+            $nutrition->setDate($dateObj);
+            $nutrition->setEntityManager($this->entityManager);
+        } else {
+            $nutrition->setEntityManager($this->entityManager);
         }
 
         if ($type === 'food') {
@@ -238,23 +199,13 @@ class DailyNutritionController extends AbstractController
             if (!$food) {
                 throw $this->createNotFoundException('Food not found');
             }
-            $nutrition->addFood($food);
-            // Track by meal in session
-            $mealFoods = $session->get('mealFoods', []);
-            $mealFoods[$date][$mealType][] = $food->getId();
-            $mealFoods[$date][$mealType] = array_unique($mealFoods[$date][$mealType]);
-            $session->set('mealFoods', $mealFoods);
+            $nutrition->addFood($food, $mealType, $serving);
         } elseif ($type === 'recipe') {
             $recipe = $recipeRepository->find($id);
             if (!$recipe) {
                 throw $this->createNotFoundException('Recipe not found');
             }
-            $nutrition->addRecipe($recipe);
-            // Track by meal in session
-            $mealRecipes = $session->get('mealRecipes', []);
-            $mealRecipes[$date][$mealType][] = $recipe->getId();
-            $mealRecipes[$date][$mealType] = array_unique($mealRecipes[$date][$mealType]);
-            $session->set('mealRecipes', $mealRecipes);
+            $nutrition->addRecipe($recipe, $mealType, $serving);
         } else {
             throw $this->createNotFoundException('Invalid item type');
         }
@@ -266,14 +217,13 @@ class DailyNutritionController extends AbstractController
     }
 
     #[Route('/{date}/remove-food/{foodId}/{mealType}', name: 'app_daily_nutrition_remove_food', methods: ['POST'])]
-    public function removeFood(string $date, int $foodId, string $mealType, FoodRepository $foodRepository, NutritionRepository $nutritionRepository, SessionInterface $session): Response
+    public function removeFood(string $date, int $foodId, string $mealType, FoodRepository $foodRepository, NutritionRepository $nutritionRepository): Response
     {
-        if (!in_array($mealType, self::MEAL_TYPES)) {
+        if (!in_array($mealType, Nutrition::MEAL_TYPES)) {
             throw $this->createNotFoundException('Invalid meal type');
         }
 
         $dateObj = \DateTime::createFromFormat('Y-m-d', $date);
-        
         if (!$dateObj) {
             throw $this->createNotFoundException('Invalid date format');
         }
@@ -289,13 +239,8 @@ class DailyNutritionController extends AbstractController
         ]);
 
         if ($nutrition) {
-            $nutrition->removeFood($food);
-            // Remove from session mealFoods
-            $mealFoods = $session->get('mealFoods', []);
-            if (isset($mealFoods[$date][$mealType])) {
-                $mealFoods[$date][$mealType] = array_diff($mealFoods[$date][$mealType], [$foodId]);
-                $session->set('mealFoods', $mealFoods);
-            }
+            $nutrition->setEntityManager($this->entityManager);
+            $nutrition->removeFood($food, $mealType);
             $this->entityManager->flush();
         }
 
@@ -303,14 +248,13 @@ class DailyNutritionController extends AbstractController
     }
 
     #[Route('/{date}/remove-recipe/{recipeId}/{mealType}', name: 'app_daily_nutrition_remove_recipe', methods: ['POST'])]
-    public function removeRecipe(string $date, int $recipeId, string $mealType, RecipeRepository $recipeRepository, NutritionRepository $nutritionRepository, SessionInterface $session): Response
+    public function removeRecipe(string $date, int $recipeId, string $mealType, RecipeRepository $recipeRepository, NutritionRepository $nutritionRepository): Response
     {
-        if (!in_array($mealType, self::MEAL_TYPES)) {
+        if (!in_array($mealType, Nutrition::MEAL_TYPES)) {
             throw $this->createNotFoundException('Invalid meal type');
         }
 
         $dateObj = \DateTime::createFromFormat('Y-m-d', $date);
-        
         if (!$dateObj) {
             throw $this->createNotFoundException('Invalid date format');
         }
@@ -326,13 +270,80 @@ class DailyNutritionController extends AbstractController
         ]);
 
         if ($nutrition) {
-            $nutrition->removeRecipe($recipe);
-            // Remove from session mealRecipes
-            $mealRecipes = $session->get('mealRecipes', []);
-            if (isset($mealRecipes[$date][$mealType])) {
-                $mealRecipes[$date][$mealType] = array_diff($mealRecipes[$date][$mealType], [$recipeId]);
-                $session->set('mealRecipes', $mealRecipes);
-            }
+            $nutrition->setEntityManager($this->entityManager);
+            $nutrition->removeRecipe($recipe, $mealType);
+            $this->entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_daily_nutrition_show', ['date' => $date]);
+    }
+
+    #[Route('/{date}/update-food-serving/{foodId}/{mealType}', name: 'app_daily_nutrition_update_food_serving', methods: ['POST'])]
+    public function updateFoodServing(Request $request, string $date, int $foodId, string $mealType, FoodRepository $foodRepository, NutritionRepository $nutritionRepository): Response
+    {
+        if (!in_array($mealType, Nutrition::MEAL_TYPES)) {
+            throw $this->createNotFoundException('Invalid meal type');
+        }
+
+        $serving = (int)$request->request->get('serving', 1);
+        if ($serving < 1) {
+            throw $this->createNotFoundException('Invalid serving size');
+        }
+
+        $dateObj = \DateTime::createFromFormat('Y-m-d', $date);
+        if (!$dateObj) {
+            throw $this->createNotFoundException('Invalid date format');
+        }
+
+        $food = $foodRepository->find($foodId);
+        if (!$food) {
+            throw $this->createNotFoundException('Food not found');
+        }
+
+        $nutrition = $nutritionRepository->findOneBy([
+            'user_id' => self::DEFAULT_USER_ID,
+            'date' => $dateObj
+        ]);
+
+        if ($nutrition) {
+            $nutrition->setEntityManager($this->entityManager);
+            $nutrition->updateFoodServing($food, $mealType, $serving);
+            $this->entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_daily_nutrition_show', ['date' => $date]);
+    }
+
+    #[Route('/{date}/update-recipe-serving/{recipeId}/{mealType}', name: 'app_daily_nutrition_update_recipe_serving', methods: ['POST'])]
+    public function updateRecipeServing(Request $request, string $date, int $recipeId, string $mealType, RecipeRepository $recipeRepository, NutritionRepository $nutritionRepository): Response
+    {
+        if (!in_array($mealType, Nutrition::MEAL_TYPES)) {
+            throw $this->createNotFoundException('Invalid meal type');
+        }
+
+        $serving = (int)$request->request->get('serving', 1);
+        if ($serving < 1) {
+            throw $this->createNotFoundException('Invalid serving size');
+        }
+
+        $dateObj = \DateTime::createFromFormat('Y-m-d', $date);
+        if (!$dateObj) {
+            throw $this->createNotFoundException('Invalid date format');
+        }
+
+        $recipe = $recipeRepository->find($recipeId);
+        if (!$recipe) {
+            throw $this->createNotFoundException('Recipe not found');
+        }
+
+        $nutrition = $nutritionRepository->findOneBy([
+            'user_id' => self::DEFAULT_USER_ID,
+            'date' => $dateObj
+        ]);
+
+        if ($nutrition) {
+            $nutrition->setEntityManager($this->entityManager);
+            $nutrition->updateRecipeServing($recipe, $mealType, $serving);
             $this->entityManager->flush();
         }
 

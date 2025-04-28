@@ -188,4 +188,58 @@ class Recipe
 
         return $this;
     }
+
+    /**
+     * Get the serving size for a specific food in this recipe
+     * 
+     * @param Food $food The food to get the serving size for
+     * @return float The serving size for the food
+     */
+    public function getFoodServingSize(Food $food): float
+    {
+        // This is a placeholder implementation
+        // In a real implementation, this would query the recipe_food table
+        // For now, we'll return a default value of 1
+        return 1.0;
+    }
+
+    public function getTotalCalories(): float
+    {
+        $total = 0;
+        foreach ($this->getFoods() as $food) {
+            $servingSize = $this->getFoodServingSize($food);
+            $total += $food->getCalories() * $servingSize;
+        }
+        return $total;
+    }
+
+    public function getTotalProtein(): float
+    {
+        $total = 0;
+        foreach ($this->getFoods() as $food) {
+            $servingSize = $this->getFoodServingSize($food);
+            $total += $food->getProtein() * $servingSize;
+        }
+        return $total;
+    }
+
+    public function getTotalCarbohydrate(): float
+    {
+        $total = 0;
+        foreach ($this->getFoods() as $food) {
+            $servingSize = $this->getFoodServingSize($food);
+            $total += $food->getCarbohydrate() * $servingSize;
+        }
+        return $total;
+    }
+
+    public function getTotalFats(): float
+    {
+        $total = 0;
+        foreach ($this->getFoods() as $food) {
+            $servingSize = $this->getFoodServingSize($food);
+            $total += $food->getFats() * $servingSize;
+        }
+        return $total;
+    }
 }
