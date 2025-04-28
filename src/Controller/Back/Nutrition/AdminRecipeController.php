@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Back\Nutrition;
 
 use App\Entity\Recipe;
 use App\Entity\Food;
@@ -16,24 +16,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
-#[Route('/recipe')]
-class RecipeController extends AbstractController
+#[Route('/admin/recipe')]
+class AdminRecipeController extends AbstractController
 {
     // Hardcoded user ID for all recipes
     private const DEFAULT_USER_ID = 35;
 
-    #[Route('/', name: 'app_recipe_index', methods: ['GET'])]
+    #[Route('/', name: 'app_admin_recipe_index', methods: ['GET'])]
     public function index(RecipeRepository $recipeRepository): Response
     {
-        // Filter recipes by the hardcoded user ID
-        $recipes = $recipeRepository->findBy(['user' => self::DEFAULT_USER_ID]);
+        // Admin can see all recipes
+        $recipes = $recipeRepository->findAll();
         
-        return $this->render('recipe/index.html.twig', [
+        return $this->render('Back/Nutrition/admin_recipe/index.html.twig', [
             'recipes' => $recipes,
         ]);
     }
 
-    #[Route('/new', name: 'app_recipe_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_admin_recipe_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, FoodRepository $foodRepository, UserRepository $userRepository): Response
     {
         $recipe = new Recipe();
@@ -50,13 +50,24 @@ class RecipeController extends AbstractController
                 $recipe->setUser($user);
             }
             
+            // Process the foods data from the form
+            $foodIds = $request->request->all('recipe')['foods'] ?? [];
+            
+            // Add foods
+            foreach ($foodIds as $foodId) {
+                $food = $foodRepository->find($foodId);
+                if ($food) {
+                    $recipe->addFood($food);
+                }
+            }
+            
             $entityManager->persist($recipe);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_recipe_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_admin_recipe_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('recipe/new.html.twig', [
+        return $this->render('Back/Nutrition/admin_recipe/new.html.twig', [
             'recipe' => $recipe,
             'form' => $form,
             'foods' => $foodRepository->findAll(),
@@ -64,27 +75,18 @@ class RecipeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_recipe_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_admin_recipe_show', methods: ['GET'])]
     public function show(Recipe $recipe): Response
     {
-        // Check if the recipe belongs to the hardcoded user
-        if ($recipe->getUser() && $recipe->getUser()->getId() !== self::DEFAULT_USER_ID) {
-            throw $this->createNotFoundException('Recipe not found or access denied.');
-        }
-        
-        return $this->render('recipe/show.html.twig', [
+        // Admin can view any recipe
+        return $this->render('Back/Nutrition/admin_recipe/show.html.twig', [
             'recipe' => $recipe,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_recipe_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_admin_recipe_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Recipe $recipe, EntityManagerInterface $entityManager, FoodRepository $foodRepository, UserRepository $userRepository): Response
     {
-        // Check if the recipe belongs to the hardcoded user
-        if ($recipe->getUser() && $recipe->getUser()->getId() !== self::DEFAULT_USER_ID) {
-            throw $this->createNotFoundException('Recipe not found or access denied.');
-        }
-        
         $form = $this->createForm(RecipeType::class, $recipe);
         $form->handleRequest($request);
 
@@ -95,12 +97,30 @@ class RecipeController extends AbstractController
                 $recipe->setUser($user);
             }
             
+            // Process the foods data from the form
+            $foodIds = $request->request->all('recipe')['foods'] ?? [];
+            $servingSizes = $request->request->all('serving_size') ?? [];
+            
+            // Clear existing foods
+            foreach ($recipe->getFoods() as $food) {
+                $recipe->removeFood($food);
+            }
+            
+            // Add new foods with their serving sizes
+            foreach ($foodIds as $foodId) {
+                $food = $foodRepository->find($foodId);
+                if ($food) {
+                    $servingSize = $servingSizes[$foodId] ?? 1;
+                    $recipe->addFood($food, floatval($servingSize));
+                }
+            }
+            
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_recipe_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_admin_recipe_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('recipe/edit.html.twig', [
+        return $this->render('Back/Nutrition/admin_recipe/edit.html.twig', [
             'recipe' => $recipe,
             'form' => $form,
             'foods' => $foodRepository->findAll(),
@@ -108,23 +128,19 @@ class RecipeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_recipe_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_admin_recipe_delete', methods: ['POST'])]
     public function delete(Request $request, Recipe $recipe, EntityManagerInterface $entityManager): Response
     {
-        // Check if the recipe belongs to the hardcoded user
-        if ($recipe->getUser() && $recipe->getUser()->getId() !== self::DEFAULT_USER_ID) {
-            throw $this->createNotFoundException('Recipe not found or access denied.');
-        }
-        
+        // Admin can delete any recipe
         if ($this->isCsrfTokenValid('delete'.$recipe->getId(), $request->request->get('_token'))) {
             $entityManager->remove($recipe);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_recipe_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_admin_recipe_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/search-foods', name: 'app_recipe_search_foods', methods: ['GET'])]
+    #[Route('/search-foods', name: 'app_admin_recipe_search_foods', methods: ['GET'])]
     public function searchFoods(Request $request, FoodRepository $foodRepository): Response
     {
         $query = $request->query->get('q', '');

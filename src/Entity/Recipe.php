@@ -30,9 +30,9 @@ class Recipe
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-#[Assert\NotBlank]
-#[Assert\Length(min: 3, max: 40, minMessage: 'Recipe name must be at least {{ limit }} characters', maxMessage: 'Recipe name cannot be longer than {{ limit }} characters')]
-private ?string $name = null;
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 40, minMessage: 'Recipe name must be at least {{ limit }} characters', maxMessage: 'Recipe name cannot be longer than {{ limit }} characters')]
+    private ?string $name = null;
 
     public function getName(): ?string
     {
@@ -125,16 +125,10 @@ private ?string $name = null;
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Food::class, inversedBy: 'recipes')]
-    #[ORM\JoinTable(
-        name: 'recipe_food',
-        joinColumns: [
-            new ORM\JoinColumn(name: 'recipe_id', referencedColumnName: 'id')
-        ],
-        inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'food_id', referencedColumnName: 'id')
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Food::class)]
+    #[ORM\JoinTable(name: 'recipe_food')]
+    #[ORM\JoinColumn(name: 'recipe_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'food_id', referencedColumnName: 'id')]
     private Collection $foods;
 
     public function __construct()
@@ -148,13 +142,10 @@ private ?string $name = null;
      */
     public function getFoods(): Collection
     {
-        if (!$this->foods instanceof Collection) {
-            $this->foods = new ArrayCollection();
-        }
         return $this->foods;
     }
 
-    public function addFood(Food $food): self
+    public function addFood(Food $food, int $servings = 1): self
     {
         if (!$this->getFoods()->contains($food)) {
             $this->getFoods()->add($food);
@@ -166,6 +157,12 @@ private ?string $name = null;
     {
         $this->getFoods()->removeElement($food);
         return $this;
+    }
+
+    public function getServingSize(Food $food): int
+    {
+        // This should be implemented in the repository
+        return 1;
     }
 
     public function getTimesUsed(): ?int
@@ -191,5 +188,4 @@ private ?string $name = null;
 
         return $this;
     }
-
 }

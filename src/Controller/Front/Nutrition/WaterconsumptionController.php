@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Front\Nutrition;
 
 use App\Entity\Waterconsumption;
 use App\Repository\WaterconsumptionRepository;
@@ -59,7 +59,7 @@ class WaterconsumptionController extends AbstractController
             $this->entityManager->flush();
         }
         $last10days = $waterconsumptionRepository->findLast10DaysForUser(self::DEFAULT_USER_ID);
-        return $this->render('waterconsumption/show.html.twig', [
+        return $this->render('Front/Nutrition/waterconsumption/show.html.twig', [
             'waterconsumption' => $waterconsumption,
             'last10days' => $last10days,
         ]);

@@ -44,12 +44,11 @@ class FoodRepository extends ServiceEntityRepository
     public function findByNameLike(string $query): array
     {
         return $this->createQueryBuilder('f')
-            ->where('LOWER(f.name) LIKE LOWER(:query)')
+            ->where('f.name LIKE :query')
             ->setParameter('query', '%' . $query . '%')
             ->orderBy('f.name', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }

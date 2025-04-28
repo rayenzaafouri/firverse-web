@@ -10,14 +10,14 @@
                 <h1 class="h3 mb-0">Edit Food</h1>
             </div>
             <div class="card-body">
-                {{ include('food/_form.html.twig', {'button_label': 'Update'}) }}
+                {{ include('Back/Nutrition/food/_form.html.twig', {'button_label': 'Update'}) }}
                 
                 <div class="d-flex justify-content-between mt-3">
                     <a href="{{ path('app_food_index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left"></i> Back to list
                     </a>
                     
-                    {{ include('food/_delete_form.html.twig') }}
+                    {{ include('Back/Nutrition/food/_delete_form.html.twig') }}
                 </div>
             </div>
         </div>

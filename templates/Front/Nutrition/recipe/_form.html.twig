@@ -56,7 +56,9 @@
                                             <div class="serving-size-container">
                                                 <label class="small text-muted">Serving:</label>
                                                 <input type="number" class="form-control form-control-sm serving-size" 
-                                                       name="serving_size[{{ food.id }}]" value="1" min="0.1" step="0.1">
+                                                       name="serving_size[{{ food.id }}]" 
+                                                       value="{{ existingServingSizes[food.id]|default(1) }}" 
+                                                       min="0.1" step="0.1">
                                             </div>
                                         </div>
                                         <div class="col-md-9">
@@ -168,7 +170,7 @@
                 <a href="{{ path('app_recipe_index') }}" class="btn btn-secondary mr-2">
                     <i class="fas fa-arrow-left"></i> Back to list
                 </a>
-                <button class="btn btn-primary">
+                <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> {{ button_label|default('Save') }}
                 </button>
             </div>
@@ -177,10 +179,11 @@
 {{ form_end(form) }}
 
 <script>
-    (function() {
+    document.addEventListener('DOMContentLoaded', function() {
         let currentFocus = -1;
         let searchTimeout;
         let ingredientSearch, ingredientSearchResults, addIngredientBtn, selectedIngredients, nutritionSummary;
+        let foodsInput;
 
         function initializeSearch() {
             ingredientSearch = document.getElementById('ingredientSearch');
@@ -188,9 +191,29 @@
             addIngredientBtn = document.getElementById('addIngredientBtn');
             selectedIngredients = document.getElementById('selectedIngredients');
             nutritionSummary = document.getElementById('nutritionSummary');
+            foodsInput = document.querySelector('input[name="{{ form.foods.vars.full_name }}"]');
 
             if (!ingredientSearch || !ingredientSearchResults || !addIngredientBtn || !selectedIngredients || !nutritionSummary) {
                 return;
+            }
+
+            // Function to update the foods input
+            function updateFoodsInput() {
+                const foodIds = [];
+                document.querySelectorAll('.ingredient-item').forEach(item => {
+                    foodIds.push(item.dataset.id);
+                });
+                
+                // Update the hidden input with the current food IDs
+                const foodsContainer = document.querySelector('div[style="display: none;"]');
+                foodsContainer.innerHTML = '';
+                foodIds.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = '{{ form.foods.vars.full_name }}[]';
+                    input.value = id;
+                    foodsContainer.appendChild(input);
+                });
             }
 
             // Function to calculate and update nutrition totals
@@ -248,306 +271,148 @@
             // Function to search ingredients with debounce
             function searchIngredients(query) {
                 clearTimeout(searchTimeout);
-                
-                if (query.length < 1) {
-                    ingredientSearchResults.style.display = 'none';
-                    return;
-                }
-                
                 searchTimeout = setTimeout(() => {
-                    fetch(`/nutrition/food/search?q=${encodeURIComponent(query)}`)
+                    if (query.length < 2) {
+                        ingredientSearchResults.style.display = 'none';
+                        return;
+                    }
+
+                    fetch(`/recipe/search-foods?q=${encodeURIComponent(query)}`)
                         .then(response => {
                             if (!response.ok) {
-                                return response.json().then(err => {
-                                    throw new Error(err.message || `HTTP error! status: ${response.status}`);
-                                });
+                                throw new Error('Network response was not ok');
                             }
                             return response.json();
                         })
-                        .then(results => {
-                            if (Array.isArray(results)) {
-                                displaySearchResults(results);
+                        .then(data => {
+                            ingredientSearchResults.innerHTML = '';
+                            if (data.length > 0) {
+                                data.forEach(food => {
+                                    const div = document.createElement('div');
+                                    div.className = 'list-group-item list-group-item-action';
+                                    div.innerHTML = food.name;
+                                    div.addEventListener('click', () => addIngredient(food));
+                                    ingredientSearchResults.appendChild(div);
+                                });
+                                ingredientSearchResults.style.display = 'block';
                             } else {
-                                throw new Error('Invalid response format');
+                                ingredientSearchResults.style.display = 'none';
                             }
                         })
                         .catch(error => {
-                            console.error('Search error:', error);
-                            ingredientSearchResults.innerHTML = `
-                                <div class="list-group-item text-danger">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    Error searching ingredients: ${error.message}
-                                </div>
-                            `;
-                            ingredientSearchResults.style.display = 'block';
+                            console.error('Error searching ingredients:', error);
+                            ingredientSearchResults.style.display = 'none';
                         });
-                }, 150);
+                }, 300);
             }
-            
-            // Function to check if an ingredient is already selected
-            function isIngredientSelected(id) {
-                return document.querySelector(`.ingredient-item[data-id="${id}"]`) !== null;
-            }
-            
-            // Function to display search results
-            function displaySearchResults(results) {
-                ingredientSearchResults.innerHTML = '';
-                currentFocus = -1;
-                
-                if (results.length === 0) {
-                    ingredientSearchResults.innerHTML = '<div class="list-group-item">No ingredients found</div>';
-                } else {
-                    results.forEach((food, index) => {
-                        if (!isIngredientSelected(food.id)) {
-                            const item = document.createElement('a');
-                            item.href = '#';
-                            item.className = 'list-group-item list-group-item-action';
-                            item.textContent = food.name;
-                            item.dataset.id = food.id;
-                            item.dataset.name = food.name;
-                            item.dataset.index = index;
-                            
-                            item.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                addIngredient(food);
-                                ingredientSearch.value = '';
-                                ingredientSearchResults.style.display = 'none';
-                            });
-                            
-                            ingredientSearchResults.appendChild(item);
-                        }
-                    });
-                }
-                
-                ingredientSearchResults.style.display = 'block';
-            }
-            
+
             // Function to add an ingredient
             function addIngredient(food) {
-                if (isIngredientSelected(food.id)) return;
-                
-                const ingredientElement = document.createElement('div');
-                ingredientElement.className = 'ingredient-item card mb-2';
-                ingredientElement.dataset.id = food.id;
-                ingredientElement.dataset.calories = food.calories || 0;
-                ingredientElement.dataset.protein = food.protein || 0;
-                ingredientElement.dataset.carbs = food.carbohydrate || 0;
-                ingredientElement.dataset.fats = food.fats || 0;
-                ingredientElement.dataset.fiber = food.fiber || 0;
-                ingredientElement.dataset.sugar = food.sugar || 0;
-                ingredientElement.dataset.sodium = food.sodium || 0;
-                ingredientElement.dataset.potassium = food.potassium || 0;
-                
-                ingredientElement.innerHTML = `
-                    <div class="card-body p-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="ingredient-name font-weight-bold">${food.name}</div>
-                            <button type="button" class="btn-close remove-ingredient" aria-label="Remove"></button>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-3">
-                                <div class="serving-size-container">
-                                    <label class="small text-muted">Serving:</label>
-                                    <input type="number" class="form-control form-control-sm serving-size" 
-                                           name="serving_size[${food.id}]" value="1" min="0.1" step="0.1">
-                                </div>
+                const existingIngredient = document.querySelector(`.ingredient-item[data-id="${food.id}"]`);
+                if (existingIngredient) {
+                    return;
+                }
+
+                const ingredientHtml = `
+                    <div class="ingredient-item card mb-2" data-id="${food.id}" 
+                         data-calories="${food.calories || 0}" 
+                         data-protein="${food.protein || 0}" 
+                         data-carbs="${food.carbohydrate || 0}" 
+                         data-fats="${food.fats || 0}"
+                         data-fiber="${food.fiber || 0}"
+                         data-sugar="${food.sugar || 0}"
+                         data-sodium="${food.sodium || 0}"
+                         data-potassium="${food.potassium || 0}">
+                        <div class="card-body p-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="ingredient-name font-weight-bold">${food.name}</div>
+                                <button type="button" class="btn-close remove-ingredient" aria-label="Remove"></button>
                             </div>
-                            <div class="col-md-9">
-                                <div class="nutrition-info d-flex justify-content-between">
-                                    <div class="nutrition-item">
-                                        <span class="small text-muted">Calories:</span>
-                                        <span class="calories">${food.calories || 0}</span>
-                                    </div>
-                                    <div class="nutrition-item">
-                                        <span class="small text-muted">Protein:</span>
-                                        <span class="protein">${food.protein || 0}g</span>
-                                    </div>
-                                    <div class="nutrition-item">
-                                        <span class="small text-muted">Carbs:</span>
-                                        <span class="carbs">${food.carbohydrate || 0}g</span>
-                                    </div>
-                                    <div class="nutrition-item">
-                                        <span class="small text-muted">Fat:</span>
-                                        <span class="fats">${food.fats || 0}g</span>
+                            <div class="row mt-2">
+                                <div class="col-md-3">
+                                    <div class="serving-size-container">
+                                        <label class="small text-muted">Serving:</label>
+                                        <input type="number" class="form-control form-control-sm serving-size" 
+                                               name="serving_size[${food.id}]" value="1" min="0.1" step="0.1">
                                     </div>
                                 </div>
+                                <div class="col-md-9">
+                                    <div class="nutrition-info d-flex justify-content-between">
+                                        <div class="nutrition-item">
+                                            <span class="small text-muted">Calories:</span>
+                                            <span class="calories">${food.calories || 0}</span>
+                                        </div>
+                                        <div class="nutrition-item">
+                                            <span class="small text-muted">Protein:</span>
+                                            <span class="protein">${food.protein || 0}g</span>
+                                        </div>
+                                        <div class="nutrition-item">
+                                            <span class="small text-muted">Carbs:</span>
+                                            <span class="carbs">${food.carbohydrate || 0}g</span>
+                                        </div>
+                                        <div class="nutrition-item">
+                                            <span class="small text-muted">Fat:</span>
+                                            <span class="fats">${food.fats || 0}g</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <input type="hidden" name="{{ form.foods.vars.full_name }}[]" value="${food.id}">
                     </div>
                 `;
-                
-                const removeBtn = ingredientElement.querySelector('.remove-ingredient');
-                removeBtn.addEventListener('click', function() {
-                    ingredientElement.remove();
-                    updateNutritionTotals();
-                });
-                
-                const servingInput = ingredientElement.querySelector('.serving-size');
-                servingInput.addEventListener('input', function() {
-                    updateNutritionTotals();
-                });
-                
-                selectedIngredients.querySelector('.ingredients-list').appendChild(ingredientElement);
-                
-                // Update nutrition totals after adding an ingredient
+
+                selectedIngredients.querySelector('.ingredients-list').insertAdjacentHTML('beforeend', ingredientHtml);
+                ingredientSearch.value = '';
+                ingredientSearchResults.style.display = 'none';
                 updateNutritionTotals();
-                
-                // Focus back on search input after adding
-                ingredientSearch.focus();
+                updateFoodsInput();
+
+                // Add event listener to the new remove button
+                const newIngredient = selectedIngredients.querySelector('.ingredient-item:last-child');
+                newIngredient.querySelector('.remove-ingredient').addEventListener('click', function() {
+                    newIngredient.remove();
+                    updateNutritionTotals();
+                    updateFoodsInput();
+                });
+
+                // Add event listener to the new serving size input
+                newIngredient.querySelector('.serving-size').addEventListener('input', updateNutritionTotals);
             }
-            
-            // Function to handle keyboard navigation
-            function handleKeyDown(e) {
-                const items = ingredientSearchResults.getElementsByClassName('list-group-item');
-                
-                if (items.length === 0) return;
-                
-                // Remove active class from all items
-                for (let i = 0; i < items.length; i++) {
-                    items[i].classList.remove('active');
-                }
-                
-                // Arrow down
-                if (e.key === 'ArrowDown') {
-                    currentFocus++;
-                    if (currentFocus >= items.length) currentFocus = 0;
-                    items[currentFocus].classList.add('active');
-                    items[currentFocus].scrollIntoView({ block: 'nearest' });
-                }
-                // Arrow up
-                else if (e.key === 'ArrowUp') {
-                    currentFocus--;
-                    if (currentFocus < 0) currentFocus = items.length - 1;
-                    items[currentFocus].classList.add('active');
-                    items[currentFocus].scrollIntoView({ block: 'nearest' });
-                }
-                // Enter
-                else if (e.key === 'Enter' && currentFocus > -1) {
-                    e.preventDefault();
-                    const selectedItem = items[currentFocus];
-                    const foodId = selectedItem.dataset.id;
-                    
-                    // Fetch the full food data
-                    fetch(`/nutrition/food/id/${foodId}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(food => {
-                            addIngredient(food);
-                            ingredientSearch.value = '';
-                            ingredientSearchResults.style.display = 'none';
-                        })
-                        .catch(error => {
-                            console.error('Error fetching food details:', error);
-                        });
-                }
-                // Escape
-                else if (e.key === 'Escape') {
-                    ingredientSearchResults.style.display = 'none';
-                }
-            }
-            
-            // Event listeners
+
+            // Event Listeners
             ingredientSearch.addEventListener('input', function() {
                 searchIngredients(this.value);
             });
-            
-            ingredientSearch.addEventListener('focus', function() {
-                if (this.value.length >= 1) {
-                    searchIngredients(this.value);
+
+            ingredientSearch.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const results = ingredientSearchResults.querySelectorAll('.list-group-item');
+                    if (results.length > 0) {
+                        results[0].click();
+                    }
                 }
             });
-            
-            ingredientSearch.addEventListener('keydown', handleKeyDown);
-            
-            document.addEventListener('click', function(e) {
-                if (!ingredientSearch.contains(e.target) && !ingredientSearchResults.contains(e.target)) {
-                    ingredientSearchResults.style.display = 'none';
-                }
-            });
-            
-            // Add ingredient button
-            addIngredientBtn.addEventListener('click', function() {
-                const query = ingredientSearch.value.trim();
-                if (query.length < 1) return;
-                
-                fetch(`/nutrition/food/search?q=${encodeURIComponent(query)}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => {
-                                throw new Error(err.message || `HTTP error! status: ${response.status}`);
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(results => {
-                        if (Array.isArray(results) && results.length > 0) {
-                            // Fetch the full food data
-                            fetch(`/nutrition/food/id/${results[0].id}`)
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error(`HTTP error! status: ${response.status}`);
-                                    }
-                                    return response.json();
-                                })
-                                .then(food => {
-                                    addIngredient(food);
-                                    ingredientSearch.value = '';
-                                    ingredientSearchResults.style.display = 'none';
-                                })
-                                .catch(error => {
-                                    console.error('Error fetching food details:', error);
-                                });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Search error:', error);
-                        ingredientSearchResults.innerHTML = `
-                            <div class="list-group-item text-danger">
-                                <i class="fas fa-exclamation-circle"></i>
-                                Error searching ingredients: ${error.message}
-                            </div>
-                        `;
-                        ingredientSearchResults.style.display = 'block';
-                    });
-            });
-            
-            // Remove ingredient buttons for existing ingredients
-            document.querySelectorAll('.remove-ingredient').forEach(btn => {
-                btn.addEventListener('click', function() {
+
+            // Add event listeners to existing remove buttons
+            document.querySelectorAll('.remove-ingredient').forEach(button => {
+                button.addEventListener('click', function() {
                     this.closest('.ingredient-item').remove();
                     updateNutritionTotals();
+                    updateFoodsInput();
                 });
             });
-            
+
             // Add event listeners to existing serving size inputs
             document.querySelectorAll('.serving-size').forEach(input => {
-                input.addEventListener('input', function() {
-                    updateNutritionTotals();
-                });
+                input.addEventListener('input', updateNutritionTotals);
             });
-            
-            // Add keyboard shortcut for focusing search
-            document.addEventListener('keydown', function(e) {
-                // Ctrl+I or Cmd+I to focus ingredient search
-                if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
-                    e.preventDefault();
-                    ingredientSearch.focus();
-                }
-            });
-            
-            // Initialize nutrition totals
+
+            // Initial nutrition totals update
             updateNutritionTotals();
+            updateFoodsInput();
         }
 
-        // Initialize on page load
         initializeSearch();
-
-        // Re-initialize when Turbo navigates to the page
-        document.addEventListener('turbo:load', initializeSearch);
-    })();
+    });
 </script> 

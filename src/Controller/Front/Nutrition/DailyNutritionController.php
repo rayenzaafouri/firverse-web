@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Front\Nutrition;
 
 use App\Entity\Nutrition;
 use App\Entity\Food;
@@ -68,7 +68,7 @@ class DailyNutritionController extends AbstractController
         // Get all nutrition records for the user
         $nutritions = $nutritionRepository->findBy(['user_id' => self::DEFAULT_USER_ID], ['date' => 'DESC']);
 
-        return $this->render('daily_nutrition/index.html.twig', [
+        return $this->render('Front/Nutrition/daily_nutrition/index.html.twig', [
             'nutritions' => $nutritions,
         ]);
     }
@@ -190,7 +190,7 @@ class DailyNutritionController extends AbstractController
         $session->set('mealFoods', $mealFoods);
         $session->set('mealRecipes', $mealRecipes);
 
-        return $this->render('daily_nutrition/show.html.twig', [
+        return $this->render('Front/Nutrition/daily_nutrition/show.html.twig', [
             'nutrition' => $nutrition,
             'foods' => $foods,
             'recipes' => $recipes,

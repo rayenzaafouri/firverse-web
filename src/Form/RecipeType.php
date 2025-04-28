@@ -48,15 +48,6 @@ class RecipeType extends AbstractType
                     'class' => 'form-check-label'
                 ]
             ])
-            ->add('times_used', IntegerType::class, [
-                'required' => false,
-                'attr' => [
-                    'class' => 'form-control'
-                ],
-                'label_attr' => [
-                    'class' => 'form-label'
-                ]
-            ])
         ;
     }
 
