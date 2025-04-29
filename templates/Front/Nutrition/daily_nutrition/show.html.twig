@@ -25,6 +25,7 @@
             padding: 10px;
             cursor: pointer;
             border-bottom: 1px solid #eee;
+            color: #000000;
         }
         .search-result-item:hover {
             background-color: #f8f9fa;
@@ -129,6 +130,30 @@
                 <a href="{{ path('app_food_view_only') }}" class="btn btn-primary me-2">Food</a>
             </div>
         </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="date-navigation">
+                {% if prevDate %}
+                    <a href="{{ path('app_daily_nutrition_show', {'date': prevDate}) }}" class="btn btn-outline-primary">
+                        <i class="fas fa-chevron-left"></i> Previous Day
+                    </a>
+                {% endif %}
+                
+                <span class="mx-3 h4 mb-0">{{ currentDate|date('F j, Y') }}</span>
+                
+                {% if nextDate %}
+                    <a href="{{ path('app_daily_nutrition_show', {'date': nextDate}) }}" class="btn btn-outline-primary">
+                        Next Day <i class="fas fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if isToday %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> You are viewing today's nutrition. Add your meals and track your progress!
+            </div>
+        {% endif %}
 
         {% for mealType in ['breakfast', 'lunch', 'dinner', 'snack'] %}
             <div class="meal-card">

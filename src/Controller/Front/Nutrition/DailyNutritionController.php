@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/nutrition/user/dailynutrition')]
 class DailyNutritionController extends AbstractController
@@ -28,49 +29,11 @@ class DailyNutritionController extends AbstractController
     ) {}
 
     #[Route('/', name: 'app_daily_nutrition_index', methods: ['GET'])]
-    public function index(NutritionRepository $nutritionRepository, WaterconsumptionRepository $waterconsumptionRepository): Response
+    public function index(): Response
     {
-        // Get today's date
+        // Redirect to today's nutrition page
         $today = new \DateTime();
-        
-        // Create nutrition and waterconsumption records for the last 10 days if they don't exist
-        for ($i = 0; $i < 10; $i++) {
-            $date = clone $today;
-            $date->modify("-{$i} days");
-            
-            $existingNutrition = $nutritionRepository->findOneBy([
-                'user_id' => self::DEFAULT_USER_ID,
-                'date' => $date
-            ]);
-            if (!$existingNutrition) {
-                $nutrition = new Nutrition();
-                $nutrition->setDate($date);
-                $nutrition->setUserId(self::DEFAULT_USER_ID);
-                $this->entityManager->persist($nutrition);
-            }
-
-            // Waterconsumption check
-            $existingWater = $waterconsumptionRepository->findOneBy([
-                'user' => self::DEFAULT_USER_ID,
-                'ConsumptionDate' => $date
-            ]);
-            if (!$existingWater) {
-                $water = new Waterconsumption();
-                $water->setUser($this->entityManager->getReference('App\\Entity\\User', self::DEFAULT_USER_ID));
-                $water->setConsumptionDate($date);
-                $water->setAmountConsumed(0);
-                $this->entityManager->persist($water);
-            }
-        }
-        // Flush all new records at once
-        $this->entityManager->flush();
-
-        // Get all nutrition records for the user
-        $nutritions = $nutritionRepository->findBy(['user_id' => self::DEFAULT_USER_ID], ['date' => 'DESC']);
-
-        return $this->render('Front/Nutrition/daily_nutrition/index.html.twig', [
-            'nutritions' => $nutritions,
-        ]);
+        return $this->redirectToRoute('app_daily_nutrition_show', ['date' => $today->format('Y-m-d')]);
     }
 
     #[Route('/search-items', name: 'app_daily_nutrition_search_items', methods: ['GET'])]
@@ -116,7 +79,7 @@ class DailyNutritionController extends AbstractController
     }
 
     #[Route('/{date}', name: 'app_daily_nutrition_show', methods: ['GET'])]
-    public function show(string $date, FoodRepository $foodRepository, RecipeRepository $recipeRepository, NutritionRepository $nutritionRepository, SessionInterface $session): Response
+    public function show(string $date, Request $request, FoodRepository $foodRepository, RecipeRepository $recipeRepository, NutritionRepository $nutritionRepository, SessionInterface $session): Response
     {
         $dateObj = \DateTime::createFromFormat('Y-m-d', $date);
         if (!$dateObj) {
@@ -150,6 +113,26 @@ class DailyNutritionController extends AbstractController
             $mealRecipes[$mealType] = $nutrition->getRecipesByMealType($mealType);
         }
 
+        // Get previous and next dates for navigation
+        $prevDate = clone $dateObj;
+        $prevDate->modify('-1 day');
+        
+        $nextDate = clone $dateObj;
+        $nextDate->modify('+1 day');
+        
+        // Check if current date is in the past
+        $today = new \DateTime();
+        $today->setTime(0, 0, 0);
+        $isPastDate = $dateObj < $today;
+        
+        // Always show next date if viewing a past date
+        if ($isPastDate) {
+            $nextDate = $nextDate->format('Y-m-d');
+        } else {
+            // For future dates, only show next if it's not beyond today
+            $nextDate = ($nextDate <= $today) ? $nextDate->format('Y-m-d') : null;
+        }
+
         return $this->render('Front/Nutrition/daily_nutrition/show.html.twig', [
             'nutrition' => $nutrition,
             'foods' => $foods,
@@ -157,6 +140,10 @@ class DailyNutritionController extends AbstractController
             'meal_types' => Nutrition::MEAL_TYPES,
             'mealFoods' => $mealFoods,
             'mealRecipes' => $mealRecipes,
+            'prevDate' => $prevDate->format('Y-m-d'),
+            'nextDate' => $nextDate,
+            'currentDate' => $dateObj->format('Y-m-d'),
+            'isToday' => $dateObj->format('Y-m-d') === $today->format('Y-m-d'),
         ]);
     }
 
