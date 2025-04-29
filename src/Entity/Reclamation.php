@@ -70,6 +70,7 @@ class Reclamation
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'Description is required.')]
     #[Assert\Length(
         min: 5,
         max: 1000,

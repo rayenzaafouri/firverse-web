@@ -20,7 +20,7 @@
 
   <div class="form-card">
     <h2>Create New Reclamation</h2>
-    {{ form_start(form, { 'attr': { 'style': 'display: grid; gap: 1rem;' } }) }}
+    {{ form_start(form, { 'attr': { novalidate: 'novalidate','style': 'display: grid; gap: 1rem;' } }) }}
 
     {% for field in [form.title, form.description] %}
       <div class="form-field">

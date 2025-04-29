@@ -21,7 +21,7 @@
 
   <div class="form-card">
     <h2>Edit Reclamation</h2>
-    {{ form_start(form, { 'attr': { 'style': 'display: grid; gap: 1rem;' } }) }}
+    {{ form_start(form, { 'attr': { novalidate: 'novalidate','style': 'display: grid; gap: 1rem;' } }) }}
 
     {% for field in [form.title, form.description] %}
       <div class="form-field">
@@ -40,8 +40,6 @@
 
     {{ form_end(form) }}
 
-    <div class="delete-wrapper">
-      {{ include('reclamation/_delete_form.html.twig') }}
-    </div>
+
   </div>
 {% endblock %}

@@ -6,7 +6,7 @@
 
 {% block body %}
     <div style="max-width: 700px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-        {{ form_start(form, { 'attr': { 'style': 'display: grid; gap: 1.5rem;' }, multipart: true }) }}
+        {{ form_start(form, { 'attr': { novalidate: 'novalidate','style': 'display: grid; gap: 1.5rem;' }, multipart: true }) }}
 
         {% for field in [form.first_name, form.last_name, form.email, form.address, form.phone, form.gender, form.role, form.birth_date, form.image] %}
             <div style="display: flex; flex-direction: column;">

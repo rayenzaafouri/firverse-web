@@ -12,8 +12,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+
 class SecurityController extends AbstractController
 {
+    
     #[Route('/auth', name: 'app_auth', methods: ['GET'])]
     public function loginPage(AuthenticationUtils $authUtils): Response
     {
@@ -57,7 +59,7 @@ class SecurityController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            return $this->redirectToRoute('app_index');
+            return $this->redirectToRoute('app_auth');
         }
 
         return $this->render('authentification/index.html.twig', [
@@ -76,4 +78,6 @@ class SecurityController extends AbstractController
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
+    
+
 }
