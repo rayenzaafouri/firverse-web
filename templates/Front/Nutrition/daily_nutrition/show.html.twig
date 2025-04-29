@@ -161,7 +161,6 @@
                     <h2 class="h5 mb-0">{{ mealType|capitalize }}</h2>
                     <div class="d-flex gap-2">
                         <form action="{{ path('app_daily_nutrition_add_item', {'date': nutrition.date|date('Y-m-d'), 'mealType': mealType}) }}" method="post" class="d-flex gap-2 search-container">
-                            <input type="hidden" name="mealType" value="{{ mealType }}">
                             <input type="hidden" name="type" class="item-type-input">
                             <input type="hidden" name="id" class="item-id-input">
                             <input type="text" name="search" class="form-control form-control-sm search-input" placeholder="Search food or recipe..." required>

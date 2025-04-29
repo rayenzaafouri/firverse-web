@@ -21,7 +21,7 @@ use Knp\Component\Pager\PaginatorInterface;
 #[Route('/nutrition/user/dailynutrition')]
 class DailyNutritionController extends AbstractController
 {
-    private const DEFAULT_USER_ID = 18;
+    private const DEFAULT_USER_ID = 33;
     private const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'];
 
     public function __construct(

@@ -97,6 +97,10 @@ class Nutrition
             throw new \InvalidArgumentException('Invalid meal type');
         }
 
+        if (!$this->entityManager) {
+            throw new \RuntimeException('EntityManager is not set. Call setEntityManager() first.');
+        }
+
         // Check if the food already exists for this meal type
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('nf')
@@ -111,11 +115,7 @@ class Nutrition
         $existingNutritionFood = $qb->getQuery()->getOneOrNullResult();
         
         if (!$existingNutritionFood) {
-            if (!$this->getFoods()->contains($food)) {
-                $this->getFoods()->add($food);
-            }
-            
-            // Create and persist the NutritionFood entity
+            // Create and persist the NutritionFood entity first
             $nutritionFood = new NutritionFood();
             $nutritionFood->setNutrition($this);
             $nutritionFood->setFood($food);
@@ -124,6 +124,11 @@ class Nutrition
             
             $this->entityManager->persist($nutritionFood);
             $this->entityManager->flush();
+            
+            // Then add to the ManyToMany collection if not already present
+            if (!$this->getFoods()->contains($food)) {
+                $this->getFoods()->add($food);
+            }
         }
         
         return $this;

@@ -9,27 +9,24 @@ use Doctrine\ORM\Mapping as ORM;
 class NutritionFood
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
-
     #[ORM\ManyToOne(targetEntity: Nutrition::class)]
     #[ORM\JoinColumn(name: 'nutrition_id', referencedColumnName: 'id', nullable: false)]
     private ?Nutrition $nutrition = null;
 
+    #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: Food::class)]
     #[ORM\JoinColumn(name: 'food_id', referencedColumnName: 'id', nullable: false)]
     private ?Food $food = null;
 
     #[ORM\Column(type: 'string', length: 20, nullable: false)]
-    private string $mealType = '';
+    private string $mealType;
 
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $serving = 1;
 
-    public function getId(): ?int
+    public function __construct()
     {
-        return $this->id;
+        $this->mealType = '';
     }
 
     public function getNutrition(): ?Nutrition
