@@ -29,7 +29,6 @@ class ParticipationType extends AbstractType
             'constraints' => [
            
             ],
-            'error_bubbling' => false
         ])
         ->add('phoneNumber', TextType::class, [
             'attr' => ['class' => 'form-control'],

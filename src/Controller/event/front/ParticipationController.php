@@ -7,13 +7,13 @@ use App\Form\ParticipationType;
 use App\Repository\ParticipationRepository;
 use App\Repository\EventRepository;
 use Psr\Log\LoggerInterface; 
-
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 #[Route('/participation')]
 final class ParticipationController extends AbstractController
 {
@@ -37,13 +37,13 @@ final class ParticipationController extends AbstractController
         if (!$event) {
             throw $this->createNotFoundException('Event not found');
         }
-    
+
         $participation = new Participation();
         $participation->setEvent($event);
-    
+
         $form = $this->createForm(ParticipationType::class, $participation);
         $form->handleRequest($request);
-    
+
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $entityManager->persist($participation);
@@ -58,18 +58,19 @@ final class ParticipationController extends AbstractController
                         $error->getMessage()
                     );
                     $errors[] = $errorMsg;
-                    
                     $logger->error($errorMsg);
-                    
-                    error_log($errorMsg);
+                    error_log($errorMsg); // You can remove this when you're done debugging
                 }
-    
-                dump('Validation Errors:', $errors);
-    
-                $this->addFlash('error', 'Please fix the validation errors');
+
+                // Passing errors to the template
+                return $this->render('participation/new.html.twig', [
+                    'form' => $form->createView(),
+                    'event' => $event,
+                    'errors' => $errors, // Pass errors to the view
+                ]);
             }
         }
-    
+
         return $this->render('participation/new.html.twig', [
             'form' => $form->createView(),
             'event' => $event,
@@ -105,7 +106,8 @@ final class ParticipationController extends AbstractController
     #[Route('/{participationID}', name: 'app_participation_delete', methods: ['POST'])]
     public function delete(Request $request, Participation $participation, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$participation->getParticipationID(), $request->getPayload()->getString('_token'))) {
+        // Correct CSRF token handling
+        if ($this->isCsrfTokenValid('delete'.$participation->getParticipationID(), $request->request->get('_token'))) {
             $entityManager->remove($participation);
             $entityManager->flush();
         }
