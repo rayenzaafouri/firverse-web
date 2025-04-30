@@ -6,129 +6,120 @@
     <title>New Event</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            background-color: #1e1e1e;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    body {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-        .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 40px;
-            border-radius: 12px;
-            background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
-            box-shadow: 20px 20px 60px #1c1c1c, -20px -20px 60px #262626;
-            text-align: center;
-        }
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 40px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+    box-shadow: 20px 20px 60px #1c1c1c, -20px -20px 60px #262626;
+    text-align: center;
+}
 
-        h2 {
-            color: #92ff44;
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+h2 {
+    color: #92ff44;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
 
-        .event-form-container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
+.event-form-container {
+    max-width: 100%;
+    margin: 0 auto;
+}
 
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
 
-        .form-label {
-            color: #92ff44;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
-        }
+.form-label {
+    color:rgb(101, 192, 36);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+}
 
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            background-color: #2d2d2d;
-            border: 1px solid #444;
-            border-radius: 6px;
-            color: #e0e0e0;
-            transition: all 0.3s ease;
-        }
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    background-color:rgb(255, 255, 255);
+    border: 1px solid #444;
+    border-radius: 6px;
+    color:rgb(150, 149, 149);
+    transition: all 0.3s ease;
+}
 
-        .form-control:focus {
-            border-color: #92ff44;
-            box-shadow: 0 0 8px rgba(146, 255, 68, 0.5);
-            outline: none;
-        }
+.form-control:focus {
+    border-color: #92ff44;
+    box-shadow: 0 0 8px rgba(146, 255, 68, 0.5);
+    outline: none;
+}
 
-        .is-invalid {
-            border-color: #ff6b6b !important;
-        }
 
-        .invalid-feedback {
-            color: #ff6b6b;
-            font-size: 0.875rem;
-            margin-top: 5px;
-        }
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+.btn-outline-secondary {
+    background-color: transparent;
+    border: 2px solid #92ff44;
+    color: #92ff44;
+}
 
-        .btn-outline-secondary {
-            background-color: transparent;
-            border: 2px solid #92ff44;
-            color: #92ff44;
-        }
+.btn-outline-secondary:hover {
+    background-color: #92ff44;
+    color: #1a1a1a;
+}
 
-        .btn-outline-secondary:hover {
-            background-color: #92ff44;
-            color: #1a1a1a;
-        }
+.btn-primary {
+    background-color: #92ff44;
+    color: #1a1a1a;
+}
 
-        .btn-primary {
-            background-color: #92ff44;
-            color: #1a1a1a;
-        }
+.btn-primary:hover {
+    background-color: #78e633;
+}
 
-        .btn-primary:hover {
-            background-color: #78e633;
-        }
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
 
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-            margin-top: 30px;
-        }
+@media (max-width: 768px) {
+    .container {
+        padding: 30px;
+    }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 30px;
-            }
+    h2 {
+        font-size: 1.75rem;
+    }
 
-            h2 {
-                font-size: 1.75rem;
-            }
-
-            .form-actions {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 10px;
-            }
-        }
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+}
     </style>
 </head>
 <body>

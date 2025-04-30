@@ -25,8 +25,7 @@
                         <th class="text-success">Type</th>
                         <th class="text-success">Participants</th>
                         <th class="text-success">Terms</th>
-                        <th class="text-success">Actions</th>
-                    </tr>
+                  </tr>
                 </thead>
                 <tbody>
                 {% for participation in participations %}
@@ -43,13 +42,9 @@
                                 {{ participation.termsAccepted ? 'Yes' : 'No' }}
                             </span>
                         </td>
-                        <td>
-                            <div class="btn-group">
-                                <a href="{{ path('app_participation_show', {'participationID': participation.participationID}) }}" class="btn btn-sm btn-success">Show</a>
-                                <a href="{{ path('app_participation_edit', {'participationID': participation.participationID}) }}" class="btn btn-sm btn-outline-success">Edit</a>
-                            </div>
-                        </td>
+                
                     </tr>
+
                 {% else %}
                     <tr>
                         <td colspan="9" class="text-center py-4">
@@ -62,164 +57,245 @@
                 </tbody>
             </table>
         </div>
+        
+            <div id="genderChart" style="width: 100%; height: 400px; margin-top: 40px;"></div>
+<div id="typeChart" style="width: 100%; height: 400px; margin-top: 40px;"></div>
+<!-- Ajouter cette section sous les graphiques -->
+<div class="total-participants-container" style="margin-top: 20px;">
+    <p><strong>Total Participants:</strong> <span id="totalParticipantsCount">0</span></p>
+</div>
+<div class="export-buttons" style="margin-top: 20px; text-align: center;">
+    <button id="exportExcelBtn" class="btn btn-sm btn-primary">
+        <i class="fas fa-file-excel"></i> Export to Excel
+    </button>
+    <button id="exportPdfBtn" class="btn btn-sm btn-danger">
+        <i class="fas fa-file-pdf"></i> Export to PDF
+    </button>
+    <button id="printBtn" class="btn btn-sm btn-success">
+        <i class="fas fa-print"></i> Print
+    </button>
+</div>
+
     </div>
 </div>
 {% endblock %}
-
 {% block javascripts %}
-{{ parent() }}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {{ parent() }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const showStatsBtn = document.querySelector('#showStatsBtn');
-        if (!showStatsBtn) return;
+    <script>
+        google.charts.load('current', {'packages': ['corechart']});
+        google.charts.setOnLoadCallback(drawGenderChart);
+        google.charts.setOnLoadCallback(drawTypeChart);
 
-        showStatsBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            // Retrieve data as JSON from Twig
-            const participations = {{ participations|json_encode|raw }};
-            
-            // If no data is available
-            if (!participations || participations.length === 0) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'No Data',
-                    text: 'No participations available for statistics.',
-                    background: '#1e1e1e',
-                    color: '#e0e0e0'
-                });
-                return;
-            }
-
-            // Initialization of counting variables
+        function drawTypeChart() {
+            const rows = document.querySelectorAll('tbody tr');
+            const typeCounts = {};
             let totalParticipants = 0;
-            const genderCounts = { male: 0, female: 0, other: 0 };
-            const typeCounts = { student: 0, professional: 0, guest: 0 };
 
-           // Récupérer toutes les lignes de participation dans le tableau
-        const tableRows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const type = row.children[5]?.textContent.trim();
+                const numberOfParticipants = parseInt(row.children[6]?.textContent.trim()) || 0;
+                if (type) typeCounts[type] = (typeCounts[type] || 0) + 1;
+                totalParticipants += numberOfParticipants;
+            });
 
-        tableRows.forEach((row, index) => {
-            const participation = participations[index];
+            document.getElementById('totalParticipantsCount').textContent = totalParticipants;
 
-            // Récupérer le nombre de participants à partir de la table et convertir en nombre entier
-            const count = parseInt(participation.numberOfParticipants) || 0;
-            totalParticipants += count;
-                // Comptage par genre
-            const gender = (participation.gender || '').toLowerCase();
-            if (genderCounts[gender] !== undefined) {
-                genderCounts[gender] += count;
-            } else {
-                genderCounts.other += count;
+            const dataArray = [['Type', 'Count']];
+            for (const [type, count] of Object.entries(typeCounts)) {
+                dataArray.push([type, count]);
             }
+            if (dataArray.length <= 1) return;
 
-            // Comptage par type
-            const type = (participation.participantType || '').toLowerCase();
-            if (typeCounts[type] !== undefined) {
-                typeCounts[type] += count;
-            } else {
-                typeCounts.guest += count;
-            }
-        });
-// Affichage des comptages dans le terminal
-        console.log("Total Participants: ", totalParticipants);
-        console.log("Gender Counts: ", genderCounts);
-        console.log("Type Counts: ", typeCounts);
-        // Calcul des pourcentages
-        const genderLabels = Object.keys(genderCounts);
-        const genderData = genderLabels.map(g => ((genderCounts[g] / totalParticipants) * 100).toFixed(2));
+            const data = google.visualization.arrayToDataTable(dataArray);
 
-        const typeLabels = Object.keys(typeCounts);
-        const typeData = typeLabels.map(t => ((typeCounts[t] / totalParticipants) * 100).toFixed(2));
+            const options = {
+                title: 'Participant Type Distribution (%)',
+                backgroundColor: '#1e1e1e',
+                titleTextStyle: { color: '#e0e0e0', fontSize: 18 },
+                pieHole: 0.4,
+                pieSliceText: 'percentage',
+                legend: { position: 'right', textStyle: { color: '#e0e0e0' } },
+                chartArea: { width: '80%', height: '80%' },
+                animation: {
+                    startup: true,
+                    duration: 1500,
+                    easing: 'out',
+                }
+            };
 
-        // Affichage des pourcentages dans le terminal
-        console.log("Gender Percentages: ");
-        genderLabels.forEach((label, index) => {
-            console.log(`${label.charAt(0).toUpperCase() + label.slice(1)}: ${genderData[index]}%`);
-        });
+            const chart = new google.visualization.PieChart(document.getElementById('typeChart'));
+            chart.draw(data, options);
+        }
 
-        console.log("Type Percentages: ");
-        typeLabels.forEach((label, index) => {
-            console.log(`${label.charAt(0).toUpperCase() + label.slice(1)}: ${typeData[index]}%`);
-        });
+        function drawGenderChart() {
+            const rows = document.querySelectorAll('tbody tr');
+            let male = 0, female = 0, other = 0, totalParticipants = 0;
 
-            // Show statistics with SweetAlert2
-            Swal.fire({
-                title: 'Participants Statistics',
-                html: `
-                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
-                        <canvas id="genderChart" style="max-width: 400px; height: 300px;"></canvas>
-                        <canvas id="typeChart" style="max-width: 400px; height: 300px;"></canvas>
-                    </div>
-                    <p class="mt-4" style="color: #e0e0e0; text-align: center; font-size: 18px;">
-                        Total Number of Participants: <strong>${totalParticipants}</strong>
-                    </p>
-                `,
-                background: '#121212',
-                color: '#e0e0e0',
-                width: '80%',
-                showCloseButton: true,
-                didOpen: () => {
-                    // Gender chart
-                    const ctxGender = document.getElementById('genderChart').getContext('2d');
-                    new Chart(ctxGender, {
-                        type: 'pie',
-                        data: {
-                            labels: genderLabels.map(label => label.charAt(0).toUpperCase() + label.slice(1)),
-                            datasets: [{
-                                data: genderData,
-                                backgroundColor: ['#44c4ff', '#ff4473', '#ccc'],
-                                borderColor: '#1e1e1e'
-                            }]
-                        },
-                        options: {
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Gender Distribution (%)',
-                                    color: '#e0e0e0'
-                                },
-                                legend: {
-                                    labels: { color: '#e0e0e0' }
-                                }
-                            }
-                        }
-                    });
+            rows.forEach(row => {
+                const gender = row.children[3]?.textContent.trim().toLowerCase();
+                const numberOfParticipants = parseInt(row.children[6]?.textContent.trim()) || 0;
+                totalParticipants += numberOfParticipants;
 
-                    // Type chart
-                    const ctxType = document.getElementById('typeChart').getContext('2d');
-                    new Chart(ctxType, {
-                        type: 'pie',
-                        data: {
-                            labels: typeLabels.map(label => label.charAt(0).toUpperCase() + label.slice(1)),
-                            datasets: [{
-                                data: typeData,
-                                backgroundColor: ['#92ff44', '#ffdd44', '#55f', '#888'],
-                                borderColor: '#1e1e1e'
-                            }]
-                        },
-                        options: {
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Type Distribution (%)',
-                                    color: '#e0e0e0'
-                                },
-                                legend: {
-                                    labels: { color: '#e0e0e0' }
-                                }
-                            }
-                        }
-                    });
+                if (gender === 'male') male++;
+                else if (gender === 'female') female++;
+                else if (gender) other++;
+            });
+
+            const total = male + female + other;
+            if (total === 0) return;
+
+            document.getElementById('totalParticipantsCount').textContent = totalParticipants;
+
+            const data = google.visualization.arrayToDataTable([
+                ['Gender', 'Count'],
+                ['Male', male],
+                ['Female', female],
+                ['Other', other]
+            ]);
+
+            const options = {
+                title: 'Gender Distribution (%)',
+                backgroundColor: '#1e1e1e',
+                titleTextStyle: { color: '#e0e0e0', fontSize: 18 },
+                pieHole: 0.3,
+                pieSliceText: 'percentage',
+                legend: { position: 'right', textStyle: { color: '#e0e0e0' } },
+                slices: {
+                    0: { color: '#44c4ff' },
+                    1: { color: '#ff4473' },
+                    2: { color: '#cccccc' }
+                }
+            };
+
+            const chart = new google.visualization.PieChart(document.getElementById('genderChart'));
+            chart.draw(data, options);
+        }
+
+        // Gestion des boutons après chargement complet du DOM
+        document.addEventListener("DOMContentLoaded", function () {
+            // Export Excel
+            document.getElementById("exportExcelBtn")?.addEventListener("click", function () {
+                const table = document.querySelector('table');
+                if (table) {
+                    const wb = XLSX.utils.table_to_book(table, { sheet: 'Participations' });
+                    XLSX.writeFile(wb, 'participations.xlsx');
                 }
             });
-        });
+
+            // Export PDF
+         document.getElementById("exportPdfBtn")?.addEventListener("click", function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const table = document.querySelector('table');
+    if (!table) return;
+
+    // Titre
+    doc.setFontSize(18);
+    doc.text("Liste des Participations", 105, 15, { align: 'center' });
+
+    // Date d'export
+    const date = new Date().toLocaleDateString();
+    doc.setFontSize(10);
+    doc.text(`Date : ${date}`, 200, 10, { align: 'right' });
+
+    // Extraire les en-têtes
+    const headers = [];
+    const headerCells = table.querySelectorAll('thead th');
+    headerCells.forEach(cell => headers.push(cell.innerText.trim()));
+
+    // Extraire les données
+    const data = [];
+    const rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const rowData = [];
+        const cells = row.querySelectorAll('td');
+        cells.forEach(cell => rowData.push(cell.innerText.trim()));
+        data.push(rowData);
     });
-</script>
+
+    // AutoTable avec pagination
+    doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 25,
+        styles: {
+            fontSize: 10,
+            cellPadding: 3
+        },
+        headStyles: {
+            fillColor: [52, 152, 219], // Bleu
+            textColor: 255,
+            halign: 'center'
+        },
+        bodyStyles: {
+            halign: 'left'
+        },
+        alternateRowStyles: {
+            fillColor: [240, 240, 240]
+        },
+        margin: { top: 25 },
+    didDrawPage: function (data) {
+    const pageSize = doc.internal.pageSize;
+    const pageHeight = pageSize.height || pageSize.getHeight();
+    const pageWidth = pageSize.width || pageSize.getWidth();
+    const pageNumber = doc.internal.getNumberOfPages();
+    doc.setTextColor(150); // Gris clair
+doc.setFont('helvetica', 'italic');
+
+    doc.setFontSize(10);
+    doc.text(`Page ${pageNumber}`, pageWidth - 20, pageHeight - 10);
+    doc.text('Generated by Fitverse', 10, pageHeight - 10); // Pied de page
+}
+
+    });
+
+    // Sauvegarde
+    doc.save('participations.pdf');
+});
+
+
+            // Impression
+            document.getElementById("printBtn")?.addEventListener("click", function () {
+                window.print();
+            });
+
+          // Affichage/masquage des graphiques et défilement vers le bas
+document.getElementById("showStatsBtn")?.addEventListener("click", function () {
+    const charts = document.querySelectorAll("#genderChart, #typeChart");
+    let anyVisible = false;
+
+    charts.forEach(chart => {
+        if (chart.style.display === "none") {
+            chart.style.display = "block";
+            anyVisible = true;
+        } else {
+            chart.style.display = "none";
+        }
+    });
+
+    // Si au moins un graphique est devenu visible, faire défiler vers le bas
+    if (anyVisible) {
+        setTimeout(() => {
+            document.getElementById("genderChart").scrollIntoView({ behavior: 'smooth' });
+        }, 300); // Petit délai pour s'assurer de l'affichage
+    }
+});
+
+
+            // Masquer les graphiques au départ
+            document.getElementById("genderChart").style.display = "none";
+            document.getElementById("typeChart").style.display = "none";
+        });
+    </script>
+
 {% endblock %}
+
 
 {% block stylesheets %}
 {{ parent() }}
@@ -229,7 +305,12 @@
     html {
         scroll-behavior: smooth;
     }
-
+   
+    #genderChart {
+        background-color: #1e1e1e;
+        padding: 20px;
+        border-radius: 8px;
+    }
     .participation-container {
         max-width: 1200px;
         margin: 0 auto;
