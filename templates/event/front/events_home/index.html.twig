@@ -357,28 +357,33 @@
         <div class="event-card"
              data-date="{{ event.date|date('Y-m-d') }}"
              data-price="{{ event.price }}">
-            <a href="{{ path('event_detail', {'id': event.id}) }}" class="event-link"> 
-                {% if event.photo %}
-                    <img src="{{ asset('uploads/events/' ~ event.photo) }}" 
-                         alt="{{ event.name }}" 
-                         class="event-image"
-                         onerror="this.onerror=null;this.src='{{ asset('images/default-event.jpg') }}'">
-                {% else %}
-                    <img src="{{ asset('images/default-event.jpg') }}" 
-                         alt="Default event image" 
-                         class="event-image">
-                {% endif %}
-                <div class="event-title">{{ event.name }}</div>
-                 <button class="fav-btn" data-event-id="{{ event.id }}">
-        <i class="fas fa-star"></i>  <!-- Default star icon -->
-    </button>
-                <div class="event-details">
-                    <div class="event-date">📅 {{ event.date|date('F j, Y') }} ⏰ {{ event.time|date('H:i') }}</div>
-                    <div class="event-location">📍 {{ event.location }}</div>
-                    <div class="event-price">💸 {{ event.price }} TND</div>
-                </div>
-            </a>
-          
+{% if event.photo %}
+    <a href="{{ path('event_detail', {'id': event.id}) }}" class="event-link">
+        <img src="{{ asset('uploads/events/' ~ event.photo) }}" 
+             alt="{{ event.name }}" 
+             class="event-image"
+             onerror="this.onerror=null;this.src='{{ asset('images/default-event.jpg') }}'">
+    </a>
+{% else %}
+    <a href="{{ path('event_detail', {'id': event.id}) }}" class="event-link">
+        <img src="{{ asset('images/default-event.jpg') }}" 
+             alt="Default event image" 
+             class="event-image">
+    </a>
+{% endif %}
+
+<div class="event-title">{{ event.name }}</div>
+
+<button class="fav-btn" data-event-id="{{ event.id }}">
+    <i class="fas fa-star"></i>
+</button>
+
+<div class="event-details">
+    <div class="event-date">📅 {{ event.date|date('F j, Y') }} ⏰ {{ event.time|date('H:i') }}</div>
+    <div class="event-location">📍 {{ event.location }}</div>
+    <div class="event-price">💸 {{ event.price }} TND</div>
+</div>
+
         </div>
         {% endfor %}
     </div>
