@@ -13,7 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\HttpFoundation\JsonResponse;
 #[Route('/participation')]
 final class ParticipationController extends AbstractController
 {
@@ -114,4 +116,68 @@ final class ParticipationController extends AbstractController
 
         return $this->redirectToRoute('app_participation_index', [], Response::HTTP_SEE_OTHER);
     }
+
+  
+    #[Route('/send-email', name: 'send_email', methods: ['POST'])]
+    public function sendEmail(Request $request, MailerInterface $mailer): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $to = $data['to'] ?? null;
+        $subject = $data['subject'] ?? 'Confirmation';
+        $content = $data['content'] ?? 'Votre participation a été enregistrée avec succès.';
+    
+        if (!$to) {
+            return new JsonResponse(['success' => false, 'error' => 'Adresse manquante'], 400);
+        }
+    
+        $email = (new Email())
+            ->from('miled5076@gmail.com')
+            ->to($to)
+            ->subject($subject)
+            ->text($content);
+    
+        try {
+            $mailer->send($email);
+            return new JsonResponse(['success' => true]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+
+
+    #[Route('/stats', name: 'stats')]
+    public function showStats(ParticipationRepository $repo): Response
+    {
+        // Récupérer toutes les participations
+        $participations = $repo->findAll();
+    
+        // Initialiser une variable pour la somme du nombre de participants
+        $totalParticipants = 0;
+    
+        // Tableau pour stocker les données nécessaires pour les graphiques
+        $data = [];
+    
+        // Itérer sur les participations pour collecter les informations nécessaires
+        foreach ($participations as $p) {
+            // Ajouter le nombre de participants à la somme totale
+            $totalParticipants += $p->getNumberOfParticipants();
+    
+            // Ajouter les autres informations dans le tableau
+            $data[] = [
+                'gender' => $p->getGender(),
+                'participantType' => $p->getParticipantType(),
+                'numberOfParticipants' => $p->getNumberOfParticipants(),
+            ];
+        }
+    
+        // Passer les données à la vue
+        return $this->render('stats/index.html.twig', [
+            'participations' => $data,
+            'totalParticipants' => $totalParticipants, // Ajouter la somme à la vue
+        ]);
+    }
+    
+
 }
+

@@ -4,23 +4,28 @@
 
 {% block body %}
 {% include 'navbar.html.twig' %}
-<div class="container participation-container" style="text-align: center; background-color: #1e1e1e; color: #e0e0e0;">
-    <h2 style="color: #92ff44;">All Participations</h2>
+<div class="container participation-container">
+    <h2 class="text-center text-success">All Participations</h2>
+<link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
+
+    <button id="showStatsBtn" class="btn btn-sm btn-success" style="margin: 15px 0;">
+        <i class="fas fa-chart-pie"></i> Show Stats
+    </button>
 
     <div class="participation-form-container">
         <div class="table-responsive">
-            <table class="table table-dark table-hover" style="background-color: #121212; border-color: #444;">
+            <table class="table table-dark table-hover">
                 <thead>
                     <tr>
-                        <th style="background-color: #2d2d2d; color: #92ff44;">ID</th>
-                        <th style="background-color: #2d2d2d; color: #92ff44;">Email</th>
-                        <th style="background-color: #2d2d2d; color: #92ff44;">Phone</th>
-                        <th style="background-color: #2d2d2d; color: #92ff44;">Gender</th>
-                        <th style="background-color: #2d2d2d; color: #92ff44;">Birth Date</th>
-                        <th style="background-color: #2d2d2d; color: #92ff44;">Type</th>
-                        <th style="background-color: #2d2d2d; color: #92ff44;">Participants</th>
-                        <th style="background-color: #2d2d2d; color: #92ff44;">Terms</th>
-                        <th style="background-color: #2d2d2d; color: #92ff44;">Actions</th>
+                        <th class="text-success">ID</th>
+                        <th class="text-success">Email</th>
+                        <th class="text-success">Phone</th>
+                        <th class="text-success">Gender</th>
+                        <th class="text-success">Birth Date</th>
+                        <th class="text-success">Type</th>
+                        <th class="text-success">Participants</th>
+                        <th class="text-success">Terms</th>
+                        <th class="text-success">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,17 +45,15 @@
                         </td>
                         <td>
                             <div class="btn-group">
-                                <a href="{{ path('app_participation_show', {'participationID': participation.participationID}) }}" 
-                                   class="btn btn-sm" style="background-color: #92ff44; color: #1a1a1a;">Show</a>
-                                <a href="{{ path('app_participation_edit', {'participationID': participation.participationID}) }}" 
-                                   class="btn btn-sm btn-outline-secondary" style="border-color: #92ff44; color: #92ff44;">Edit</a>
+                                <a href="{{ path('app_participation_show', {'participationID': participation.participationID}) }}" class="btn btn-sm btn-success">Show</a>
+                                <a href="{{ path('app_participation_edit', {'participationID': participation.participationID}) }}" class="btn btn-sm btn-outline-success">Edit</a>
                             </div>
                         </td>
                     </tr>
                 {% else %}
                     <tr>
                         <td colspan="9" class="text-center py-4">
-                            <div class="alert alert-dark" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0;">
+                            <div class="alert alert-dark">
                                 No participations found
                             </div>
                         </td>
@@ -63,20 +66,179 @@
 </div>
 {% endblock %}
 
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const showStatsBtn = document.querySelector('#showStatsBtn');
+        if (!showStatsBtn) return;
+
+        showStatsBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Retrieve data as JSON from Twig
+            const participations = {{ participations|json_encode|raw }};
+            
+            // If no data is available
+            if (!participations || participations.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No Data',
+                    text: 'No participations available for statistics.',
+                    background: '#1e1e1e',
+                    color: '#e0e0e0'
+                });
+                return;
+            }
+
+            // Initialization of counting variables
+            let totalParticipants = 0;
+            const genderCounts = { male: 0, female: 0, other: 0 };
+            const typeCounts = { student: 0, professional: 0, guest: 0 };
+
+           // Récupérer toutes les lignes de participation dans le tableau
+        const tableRows = document.querySelectorAll('tbody tr');
+
+        tableRows.forEach((row, index) => {
+            const participation = participations[index];
+
+            // Récupérer le nombre de participants à partir de la table et convertir en nombre entier
+            const count = parseInt(participation.numberOfParticipants) || 0;
+            totalParticipants += count;
+                // Comptage par genre
+            const gender = (participation.gender || '').toLowerCase();
+            if (genderCounts[gender] !== undefined) {
+                genderCounts[gender] += count;
+            } else {
+                genderCounts.other += count;
+            }
+
+            // Comptage par type
+            const type = (participation.participantType || '').toLowerCase();
+            if (typeCounts[type] !== undefined) {
+                typeCounts[type] += count;
+            } else {
+                typeCounts.guest += count;
+            }
+        });
+// Affichage des comptages dans le terminal
+        console.log("Total Participants: ", totalParticipants);
+        console.log("Gender Counts: ", genderCounts);
+        console.log("Type Counts: ", typeCounts);
+        // Calcul des pourcentages
+        const genderLabels = Object.keys(genderCounts);
+        const genderData = genderLabels.map(g => ((genderCounts[g] / totalParticipants) * 100).toFixed(2));
+
+        const typeLabels = Object.keys(typeCounts);
+        const typeData = typeLabels.map(t => ((typeCounts[t] / totalParticipants) * 100).toFixed(2));
+
+        // Affichage des pourcentages dans le terminal
+        console.log("Gender Percentages: ");
+        genderLabels.forEach((label, index) => {
+            console.log(`${label.charAt(0).toUpperCase() + label.slice(1)}: ${genderData[index]}%`);
+        });
+
+        console.log("Type Percentages: ");
+        typeLabels.forEach((label, index) => {
+            console.log(`${label.charAt(0).toUpperCase() + label.slice(1)}: ${typeData[index]}%`);
+        });
+
+            // Show statistics with SweetAlert2
+            Swal.fire({
+                title: 'Participants Statistics',
+                html: `
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
+                        <canvas id="genderChart" style="max-width: 400px; height: 300px;"></canvas>
+                        <canvas id="typeChart" style="max-width: 400px; height: 300px;"></canvas>
+                    </div>
+                    <p class="mt-4" style="color: #e0e0e0; text-align: center; font-size: 18px;">
+                        Total Number of Participants: <strong>${totalParticipants}</strong>
+                    </p>
+                `,
+                background: '#121212',
+                color: '#e0e0e0',
+                width: '80%',
+                showCloseButton: true,
+                didOpen: () => {
+                    // Gender chart
+                    const ctxGender = document.getElementById('genderChart').getContext('2d');
+                    new Chart(ctxGender, {
+                        type: 'pie',
+                        data: {
+                            labels: genderLabels.map(label => label.charAt(0).toUpperCase() + label.slice(1)),
+                            datasets: [{
+                                data: genderData,
+                                backgroundColor: ['#44c4ff', '#ff4473', '#ccc'],
+                                borderColor: '#1e1e1e'
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Gender Distribution (%)',
+                                    color: '#e0e0e0'
+                                },
+                                legend: {
+                                    labels: { color: '#e0e0e0' }
+                                }
+                            }
+                        }
+                    });
+
+                    // Type chart
+                    const ctxType = document.getElementById('typeChart').getContext('2d');
+                    new Chart(ctxType, {
+                        type: 'pie',
+                        data: {
+                            labels: typeLabels.map(label => label.charAt(0).toUpperCase() + label.slice(1)),
+                            datasets: [{
+                                data: typeData,
+                                backgroundColor: ['#92ff44', '#ffdd44', '#55f', '#888'],
+                                borderColor: '#1e1e1e'
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Type Distribution (%)',
+                                    color: '#e0e0e0'
+                                },
+                                legend: {
+                                    labels: { color: '#e0e0e0' }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+
 {% block stylesheets %}
 {{ parent() }}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.css">
 <style>
-    /* Dark theme container styling */
+    html {
+        scroll-behavior: smooth;
+    }
+
     .participation-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 30px;
         border-radius: 8px;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        background-color: #1e1e1e;
+        color: #e0e0e0;
     }
 
-    /* Dark table styling */
     .table-dark {
         background-color: #121212;
         color: #e0e0e0;
@@ -84,20 +246,15 @@
         overflow: hidden;
     }
 
-    .table-dark th {
-        border-color: #444;
-    }
-
-    .table-dark td {
+    .table-dark th, .table-dark td {
         border-color: #444;
         vertical-align: middle;
     }
 
     .table-dark.table-hover tbody tr:hover {
-        background-color: rgba(146, 255, 68, 0.1);
+        background-color: rgba(59, 107, 25, 0.1);
     }
 
-    /* Button styling */
     .btn-group .btn {
         transition: all 0.3s ease;
     }
@@ -107,7 +264,6 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
-    /* Badge styling */
     .badge {
         padding: 5px 10px;
         border-radius: 50px;
@@ -115,22 +271,20 @@
         font-weight: 500;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
         .participation-container {
             padding: 20px;
         }
-        
+
         .table-responsive {
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
         }
-        
+
         .table th, .table td {
             padding: 8px 10px;
             font-size: 0.9em;
         }
-        
+
         .btn-group {
             flex-direction: column;
             gap: 3px;

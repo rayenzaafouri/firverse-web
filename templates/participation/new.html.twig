@@ -130,7 +130,7 @@
 <body>
     <div class="participation-container">
         <div class="back-button">
-            <a href="#" class="btn btn-primary">← Back to Participations</a>
+            <a href="{{ path('events_home') }}" class="btn btn-primary">← Back to Events</a>
         </div>
         <!-- Ajoute un attribut data-date et data-price -->
 <h2 id="event-title" data-date="{{ event.date|date('Y-m-d') }}" data-price="{{ event.price }}">
@@ -360,6 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
             text: 'Votre réservation a été enregistrée avec succès.',
             icon: 'success',
             confirmButtonText: 'Générer le ticket'
+            
         }).then(() => {
             const ticketInfo = `Participation ID: ${Date.now()}\nEmail: ${email}\nNombre de participants: ${numberOfParticipants}\nTotal: ${finalTotal.toFixed(2)} د.ت\nDate: ${eventDate}`;
             
@@ -373,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
          Swal.fire({
   title: ' 🥳 Voici votre ticket de participation 🥳 ',
 html: `
-<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #ddd; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: #fff; background-size: cover; background-position: center; padding: 20px;">
+<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #ddd; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background:rgb(7, 84, 0); background-size: cover; background-position: center; padding: 20px;">
   <h2 style="color:rgb(16, 16, 16); text-align: center; font-size: 1.5em; margin-bottom: 20px;">🎟️ Ticket de Participation 🎉</h2>
   <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 20px;">
   
