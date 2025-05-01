@@ -54,10 +54,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const locationButton = document.getElementById('location-button');
-        const eventLocation = "{{ event.location|e('js') }}"; // Escape for JS safety
+        const eventLocation = "{{ event.location|e('js') }}";
 
         locationButton.addEventListener('click', function () {
-            const apiKey = 'AIzaSyCc-Wlcr47oT5EDZW7DJA5CLLNXCGxfKs0'; // Remplacez par votre clé API
+            const apiKey = 'AIzaSyCc-Wlcr47oT5EDZW7DJA5CLLNXCGxfKs0'; 
             const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(eventLocation)}&key=${apiKey}`;
 
             fetch(geocodeUrl)
