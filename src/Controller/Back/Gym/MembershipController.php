@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Back\Gym;
 
+use App\Entity\Gym;
 use App\Entity\Membership;
+use App\Form\GymType;
 use App\Form\MembershipType;
 use App\Repository\MembershipRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,8 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Entity\Gym;
-use App\Form\GymType;
 
 #[Route('/membership')]
 final class MembershipController extends AbstractController

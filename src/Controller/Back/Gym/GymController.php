@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Back\Gym;
 
 use App\Entity\Gym;
 use App\Form\GymType;
