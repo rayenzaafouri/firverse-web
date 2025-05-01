@@ -67,9 +67,12 @@
 	<div class="aside-bottom">
 		<span class="material-symbols-outlined">shield_person</span>
 		<span>{{  app.user.first_name ~ " " ~  app.user.last_name  }}</span>		
-		<a href="logout">
-			<span class="material-symbols-outlined">logout</span>
-		</a>
+		<a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link d-flex align-items-center text-white">
+    <span class="material-symbols-outlined me-2">logout</span>
+</a>
+
+<form id="logout-form" action="{{ path('app_logout') }}" method="post" style="display: none;"></form>
+
 	</div>
 </aside>
 <script>

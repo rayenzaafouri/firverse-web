@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create New Product{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
+
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Add New Product</h1>
+
+        <div class="card shadow p-4">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            {% for field in [form.name, form.price, form.brand, form.description, form.stock, form.imageUrl, form.category] %}
+                <div class="form-group">
+                    {{ form_label(field) }}
+                    {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger">{{ form_errors(field) }}</div>
+                </div>
+            {% endfor %}
+
+            <div class="text-center">
+                <button class="btn btn-success mt-3">Save</button>
+                <a href="{{ path('app_product_index') }}" class="btn btn-secondary mt-3 ms-2">Cancel</a>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
