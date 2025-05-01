@@ -72,7 +72,7 @@
             <h2>{{ gym.name }}</h2>
 
             {% if gym.image %}
-<img src="{{ gym.image }}" alt="{{ gym.name }}" class="gym-image">
+                <img src="{{ gym.image }}" alt="{{ gym.name }}" class="gym-image">
             {% endif %}
 
             <ul class="list-group mb-4">
@@ -83,8 +83,12 @@
                 <li class="list-group-item"><strong>Note :</strong> {{ gym.rating }}</li>
                 <li class="list-group-item"><strong>Créée le :</strong> {{ gym.createdAt ? gym.createdAt|date('Y-m-d H:i') : 'N/A' }}</li>
             </ul>
+<form action="{{ path('gym_demande_rejoindre', {'id': gym.id}) }}" method="POST">
+    <button type="submit" class="btn btn-primary">Demander à rejoindre</button>
+</form>
 
-            <a href="{{ path('gym_front_list') }}" class="btn btn-secondary">← Retour à la liste</a>
+
+            <a href="{{ path('gym_front_list') }}" class="btn btn-secondary mt-3">← Retour à la liste</a>
         </div>
     </div>
 {% endblock %}

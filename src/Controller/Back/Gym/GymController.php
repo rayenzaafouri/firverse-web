@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Back\Gym;
 
 use App\Entity\Gym;
 use App\Form\GymType;
@@ -88,4 +88,28 @@ final class GymController extends AbstractController
         }
         return $this->redirectToRoute('app_gym_index', [], Response::HTTP_SEE_OTHER);
     }
+
+
+    #[Route('/stats', name: 'app_gym_stats', methods: ['GET'], priority: 1)]
+    public function stats(GymRepository $gymRepository): Response
+    {
+        $gyms = $gymRepository->findAll();
+        $ratingStats = [];
+
+        foreach ($gyms as $gym) {
+            $rating = floor($gym->getRating());
+            if ($rating) {
+                $ratingStats[$rating] = ($ratingStats[$rating] ?? 0) + 1;
+            }
+        }
+
+        krsort($ratingStats); // Classement décroissant de 5 à 1
+
+        return $this->render('back/gym/stats.html.twig', [
+            'ratingStats' => $ratingStats,
+        ]);
+    }
+
+
+
 }
