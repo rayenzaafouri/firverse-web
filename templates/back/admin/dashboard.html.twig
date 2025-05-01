@@ -2,41 +2,140 @@
 
 {% block title %}Admin Dashboard - Fitverse{% endblock %}
 
-{% block javascripts %}
-{{ parent() }} 
-{# Your javascript goes here #}
-<script>
-   
-</script>
-
-{% endblock %}
-
-
 {% block stylesheets %}
-{{ parent() }} 
-{# Your CSS goes here #}
-<style>
-
-</style>
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
 {% endblock %}
-
-
 
 {% block body %}
-{% include 'navbar-admin.html.twig' %} 
+<div class="admin-dashboard-layout">
+    {% include 'back/admin/sidenav.html.twig' %}
 
-<body data-context="default">
+    <div class="container">
+        <h1>Admin Dashboard</h1>
 
-<nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">FITVERSE</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Admin Dashboard</li>
-  </ol>
-</nav>
+        <div class="alert alert-secondary">
+            Manage and oversee all aspects of the platform
+        </div>
 
+        <figcaption class="blockquote-footer">
+            Statistics
+        </figcaption>
 
+        <div class="overview-stats">
+            <div class="card">
+                <div class="card-body">
+                    <h3>{{ totalProducts }}</h3>
+                    <h2>Products</h2>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h3>{{ totalOrders }}</h3>
+                    <h2>Orders</h2>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h3>${{ totalRevenue|number_format(2, '.', ',') }}</h3>
+                    <h2>Total Revenue</h2>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h3>{{ totalProductsSold }}</h3>
+                    <h2>Products Sold</h2>
+                </div>
+            </div>
+        </div>
 
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Sales Last 30 Days
+                    </div>
+                    <div class="card-body">
+                        <canvas id="salesChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
 
-</body>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Top 5 Best-Selling Products
+                    </div>
+                    <div class="card-body">
+                        <canvas id="topProductsChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dailySalesData = {{ dailySales|json_encode|raw }};
+    const dates = Object.keys(dailySalesData);
+    const revenues = Object.values(dailySalesData);
+
+    const topProductsData = {{ topProducts|json_encode|raw }};
+    const topProductNames = topProductsData.map(item => item.product);
+    const topProductQuantities = topProductsData.map(item => item.quantity);
+
+    // Sales Chart
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Sales ($)',
+                data: revenues,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                x: { ticks: { autoSkip: true, maxTicksLimit: 10 } },
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Top Products Chart
+    const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+    new Chart(topProductsCtx, {
+        type: 'bar',
+        data: {
+            labels: topProductNames,
+            datasets: [{
+                label: 'Units Sold',
+                data: topProductQuantities,
+                backgroundColor: 'rgba(153, 102, 255, 0.5)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Horizontal bars
+            scales: {
+                x: {
+                    beginAtZero: true
+                }
+            }
+        }
+    }); // <--- this ) and ; is important!!
+});
+
+</script>
 {% endblock %}

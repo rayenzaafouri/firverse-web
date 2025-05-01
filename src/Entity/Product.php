@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
-use App\Repository\ProductRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Form\FormError;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'product')]
@@ -18,122 +19,80 @@ class Product
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(type: 'string', length: 100)]
+    #[Assert\NotBlank(message: 'Please enter a product name.')]
+    #[Assert\Length(
+        min: 2,
+        max: 100,
+        minMessage: 'Product name must be at least {{ limit }} characters long.',
+        maxMessage: 'Product name cannot exceed {{ limit }} characters.'
+    )]
     private ?string $name = null;
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
+    #[Assert\NotBlank(message: 'Please enter a price.')]
+    #[Assert\Positive(message: 'Price must be greater than 0.')]
+    #[Assert\Range(
+        min: 0.01,
+        max: 999999.99,
+        notInRangeMessage: 'Price must be between {{ min }} and {{ max }} TND.'
+    )]
+    private ?string $price = null;
 
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'decimal', nullable: false)]
-    private ?float $price = null;
-
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function setPrice(float $price): self
-    {
-        $this->price = $price;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(type: 'string', length: 50)]
+    #[Assert\NotBlank(message: 'Please enter a brand name.')]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: 'Brand name must be at least {{ limit }} characters long.',
+        maxMessage: 'Brand name cannot exceed {{ limit }} characters.'
+    )]
     private ?string $brand = null;
 
-    public function getBrand(): ?string
-    {
-        return $this->brand;
-    }
-
-    public function setBrand(string $brand): self
-    {
-        $this->brand = $brand;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'Please enter a description.')]
+    #[Assert\Length(
+        min: 10,
+        max: 1000,
+        minMessage: 'Description must be at least {{ limit }} characters long.',
+        maxMessage: 'Description cannot exceed {{ limit }} characters.'
+    )]
     private ?string $description = null;
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(string $description): self
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank(message: 'Please enter stock quantity.')]
+    #[Assert\GreaterThanOrEqual(
+        value: 0,
+        message: 'Stock cannot be negative.'
+    )]
     private ?int $stock = null;
 
-    public function getStock(): ?int
-    {
-        return $this->stock;
-    }
-
-    public function setStock(int $stock): self
-    {
-        $this->stock = $stock;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'Please provide an image URL.')]
+    #[Assert\Url(message: 'Please enter a valid URL.')]
     private ?string $imageUrl = null;
 
-    public function getImageUrl(): ?string
-    {
-        return $this->imageUrl;
-    }
-
-    public function setImageUrl(string $imageUrl): self
-    {
-        $this->imageUrl = $imageUrl;
-        return $this;
-    }
-
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
-    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: true)]
+    #[Assert\NotNull(message: 'Please select a category.')]
     private ?Category $category = null;
 
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
+    #[ORM\OneToMany(targetEntity: Wishlist::class, mappedBy: 'product', orphanRemoval: true)]
+    private Collection $wishlists;
 
-    public function setCategory(?Category $category): self
+    public function __construct()
     {
-        $this->category = $category;
-        return $this;
+        $this->wishlists = new ArrayCollection();
     }
+    #[ORM\OneToMany(targetEntity: ProductDiscount::class, mappedBy: 'product')]
+    private Collection $productDiscounts;
 
+    /**
+     * @return Collection<int, ProductDiscount>
+     */
     #[ORM\OneToMany(targetEntity: OrderDetail::class, mappedBy: 'product')]
     private Collection $orderDetails;
 
-    /**
-     * @return Collection<int, OrderDetail>
-     */
     public function getOrderDetails(): Collection
     {
         if (!$this->orderDetails instanceof Collection) {
@@ -142,26 +101,29 @@ class Product
         return $this->orderDetails;
     }
 
-    public function addOrderDetail(OrderDetail $orderDetail): self
-    {
-        if (!$this->getOrderDetails()->contains($orderDetail)) {
-            $this->getOrderDetails()->add($orderDetail);
-        }
-        return $this;
-    }
+    public function getId(): ?int { return $this->id; }
+    public function getName(): ?string { return $this->name; }
+    public function setName(string $name): static { $this->name = $name; return $this; }
 
-    public function removeOrderDetail(OrderDetail $orderDetail): self
-    {
-        $this->getOrderDetails()->removeElement($orderDetail);
-        return $this;
-    }
+    public function getPrice(): ?string { return $this->price; }
+    public function setPrice(float $price): static { $this->price = $price; return $this; }
 
-    #[ORM\OneToMany(targetEntity: ProductDiscount::class, mappedBy: 'product')]
-    private Collection $productDiscounts;
+    public function getBrand(): ?string { return $this->brand; }
+    public function setBrand(string $brand): static { $this->brand = $brand; return $this; }
 
-    /**
-     * @return Collection<int, ProductDiscount>
-     */
+    public function getDescription(): ?string { return $this->description; }
+    public function setDescription(string $description): static { $this->description = $description; return $this; }
+
+    public function getStock(): ?int { return $this->stock; }
+    public function setStock(int $stock): static { $this->stock = $stock; return $this; }
+
+    public function getImageUrl(): ?string { return $this->imageUrl; }
+    public function setImageUrl(string $imageUrl): static { $this->imageUrl = $imageUrl; return $this; }
+
+    public function getCategory(): ?Category { return $this->category; }
+    public function setCategory(?Category $category): static { $this->category = $category; return $this; }
+
+    public function getWishlists(): Collection { return $this->wishlists; }
     public function getProductDiscounts(): Collection
     {
         if (!$this->productDiscounts instanceof Collection) {
@@ -183,49 +145,9 @@ class Product
         $this->getProductDiscounts()->removeElement($productDiscount);
         return $this;
     }
-
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'products')]
-    #[ORM\JoinTable(
-        name: 'wishlist',
-        joinColumns: [
-            new ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')
-        ],
-        inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')
-        ]
-    )]
-    private Collection $users;
-
-    public function __construct()
+    public function __toString(): string
     {
-        $this->orderDetails = new ArrayCollection();
-        $this->productDiscounts = new ArrayCollection();
-        $this->users = new ArrayCollection();
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
-    {
-        if (!$this->users instanceof Collection) {
-            $this->users = new ArrayCollection();
-        }
-        return $this->users;
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->getUsers()->contains($user)) {
-            $this->getUsers()->add($user);
-        }
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        $this->getUsers()->removeElement($user);
-        return $this;
+        return $this->name ?? '';
     }
 
 }

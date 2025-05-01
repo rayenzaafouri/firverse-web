@@ -1,0 +1,9 @@
+{% macro display_errors(field) %}
+    {% if field.vars.errors|length > 0 %}
+        <div class="text-danger mt-1">
+            {% for error in field.vars.errors %}
+                <div>{{ error.message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endmacro %}

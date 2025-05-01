@@ -25,7 +25,7 @@ class ResetPasswordController extends AbstractController
     #[Route('/auth/forgot-password', name: 'app_forgot_password')]
     public function request(
         Request $request,
-        ManagerRegistry $doctrine,           
+        ManagerRegistry $doctrine,
         CacheItemPoolInterface $cache,
         MailerInterface $mailer
     ): Response {
@@ -37,12 +37,11 @@ class ResetPasswordController extends AbstractController
 
             $user = $doctrine
                 ->getRepository(User::class)
-                ->findOneBy(['email' => $email])
-            ;
+                ->findOneBy(['email' => $email]);
 
             if ($user) {
                 $token = bin2hex(random_bytes(32));
-                $item  = $cache->getItem('pwd_reset_'.$token);
+                $item  = $cache->getItem('pwd_reset_' . $token);
                 $item->set($user->getEmail());
                 $item->expiresAfter(self::TTL);
                 $cache->save($item);
@@ -89,7 +88,7 @@ class ResetPasswordController extends AbstractController
         UserPasswordHasherInterface $hasher,
         EntityManagerInterface $em
     ): Response {
-        $item = $cache->getItem('pwd_reset_'.$token);
+        $item = $cache->getItem('pwd_reset_' . $token);
         if (!$item->isHit()) {
             $this->addFlash('error', 'Lien invalide ou expiré.');
             return $this->redirectToRoute('app_forgot_password');
@@ -109,10 +108,10 @@ class ResetPasswordController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $cache->deleteItem('pwd_reset_'.$token);
+            $cache->deleteItem('pwd_reset_' . $token);
 
             $new = $form->get('plainPassword')->getData();
-            $user->setMotDePasse($hasher->hashPassword($user, $new));
+            $user->setPassword($hasher->hashPassword($user, $new));
             $em->flush();
 
             $this->addFlash('success', 'Mot de passe modifié.');

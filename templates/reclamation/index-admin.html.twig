@@ -1,12 +1,12 @@
-{# templates/back/reclamation/index.html.twig #}
-{% extends 'back/base.html.twig' %}
-
-{% block title %}Reclamation Management{% endblock %}
-{% block page_title %}Reclamations{% endblock %}
-
+{% extends 'base.html.twig' %}
 {% block body %}
+
+{% include 'navbar.html.twig' %}
     <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 1.5rem;">
         <h2 style="color: #2d3e50;">All Reclamations</h2>
+        <a href="{{ path('app_reclamation_stats') }}" class="btn btn-info">View Status Stats</a>
+        <a href="{{ path('app_admin_reclamation_export_csv') }}" class="btn btn-primary">Export to CSV</a>
+
     </div>
 
     <div style="overflow-x: auto;">

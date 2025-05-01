@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-
+use Gregwar\CaptchaBundle\Type\CaptchaType;
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -45,6 +45,7 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ])
+            ->add('captcha', CaptchaType::class)
 
         ;
     }

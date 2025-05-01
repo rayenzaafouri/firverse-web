@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Category{% endblock %}
+
+{% block body %}
+    {% include 'navbar.html.twig' %}
+    
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Edit Category</h1>
+        
+        <div class="card shadow p-4">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                <div class="form-group">
+                    {{ form_label(form.name) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'form-control','value': category.name ?? '' }}) }}
+                    <div class="text-danger">
+                        {{ form_errors(form.name) }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4,'value': category.description ?? ''}}) }}
+                    <div class="text-danger">
+                        {{ form_errors(form.description) }}
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-success">Update</button>
+                    <a href="{{ path('app_category_index') }}" class="btn btn-secondary ml-2">Cancel</a>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

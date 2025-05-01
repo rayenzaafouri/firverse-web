@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container py-5">
+
+    <h1 class="mb-5 text-center">Welcome to FitVerse Admin Panel</h1>
+
+    <div class="row">
+
+        <div class="col-md-6 mb-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Products</h5>
+                    <p class="card-text text-muted">Add, edit, or delete shop products.</p>
+                    <a href="{{ path('app_product_index') }}" class="btn btn-primary">Go to Products</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Categories</h5>
+                    <p class="card-text text-muted">Organize your products into categories.</p>
+                    <a href="{{ path('app_category_index') }}" class="btn btn-primary">Go to Categories</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Discounts</h5>
+                    <p class="card-text text-muted">Create and manage product discounts.</p>
+                    <a href="{{ path('app_product_discount_index') }}" class="btn btn-primary">Go to Discounts</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Coupons</h5>
+                    <p class="card-text text-muted">Create and manage coupon codes.</p>
+                    <a href="{{ path('app_coupon_index') }}" class="btn btn-primary">Go to Coupons</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

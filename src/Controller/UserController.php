@@ -13,16 +13,150 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Form\RegistrationFormType;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/user')]
 final class UserController extends AbstractController
 {
     #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
-    {
+    public function index(
+        Request $request,
+        UserRepository $userRepository,
+        PaginatorInterface $paginator
+    ): Response {
+        $search    = $request->query->get('search', '');
+        $sortField = $request->query->get('sortField', 'id');
+        $sortDir   = $request->query->get('sortDir', 'asc') === 'desc' ? 'DESC' : 'ASC';
+        $page      = $request->query->getInt('page', 1);
+        $allowed   = ['id', 'first_name', 'email', 'phone', 'role', 'birth_date'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'id';
+        }
+
+        $qb = $userRepository->createQueryBuilder('u');
+        if ($search !== '') {
+            $qb->andWhere('u.first_name LIKE :s OR u.last_name LIKE :s OR u.email LIKE :s')
+                ->setParameter('s', '%' . $search . '%');
+        }
+        $qb->orderBy('u.' . $sortField, $sortDir);
+
+        $pagination = $paginator->paginate($qb, $page, 5);
+
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'pagination' => $pagination,
+            'search'     => $search,
+            'sortField'  => $sortField,
+            'sortDir'    => strtolower($sortDir),
         ]);
+    }
+
+    #[Route('/list/html', name: 'app_user_list_html', methods: ['GET'])]
+    public function listHtml(
+        Request $request,
+        UserRepository $userRepository,
+        PaginatorInterface $paginator
+    ): Response {
+        $search    = $request->query->get('search', '');
+        $sortField = $request->query->get('sortField', 'id');
+        $sortDir   = $request->query->get('sortDir', 'asc') === 'desc' ? 'DESC' : 'ASC';
+        $page      = $request->query->getInt('page', 1);
+        $allowed   = ['id', 'first_name', 'email', 'phone', 'role', 'birth_date'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'id';
+        }
+
+        $qb = $userRepository->createQueryBuilder('u');
+        if ($search !== '') {
+            $qb->andWhere('u.first_name LIKE :s OR u.last_name LIKE :s OR u.email LIKE :s')
+                ->setParameter('s', '%' . $search . '%');
+        }
+        $qb->orderBy('u.' . $sortField, $sortDir);
+
+        $pagination = $paginator->paginate($qb, $page, 5);
+
+        return $this->render('user/_list.html.twig', [
+            'pagination' => $pagination,
+            'search'     => $search,
+            'sortField'  => $sortField,
+            'sortDir'    => strtolower($sortDir),
+        ]);
+    }
+    #[Route('/user/list', name: 'app_user_list', methods: ['GET'])]
+    public function list(Request $request, UserRepository $repo): JsonResponse
+    {
+        $search    = $request->query->get('search', '');
+        $sortField = $request->query->get('sortField', 'id');
+        $sortDir   = strtolower($request->query->get('sortDir', 'asc')) === 'desc' ? 'DESC' : 'ASC';
+
+        $allowed = ['id', 'first_name', 'email', 'phone', 'role', 'birthDate'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'id';
+        }
+
+        $qb = $repo->createQueryBuilder('u');
+
+        if ($search !== '') {
+            $qb->andWhere('u.first_name LIKE :s OR u.last_name LIKE :s OR u.email LIKE :s')
+                ->setParameter('s', '%' . $search . '%');
+        }
+
+        $qb->orderBy('u.' . $sortField, $sortDir);
+
+        $users = $qb->getQuery()->getArrayResult();
+
+        return $this->json($users);
+    }
+    #[Route('/user/stats', name: 'app_user_stats', methods: ['GET'])]
+    public function stats(UserRepository $userRepository): Response
+    {
+        $qb = $userRepository->createQueryBuilder('u')
+            ->select('u.role AS label, COUNT(u.id) AS value')
+            ->groupBy('u.role');
+        $results = $qb->getQuery()->getArrayResult();
+
+        $labels = array_column($results, 'label');
+        $data   = array_column($results, 'value');
+
+        return $this->render('user/stats.html.twig', [
+            'labels' => json_encode($labels),
+            'data'   => json_encode($data),
+        ]);
+    }
+    #[Route('/user/export/pdf', name: 'app_user_export_pdf', methods: ['GET'])]
+    public function exportPdf(UserRepository $userRepository): Response
+    {
+        $users = $userRepository->findAll();
+
+        $options = new Options();
+        $options->set('defaultFont', 'Helvetica');
+        $dompdf = new Dompdf($options);
+        $logoPath       = $this->getParameter('kernel.project_dir') . '/public/fitverse-black.png';
+        $avatarBasePath = $this->getParameter('kernel.project_dir') . '/public/profile_images/';
+        $html = $this->renderView('user/export_pdf.html.twig', [
+            'users'          => $users,
+            'logoPath'       => $logoPath,
+            'avatarBasePath' => $avatarBasePath,
+        ]);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+
+        $output = $dompdf->output();
+        $filename = 'users_' . date('Ymd_His') . '.pdf';
+
+        $response = new Response($output);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $filename
+        );
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 
     #[Route('/profile/edit', name: 'app_user_profile_edit', methods: ['GET', 'POST'])]

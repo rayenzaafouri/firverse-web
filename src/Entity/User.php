@@ -6,14 +6,16 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
 
 use App\Repository\UserRepository;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -166,10 +168,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Type(type: \DateTimeInterface::class, message: 'The value is not a valid date.')]
     private ?\DateTimeInterface $birth_date = null;
 
-    public function getBirth_date(): ?\DateTimeInterface
+    public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birth_date;
     }
+
 
     public function setBirthDate(?\DateTimeInterface $birth_date): static
     {
@@ -417,17 +420,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'user')]
     #[ORM\JoinTable(
         name: 'wishlist',
         joinColumns: [
-            new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')
         ],
         inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')
         ]
     )]
     private Collection $products;
+
+    /**
+     * @var Collection<int, Wishlist>
+     */
+    #[ORM\OneToMany(targetEntity: Wishlist::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $wishlists;
 
     public function __construct()
     {
@@ -440,6 +449,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reclamations = new ArrayCollection();
         $this->waterconsumptions = new ArrayCollection();
         $this->products = new ArrayCollection();
+        $this->wishlists = new ArrayCollection();
     }
 
     /**
@@ -491,27 +501,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBirthDate(): ?\DateTimeInterface
+
+    /**
+     * @return Collection<int, Wishlist>
+     */
+    public function getWishlists(): Collection
     {
-        return $this->birth_date;
+        return $this->wishlists;
     }
+
+    public function addWishlist(Wishlist $wishlist): static
+    {
+        if (!$this->wishlists->contains($wishlist)) {
+            $this->wishlists->add($wishlist);
+            $wishlist->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWishlist(Wishlist $wishlist): static
+    {
+        if ($this->wishlists->removeElement($wishlist)) {
+            // set the owning side to null (unless already changed)
+            if ($wishlist->getUserId() === $this) {
+                $wishlist->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    //Interface specific methods ---------
+
     public function getRoles(): array
     {
-        return [$this->role ? $this->role : 'ROLE_USER'];
+        return ['ROLE_' . $this->role];
     }
 
 
-    public function getUsername(): string
-    {
-        return $this->email;
-    }
-    public function eraseCredentials(): void
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    }
+
+
+    public function eraseCredentials(): void {}
+
     public function getUserIdentifier(): string
     {
+        // Usually return username or email
         return $this->email;
     }
 }

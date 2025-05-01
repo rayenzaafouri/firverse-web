@@ -1,0 +1,154 @@
+<?php
+
+namespace App\Controller\Front\Shop;
+
+use App\Entity\Product;
+use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Annotation\Route;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
+use Stripe\Exception\ApiErrorException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+#[Route('/')]
+class CartController extends AbstractController
+{
+    #[Route('shop/cart', name: 'cart_index')]
+    public function index(SessionInterface $session, ProductRepository $productRepository): Response
+    {
+        $cart = $session->get('cart', []);
+        $cartWithData = [];
+
+        foreach ($cart as $id => $quantity) {
+            $product = $productRepository->find($id);
+            if ($product) {
+                $cartWithData[] = [
+                    'product' => $product,
+                    'quantity' => $quantity,
+                ];
+            }
+        }
+
+    // ✅ If cart is empty, clear coupon
+        if (empty($cartWithData)) {
+            $session->remove('coupon');
+        }
+
+        $total = array_reduce($cartWithData, function ($total, $item) {
+            return $total + ($item['product']->getPrice() * $item['quantity']);
+        }, 0);
+
+        return $this->render('front/shop/cart.html.twig', [
+            'cartItems' => $cartWithData,
+            'total' => $total,
+            'stripe_public_key' => $this->getParameter('stripe_public_key'),
+        ]);
+    }
+
+    #[Route('/shop/cart/add/{id}', name: 'cart_add', methods: ['POST'])]
+    public function add(Request $request, Product $product, SessionInterface $session): Response
+    {
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('add' . $product->getId(), $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+    }
+
+    $cart = $session->get('cart', []);
+    $id = $product->getId();
+
+    $cart[$id] = ($cart[$id] ?? 0) + 1;
+    $session->set('cart', $cart);
+
+    $this->addFlash('success', $product->getName() . ' added to cart.');
+    return $this->redirectToRoute('shop_home');
+    }
+
+    #[Route('/shop/cart/remove/{id}', name: 'cart_remove')]
+    public function remove(Product $product, SessionInterface $session): Response
+    {
+        $cart = $session->get('cart', []);
+        $id = $product->getId();
+
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+        }
+
+        $session->set('cart', $cart);
+
+        return $this->redirectToRoute('cart_index');
+    }
+
+    #[Route('/shop/cart/increase/{id}', name: 'cart_increase')]
+    public function increase(Product $product, SessionInterface $session): Response
+    {
+        $cart = $session->get('cart', []);
+        $id = $product->getId();
+
+        if (isset($cart[$id])) {
+            $cart[$id]++;
+        }
+
+        $session->set('cart', $cart);
+
+        return $this->redirectToRoute('cart_index');
+    }
+
+    #[Route('/shop/cart/decrease/{id}', name: 'cart_decrease')]
+    public function decrease(Product $product, SessionInterface $session): Response
+    {
+        $cart = $session->get('cart', []);
+        $id = $product->getId();
+
+        if (isset($cart[$id])) {
+            if ($cart[$id] > 1) {
+                $cart[$id]--;
+            } else {
+                unset($cart[$id]);
+            }
+        }
+
+        $session->set('cart', $cart);
+
+        return $this->redirectToRoute('cart_index');
+    }
+    #[Route('/shop/cart/apply-coupon', name: 'cart_apply_coupon', methods: ['POST'])]
+    public function applyCoupon(Request $request, SessionInterface $session, EntityManagerInterface $em): Response
+    {
+    $couponCode = $request->request->get('coupon_code');
+
+    if (!$couponCode) {
+        $this->addFlash('error', 'Please enter a coupon code.');
+        return $this->redirectToRoute('cart_index');
+    }
+
+    $coupon = $em->getRepository(\App\Entity\Coupon::class)->findOneBy([
+        'code' => $couponCode,
+        'is_active' => true,
+    ]);
+
+    if (!$coupon) {
+        $this->addFlash('error', 'Invalid or inactive coupon.');
+        return $this->redirectToRoute('cart_index');
+    }
+
+    $now = new \DateTime();
+    if ($coupon->getValidFrom() > $now || $coupon->getValidUntil() < $now) {
+        $this->addFlash('error', 'This coupon is expired.');
+        return $this->redirectToRoute('cart_index');
+    }
+
+    $session->set('coupon', [
+        'code' => $coupon->getCode(),
+        'discount' => $coupon->getDiscountPercentage()
+    ]);
+
+    $this->addFlash('success', 'Coupon applied successfully!');
+
+    return $this->redirectToRoute('cart_index');
+}
+}

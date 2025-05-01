@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
@@ -13,12 +14,12 @@ class ResetPasswordFormType extends AbstractType
         $b->add('plainPassword', RepeatedType::class, [
             'type'            => PasswordType::class,
             'first_options'   => [
-                'label'=>'Nouveau mot de passe',
-                'attr'=>['class'=>'form-control']
+                'label' => 'Nouveau mot de passe',
+                'attr' => ['class' => 'form-control']
             ],
             'second_options'  => [
-                'label'=>'Confirmer',
-                'attr'=>['class'=>'form-control']
+                'label' => 'Confirmer',
+                'attr' => ['class' => 'form-control']
             ],
             'invalid_message' => 'Les mots de passe doivent correspondre.',
         ]);
