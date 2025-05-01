@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails - {{ gym.name }}{% endblock %}
+{% block title %}{{ gym.name }} | FitVerse{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -52,6 +52,11 @@
             border-radius: 10px;
             border: 1px solid #ccc;
         }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
     </style>
 {% endblock %}
 
@@ -67,28 +72,65 @@
         {% endfor %}
     {% endfor %}
 
-    <div class="form-container py-5">
-        <div class="form-section">
-            <h2>{{ gym.name }}</h2>
-
-            {% if gym.image %}
-                <img src="{{ gym.image }}" alt="{{ gym.name }}" class="gym-image">
-            {% endif %}
-
-            <ul class="list-group mb-4">
-                <li class="list-group-item"><strong>Adresse :</strong> {{ gym.adresse }}</li>
-                <li class="list-group-item"><strong>Téléphone :</strong> {{ gym.phone }}</li>
-                <li class="list-group-item"><strong>Email :</strong> {{ gym.email }}</li>
-                <li class="list-group-item"><strong>Capacité :</strong> {{ gym.capacity }}</li>
-                <li class="list-group-item"><strong>Note :</strong> {{ gym.rating }}</li>
-                <li class="list-group-item"><strong>Créée le :</strong> {{ gym.createdAt ? gym.createdAt|date('Y-m-d H:i') : 'N/A' }}</li>
-            </ul>
-<form action="{{ path('gym_demande_rejoindre', {'id': gym.id}) }}" method="POST">
-    <button type="submit" class="btn btn-primary">Demander à rejoindre</button>
-</form>
-
-
-            <a href="{{ path('gym_front_list') }}" class="btn btn-secondary mt-3">← Retour à la liste</a>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <h1 class="mb-3">{{ gym.name }}</h1>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <span class="text-warning">
+                        {% for i in 1..5 %}
+                            {% if i <= gym.rating %}
+                                ★
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                    <span class="ms-2">(Rating: {{ gym.rating }}/5)</span>
+                </div>
+                
+                <hr>
+                
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">About this gym</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">• <strong>Address:</strong> {{ gym.adresse }}</li>
+                            <li class="mb-2">• <strong>Phone:</strong> {{ gym.phone }}</li>
+                            <li class="mb-2">• <strong>Email:</strong> {{ gym.email }}</li>
+                            <li class="mb-2">• <strong>Capacity:</strong> {{ gym.capacity }} members</li>
+                            <li class="mb-2">• <strong>Created:</strong> {{ gym.createdAt ? gym.createdAt|date('Y-m-d') : 'N/A' }}</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <form action="{{ path('gym_demande_rejoindre', {'id': gym.id}) }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-success">Demander à rejoindre</button>
+                    </form>
+                    <a href="{{ path('gym_front_list') }}" class="btn btn-secondary ms-2">← Retour à la liste</a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card shadow-sm sticky-top" style="top: 20px;">
+                    <div class="position-relative">
+                        <img src="{{ gym.image }}" class="card-img-top p-4" style="height: 300px; object-fit: contain;" alt="{{ gym.name }}">
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Name</span>
+                            <span class="fw-bold">{{ gym.name }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Rating</span>
+                            <span class="fw-bold">{{ gym.rating }}/5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

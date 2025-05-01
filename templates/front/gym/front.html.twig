@@ -5,143 +5,75 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        /* Style général de la page */
-        body {
-            background-color: #f0f4f8;
-            font-family: 'Roboto', sans-serif;
-            color: #333;
+        /* Shared styles with shop template */
+        .card-body { padding: 0.75rem; }
+        .card-title { font-size: 1.25rem; }
+        .card-text { font-size: 0.85rem; }
+        .btn-success { background-color: #28a745; border-color: #28a745; }
+        
+        /* Search bar styling - matching shop template */
+        #searchResults {
+            position: absolute;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            width: 100%;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
-
-        .card-body {
-            padding: 1rem;
+        #searchResults .list-group-item {
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
         }
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #2d2d2d;
-            margin-bottom: 0.5rem;
+        #searchResults .list-group-item:hover {
+            background-color: #f1f1f1;
         }
-        .card-text {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        /* Image des salles */
+        
+        /* Gym image styling */
         .gym-img {
-            height: 250px;
+            height: 150px;
             object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.3s ease-in-out;
+            padding: 0.5rem;
         }
-        .gym-img:hover {
-            transform: scale(1.05);
-        }
-
-        /* Styles des cartes */
+        
+        /* Card styling */
         .card {
             border: none;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
             background: #fff;
+            height: 100%;
         }
-
         .card:hover {
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
-
-        /* Boutons */
-        .btn-primary {
-            background-color: #28a745;
-            border-color: #28a745;
-            color: white;
-            font-weight: bold;
-            padding: 0.75rem 1.5rem;
-            border-radius: 30px;
-            transition: background-color 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
-        }
-
-        .btn-outline-primary {
-            border-color: #007bff;
-            color: #007bff;
-            padding: 0.75rem 1.5rem;
-            font-weight: bold;
-            border-radius: 30px;
-            transition: color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .btn-outline-primary:hover {
-            color: white;
-            background-color: #007bff;
-        }
-
-        /* Style des containers */
+        
+        /* Container and header */
         .container {
             max-width: 1200px;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
         }
-
-        /* En-tête */
         h2 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
             text-align: center;
+            margin-bottom: 2rem;
             color: #343a40;
-            margin-bottom: 40px;
         }
-
-        /* Style des cartes de salles de sport */
-        .gym-card {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            background-color: #f7f7f7;
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .gym-card .card-body {
-            flex-grow: 1;
-        }
-
-        .gym-card .card-title {
-            font-size: 1.25rem;
-            color: #333;
-        }
-
-        .gym-card .btn {
-            margin-top: auto;
-        }
-
+        
+        /* No gyms message */
         .no-gyms {
             text-align: center;
             font-size: 1.25rem;
             color: #6c757d;
-        }
-
-        /* Style de la barre de recherche */
-        .search-bar {
-            margin-bottom: 30px;
-            padding: 10px;
-            font-size: 1.1rem;
-            border-radius: 25px;
-            border: 2px solid #28a745;
-            transition: border-color 0.3s ease;
-        }
-        .search-bar:focus {
-            border-color: #007bff;
-            outline: none;
-        }
-
-        /* Responsivité */
-        @media (max-width: 768px) {
-            .gym-img {
-                height: 200px;
-            }
+            padding: 2rem;
         }
     </style>
 {% endblock %}
@@ -149,28 +81,48 @@
 {% block body %}
     {% include 'navbar.html.twig' %}
 
-    <div class="container py-5">
-        <h2 class="text-center">Nos Salles de Sport</h2>
+    <div class="container">
+        <h2>Nos Salles de Sport</h2>
 
-        <!-- Barre de recherche -->
-        <input type="text" id="searchInput" class="form-control search-bar" placeholder="Rechercher par nom de salle de sport" oninput="searchGyms()">
+        <!-- Search bar - matching shop template -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-4 position-relative">
+                <div class="input-group">
+                    <input id="searchInput" type="text" class="form-control" 
+                           placeholder="Rechercher une salle de sport...">
+                    <button id="searchButton" class="btn btn-primary" type="button">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                </div>
+                <div id="searchResults" class="list-group position-absolute mt-1"></div>
+            </div>
+        </div>
 
-        <div class="row" id="gymList">
+        <div class="row g-4" id="gymList">
             {% for gym in gyms %}
-                <div class="col-md-6 col-lg-4 mb-4 gym-card" data-name="{{ gym.name|lower }}">
-                    <div class="card shadow-sm">
+                <div class="col-md-6 col-lg-4 gym-card" data-name="{{ gym.name|lower }}">
+                    <div class="card">
                         <img src="{{ gym.image }}" alt="{{ gym.name }}" class="card-img-top gym-img">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ gym.name }}</h5>
-                            <a href="https://www.openstreetmap.org/?mlat={{ gym.latitude }}&mlon={{ gym.longitude }}&zoom=15"
-                               target="_blank"
-                               class="btn btn-outline-primary mb-2">📍 Voir sur Maps</a>
-                            <a href="{{ path('gym_front_detail', {'id': gym.id}) }}" class="btn btn-primary">Détails</a>
+                            <div class="mt-auto">
+                                <div class="d-flex gap-2">
+                                    <a href="https://www.openstreetmap.org/?mlat={{ gym.latitude }}&mlon={{ gym.longitude }}&zoom=15"
+                                       target="_blank"
+                                       class="btn btn-outline-primary btn-sm flex-grow-1">
+                                        📍 Voir sur Maps
+                                    </a>
+                                    <a href="{{ path('gym_front_detail', {'id': gym.id}) }}" 
+                                       class="btn btn-primary btn-sm flex-grow-1">
+                                        Détails
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             {% else %}
-                <div class="col-12 text-center">
+                <div class="col-12">
                     <p class="no-gyms">Aucune salle de sport trouvée.</p>
                 </div>
             {% endfor %}
@@ -178,19 +130,61 @@
     </div>
 
     <script>
+        // Search function - identical to shop template
         function searchGyms() {
             const input = document.getElementById('searchInput');
             const filter = input.value.toLowerCase();
             const gymCards = document.querySelectorAll('.gym-card');
+            const searchResults = document.getElementById('searchResults');
 
+            searchResults.innerHTML = '';
+            searchResults.style.display = 'none';
+
+            if (filter.length === 0) {
+                gymCards.forEach(gym => gym.style.display = '');
+                return;
+            }
+
+            let matches = 0;
             gymCards.forEach(gym => {
                 const name = gym.getAttribute('data-name');
                 if (name.includes(filter)) {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'list-group-item';
+                    resultItem.textContent = gym.querySelector('.card-title').textContent;
+                    resultItem.onclick = () => {
+                        input.value = gym.querySelector('.card-title').textContent;
+                        searchResults.style.display = 'none';
+                        gym.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        gym.classList.add('highlight');
+                        setTimeout(() => gym.classList.remove('highlight'), 2000);
+                    };
+                    searchResults.appendChild(resultItem);
+                    matches++;
                     gym.style.display = '';
                 } else {
                     gym.style.display = 'none';
                 }
             });
+
+            if (matches > 0) {
+                searchResults.style.display = 'block';
+            }
         }
+
+        // Event listeners - identical to shop template
+        document.getElementById('searchInput').addEventListener('input', searchGyms);
+        document.getElementById('searchButton').addEventListener('click', searchGyms);
+        
+        document.addEventListener('click', (e) => {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            
+            if (!searchInput.contains(e.target) && 
+                !searchResults.contains(e.target) &&
+                !document.getElementById('searchButton').contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
     </script>
 {% endblock %}

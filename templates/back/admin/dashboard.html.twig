@@ -9,7 +9,9 @@
 
 {% block body %}
 <div class="admin-dashboard-layout">
-    {% include 'back/admin/sidenav.html.twig' %}
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
 
     <div class="container">
         <h1>Admin Dashboard</h1>
@@ -81,6 +83,25 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Simple toggle for dropdowns
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.dataset.target;
+            const target = document.querySelector(targetId);
+            
+            // Toggle current dropdown
+            this.classList.toggle('active');
+            target.classList.toggle('show');
+            
+            // Update aria-expanded
+            const isExpanded = target.classList.contains('show');
+            this.setAttribute('aria-expanded', isExpanded);
+        });
+    });
+
+    // Charts
     const dailySalesData = {{ dailySales|json_encode|raw }};
     const dates = Object.keys(dailySalesData);
     const revenues = Object.values(dailySalesData);
@@ -127,15 +148,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }]
         },
         options: {
-            indexAxis: 'y', // Horizontal bars
+            indexAxis: 'y',
             scales: {
                 x: {
                     beginAtZero: true
                 }
             }
         }
-    }); // <--- this ) and ; is important!!
+    });
 });
-
 </script>
 {% endblock %}
