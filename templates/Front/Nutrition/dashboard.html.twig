@@ -6,7 +6,7 @@
     {{ parent() }}
     <style>
         .dashboard-container {
-            padding: 20px;
+            padding: 20px 80px;
         }
         .chart-row {
             display: flex;
@@ -15,15 +15,63 @@
         }
         .chart-container {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
+            overflow: hidden;
         }
         .chart-60 {
             flex: 0 0 60%;
         }
         .chart-40 {
             flex: 0 0 40%;
+        }
+        .chart-header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 15px;
+            margin: -20px -20px 20px -20px;
+            border-bottom: none;
+        }
+        .period-selector {
+            margin-bottom: 20px;
+            max-width: 200px;
+        }
+        .period-selector select {
+            width: 100%;
+            padding: 8px 16px;
+            border: 2px solid #6a11cb;
+            border-radius: 20px;
+            background: white;
+            color: #6a11cb;
+            font-weight: 500;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236a11cb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .period-selector select:hover {
+            background-color: #f8f9fa;
+        }
+        .period-selector select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+        }
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 40px;
+            }
+            .chart-row {
+                flex-direction: column;
+            }
+            .chart-60, .chart-40 {
+                flex: 0 0 100%;
+            }
         }
     </style>
 {% endblock %}
@@ -47,28 +95,133 @@
         });
 
         function drawCharts() {
-            // Caloric Intake Line Chart
             if (typeof google.visualization !== 'undefined') {
+                // Common chart options
+                const commonLineOptions = {
+                    curveType: 'function',
+                    lineWidth: 3,
+                    pointSize: 6,
+                    backgroundColor: 'transparent',
+                    chartArea: {
+                        backgroundColor: 'transparent',
+                        width: '90%',
+                        height: '80%'
+                    },
+                    legend: {
+                        position: 'top',
+                        textStyle: {
+                            color: '#666',
+                            fontSize: 12
+                        }
+                    },
+                    hAxis: {
+                        textStyle: {
+                            color: '#666'
+                        },
+                        gridlines: {
+                            color: 'transparent'
+                        }
+                    },
+                    vAxis: {
+                        textStyle: {
+                            color: '#666'
+                        },
+                        gridlines: {
+                            color: 'transparent'
+                        }
+                    }
+                };
+
+                // Caloric Intake Line Chart
                 var caloricData = google.visualization.arrayToDataTable({{ caloricChart.data.arrayToDataTable|json_encode|raw }});
-                var caloricOptions = {{ caloricChart.options|json_encode|raw }};
+                var caloricOptions = {
+                    ...commonLineOptions,
+                    title: 'Caloric Intake',
+                    titleTextStyle: {
+                        color: '#666',
+                        fontSize: 16
+                    },
+                    colors: ['#6a11cb']
+                };
                 new google.visualization.LineChart(document.getElementById('caloric_chart'))
                     .draw(caloricData, caloricOptions);
 
                 // Macronutrient Distribution Pie Chart
                 var macroData = google.visualization.arrayToDataTable({{ macronutrientChart.data.arrayToDataTable|json_encode|raw }});
-                var macroOptions = {{ macronutrientChart.options|json_encode|raw }};
+                var macroOptions = {
+                    title: 'Macronutrient Distribution',
+                    titleTextStyle: {
+                        color: '#666',
+                        fontSize: 16
+                    },
+                    backgroundColor: 'transparent',
+                    chartArea: {
+                        backgroundColor: 'transparent',
+                        width: '90%',
+                        height: '80%'
+                    },
+                    legend: {
+                        position: 'top',
+                        textStyle: {
+                            color: '#666',
+                            fontSize: 12
+                        }
+                    },
+                    colors: ['#6a11cb', '#43cea2', '#2575fc']
+                };
                 new google.visualization.PieChart(document.getElementById('macro_chart'))
                     .draw(macroData, macroOptions);
 
                 // Macronutrient Bar Chart
                 var macroBarData = google.visualization.arrayToDataTable({{ macronutrientBarChart.data.arrayToDataTable|json_encode|raw }});
-                var macroBarOptions = {{ macronutrientBarChart.options|json_encode|raw }};
+                var macroBarOptions = {
+                    title: 'Macronutrient Breakdown',
+                    titleTextStyle: {
+                        color: '#666',
+                        fontSize: 16
+                    },
+                    backgroundColor: 'transparent',
+                    chartArea: {
+                        backgroundColor: 'transparent',
+                        width: '90%',
+                        height: '80%'
+                    },
+                    legend: {
+                        position: 'top',
+                        textStyle: {
+                            color: '#666',
+                            fontSize: 12
+                        }
+                    },
+                    hAxis: {
+                        textStyle: {
+                            color: '#666'
+                        }
+                    },
+                    vAxis: {
+                        textStyle: {
+                            color: '#666'
+                        },
+                        gridlines: {
+                            color: 'transparent'
+                        }
+                    },
+                    colors: ['#6a11cb', '#43cea2', '#2575fc']
+                };
                 new google.visualization.ColumnChart(document.getElementById('macro_bar_chart'))
                     .draw(macroBarData, macroBarOptions);
 
                 // Water Consumption Line Chart
                 var waterData = google.visualization.arrayToDataTable({{ waterChart.data.arrayToDataTable|json_encode|raw }});
-                var waterOptions = {{ waterChart.options|json_encode|raw }};
+                var waterOptions = {
+                    ...commonLineOptions,
+                    title: 'Water Consumption',
+                    titleTextStyle: {
+                        color: '#666',
+                        fontSize: 16
+                    },
+                    colors: ['#2575fc']
+                };
                 new google.visualization.LineChart(document.getElementById('water_chart'))
                     .draw(waterData, waterOptions);
             }
@@ -79,8 +232,8 @@
 {% block body %}
 {% include 'navbar.html.twig' %}
 <div class="container-fluid dashboard-container" data-context="nutrition">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Nutrition Dashboard</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
+        <h1 class="mb-0">Nutrition Dashboard</h1>
         <div>
             <a href="{{ path('app_daily_nutrition_index') }}" class="btn btn-primary">
                 <i class="fas fa-arrow-left me-2"></i>Back to Daily Nutrition
@@ -88,20 +241,49 @@
         </div>
     </div>
 
+    <div class="period-selector">
+        <select onchange="window.location.href=this.value">
+            <option value="{{ path('app_nutrition_dashboard', {'period': '7days'}) }}" 
+                    {{ selectedPeriod == '7days' ? 'selected' : '' }}>
+                7 Days
+            </option>
+            <option value="{{ path('app_nutrition_dashboard', {'period': '2weeks'}) }}" 
+                    {{ selectedPeriod == '2weeks' ? 'selected' : '' }}>
+                2 Weeks
+            </option>
+            <option value="{{ path('app_nutrition_dashboard', {'period': '1month'}) }}" 
+                    {{ selectedPeriod == '1month' ? 'selected' : '' }}>
+                1 Month
+            </option>
+        </select>
+    </div>
+
     <div class="chart-row">
         <div class="chart-container chart-60">
+            <div class="chart-header">
+                <h2 class="h5 mb-0">Caloric Intake</h2>
+            </div>
             <div id="caloric_chart" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="chart-container chart-40">
+            <div class="chart-header">
+                <h2 class="h5 mb-0">Macronutrient Distribution</h2>
+            </div>
             <div id="macro_chart" style="width: 100%; height: 400px;"></div>
         </div>
     </div>
 
     <div class="chart-row">
         <div class="chart-container chart-60">
+            <div class="chart-header">
+                <h2 class="h5 mb-0">Macronutrient Breakdown</h2>
+            </div>
             <div id="macro_bar_chart" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="chart-container chart-40">
+            <div class="chart-header">
+                <h2 class="h5 mb-0">Water Consumption</h2>
+            </div>
             <div id="water_chart" style="width: 100%; height: 400px;"></div>
         </div>
     </div>

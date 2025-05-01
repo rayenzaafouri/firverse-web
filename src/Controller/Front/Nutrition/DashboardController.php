@@ -15,27 +15,36 @@ use CMEN\GoogleChartsBundle\GoogleCharts\Charts\ColumnChart;
 class DashboardController extends AbstractController
 {
     private const DEFAULT_USER_ID = 33;
-    private const DAYS_TO_SHOW = 7;
+    private const DEFAULT_DAYS = 7;
+    private const TWO_WEEKS = 14;
+    private const ONE_MONTH = 30;
 
     public function __construct(
         private NutritionRepository $nutritionRepository,
         private WaterconsumptionRepository $waterRepository
     ) {}
 
-    #[Route('/', name: 'app_nutrition_dashboard')]
-    public function index(): Response
+    #[Route('/{period}', name: 'app_nutrition_dashboard', defaults: ['period' => '7days'])]
+    public function index(string $period): Response
     {
         $endDate = new \DateTime();
-        $startDate = (clone $endDate)->modify('-' . (self::DAYS_TO_SHOW - 1) . ' days');
+        $daysToShow = match($period) {
+            '7days' => self::DEFAULT_DAYS,
+            '2weeks' => self::TWO_WEEKS,
+            '1month' => self::ONE_MONTH,
+            default => self::DEFAULT_DAYS
+        };
 
-        // Get nutrition data for the last 7 days
+        $startDate = (clone $endDate)->modify('-' . ($daysToShow - 1) . ' days');
+
+        // Get nutrition data for the selected period
         $nutritionData = $this->nutritionRepository->findByDateRange(
             self::DEFAULT_USER_ID,
             $startDate,
             $endDate
         );
 
-        // Get water consumption data for the last 7 days
+        // Get water consumption data for the selected period
         $waterData = $this->waterRepository->findByDateRange(
             self::DEFAULT_USER_ID,
             $startDate,
@@ -115,7 +124,8 @@ class DashboardController extends AbstractController
             'caloricChart' => $caloricChart,
             'macronutrientChart' => $macronutrientChart,
             'macronutrientBarChart' => $macronutrientBarChart,
-            'waterChart' => $waterChart
+            'waterChart' => $waterChart,
+            'selectedPeriod' => $period
         ]);
     }
 } 
