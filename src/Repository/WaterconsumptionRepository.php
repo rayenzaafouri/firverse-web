@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Waterconsumption;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use DateTime;
 
 /**
  * @extends ServiceEntityRepository<Waterconsumption>
@@ -34,6 +35,21 @@ class WaterconsumptionRepository extends ServiceEntityRepository
             ->orderBy('w.ConsumptionDate', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByDateRange(int $userId, DateTime $startDate, DateTime $endDate): array
+    {
+        $qb = $this->createQueryBuilder('w')
+            ->select('w.ConsumptionDate, SUM(w.AmountConsumed) as amount')
+            ->where('w.user = :userId')
+            ->andWhere('w.ConsumptionDate BETWEEN :startDate AND :endDate')
+            ->setParameter('userId', $userId)
+            ->setParameter('startDate', $startDate->format('Y-m-d'))
+            ->setParameter('endDate', $endDate->format('Y-m-d'))
+            ->groupBy('w.ConsumptionDate')
+            ->orderBy('w.ConsumptionDate', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 
     //    /**

@@ -186,12 +186,16 @@ class DailyNutritionController extends AbstractController
             if (!$food) {
                 throw $this->createNotFoundException('Food not found');
             }
+            // Increment timesUsed for food
+            $food->setTimesUsed($food->getTimesUsed() + 1);
             $nutrition->addFood($food, $mealType, $serving);
         } elseif ($type === 'recipe') {
             $recipe = $recipeRepository->find($id);
             if (!$recipe) {
                 throw $this->createNotFoundException('Recipe not found');
             }
+            // Increment timesUsed for recipe
+            $recipe->setTimesUsed($recipe->getTimesUsed() + 1);
             $nutrition->addRecipe($recipe, $mealType, $serving);
         } else {
             throw $this->createNotFoundException('Invalid item type');

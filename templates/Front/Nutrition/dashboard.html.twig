@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nutrition Dashboard{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .dashboard-container {
+            padding: 20px;
+        }
+        .chart-row {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .chart-60 {
+            flex: 0 0 60%;
+        }
+        .chart-40 {
+            flex: 0 0 40%;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        // Load Google Charts with corechart package
+        google.charts.load('current', {
+            packages: ['corechart'],
+            callback: function() {
+                // Initial draw
+                drawCharts();
+                
+                // Redraw charts on window resize
+                window.addEventListener('resize', function() {
+                    drawCharts();
+                });
+            }
+        });
+
+        function drawCharts() {
+            // Caloric Intake Line Chart
+            if (typeof google.visualization !== 'undefined') {
+                var caloricData = google.visualization.arrayToDataTable({{ caloricChart.data.arrayToDataTable|json_encode|raw }});
+                var caloricOptions = {{ caloricChart.options|json_encode|raw }};
+                new google.visualization.LineChart(document.getElementById('caloric_chart'))
+                    .draw(caloricData, caloricOptions);
+
+                // Macronutrient Distribution Pie Chart
+                var macroData = google.visualization.arrayToDataTable({{ macronutrientChart.data.arrayToDataTable|json_encode|raw }});
+                var macroOptions = {{ macronutrientChart.options|json_encode|raw }};
+                new google.visualization.PieChart(document.getElementById('macro_chart'))
+                    .draw(macroData, macroOptions);
+
+                // Macronutrient Bar Chart
+                var macroBarData = google.visualization.arrayToDataTable({{ macronutrientBarChart.data.arrayToDataTable|json_encode|raw }});
+                var macroBarOptions = {{ macronutrientBarChart.options|json_encode|raw }};
+                new google.visualization.ColumnChart(document.getElementById('macro_bar_chart'))
+                    .draw(macroBarData, macroBarOptions);
+
+                // Water Consumption Line Chart
+                var waterData = google.visualization.arrayToDataTable({{ waterChart.data.arrayToDataTable|json_encode|raw }});
+                var waterOptions = {{ waterChart.options|json_encode|raw }};
+                new google.visualization.LineChart(document.getElementById('water_chart'))
+                    .draw(waterData, waterOptions);
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container-fluid dashboard-container" data-context="nutrition">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Nutrition Dashboard</h1>
+        <div>
+            <a href="{{ path('app_daily_nutrition_index') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Daily Nutrition
+            </a>
+        </div>
+    </div>
+
+    <div class="chart-row">
+        <div class="chart-container chart-60">
+            <div id="caloric_chart" style="width: 100%; height: 400px;"></div>
+        </div>
+        <div class="chart-container chart-40">
+            <div id="macro_chart" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+
+    <div class="chart-row">
+        <div class="chart-container chart-60">
+            <div id="macro_bar_chart" style="width: 100%; height: 400px;"></div>
+        </div>
+        <div class="chart-container chart-40">
+            <div id="water_chart" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
