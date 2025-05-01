@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nutrition Preferences{% endblock %}
+{% block body %}
+  <h1>Select Your Nutrition Preferences</h1>
+
+  {{ form_start(form) }}
+    <div class="form-group">
+      {{ form_row(form.diet) }}
+    </div>
+    <div class="form-group">
+      {{ form_row(form.dislikes) }}
+      <small class="form-text text-muted">Comma-separated list of foods you dislike.</small>
+    </div>
+    <div class="form-row">
+      <div class="col">{{ form_row(form.proteinPct) }}</div>
+      <div class="col">{{ form_row(form.fatPct) }}</div>
+      <div class="col">{{ form_row(form.carbPct) }}</div>
+    </div>
+    <button class="btn btn-success mt-3">{{ button_label|default('Get Nutrition Plan') }}</button>
+  {{ form_end(form) }}
+
+  {% if plan %}
+    <hr>
+    <h2>Your Custom Nutrition Plan</h2>
+    <div class="card p-3">
+      {{ plan|nl2br }}
+    </div>
+  {% endif %}
+{% endblock %}
