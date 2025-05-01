@@ -1,0 +1,719 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+
+<script>
+
+
+let timer;
+
+
+
+document.addEventListener("DOMContentLoaded", ()=>{
+	UI_toggle_timer(false)
+
+	centerDivByMargin(".workout-view")
+	attachHUDControlsClickEvents()
+	initExerciseScope()
+	pushState("initial")
+
+	timer = new Timer('#timer');
+
+})
+
+
+
+function initExerciseScope()
+{
+	sessionStorage.setItem('exercise', "0");
+}
+
+function setExerciseScope(value)
+{
+	sessionStorage.setItem('exercise', ""+value);
+}
+
+function getExerciseScope()
+{
+	if(sessionStorage.getItem('exercise')){
+		return parseInt(sessionStorage.getItem('exercise'))
+	}
+	initExerciseScope()
+}
+
+// ---------------------------------------------------------
+
+function attachHUDControlsClickEvents(){
+
+
+	const abandonBtn = document.querySelector(".workout-hud-controls > .abandon")
+
+	const pauseBtn = document.querySelector(".workout-hud-controls > .pause")
+	const continueBtn = document.querySelector(".workout-hud-controls  > .continue")
+	const startWorkoutBtn = document.querySelector(".workout-hud-controls > .start")
+	const lastExerciseBtn = document.querySelector(".workout-hud-controls > .last")
+	const nextExerciseBtn = document.querySelector(".workout-hud-controls > .next")
+
+	abandonBtn.addEventListener("click",()=>{
+		abandonWorkout_onclick()
+		UI_toggle_timer(false)
+
+	})
+
+	pauseBtn.addEventListener("click",()=>{
+		pauseWorkout_onclick()
+	})
+
+	continueBtn.addEventListener("click",()=>{
+		continueWorkout_onclick()
+
+	})
+
+
+	startWorkoutBtn.addEventListener("click",()=>{
+		startWorkout_onclick()
+	})
+
+	
+	lastExerciseBtn.addEventListener("click",()=>{
+		lastExerciseBtn_onclick()
+	})
+
+	nextExerciseBtn.addEventListener("click",()=>{
+		nextExerciseBtn_onclick()
+	})
+
+}
+
+
+function lastExerciseBtn_onclick()
+{
+	renderExercise(getExerciseScope()-1)
+	syncNavigationControls()
+}
+
+
+function nextExerciseBtn_onclick()
+{
+	renderExercise(getExerciseScope()+1)
+	syncNavigationControls()
+	
+}
+
+
+function continueWorkout_onclick(){
+	timer.resume();
+	pushState("playing")
+}
+
+
+
+function abandonWorkout_onclick(){
+	timer.reset();
+	UI_toggle_workoutMode(false)
+	pushState("initial")
+
+
+}
+
+
+function pauseWorkout_onclick(){
+	timer.pause()
+	
+	pushState("pause")
+
+}
+
+function startWorkout_onclick(){
+	timer.start()
+	UI_toggle_timer(true)
+	UI_toggle_workoutMode(true)
+	pushState("playing")
+	exerciceScope = 0
+	renderExercise(exerciceScope)
+	syncNavigationControls()
+}
+
+function UI_toggle_timer(state){
+	const timerDisplay = document.querySelector("#timer")
+	if(!state){
+		timerDisplay.style.setProperty("display","none")
+		return
+	}
+	timerDisplay.style.setProperty("display","block")
+
+
+}
+
+
+
+function syncNavigationControls(){
+
+	const stepsCollection = document.querySelectorAll(".step-bundle")
+
+	//check for last
+	if(getExerciseScope() == stepsCollection.length -1){
+		pushState("last")
+		return
+	}
+
+	if(getExerciseScope() == 0){
+		pushState("first")
+		return
+	}
+
+	pushState("middle")
+}
+
+function pushState(state){
+	const abandonBtn = document.querySelector(".workout-hud-controls > .abandon")
+	const pauseBtn = document.querySelector(".workout-hud-controls > .pause")
+	const continueBtn = document.querySelector(".workout-hud-controls  > .continue")
+	const startWorkoutBtn = document.querySelector(".workout-hud-controls > .start")
+	const lastExerciseBtn = document.querySelector(".workout-hud-controls > .last")
+	const nextExerciseBtn = document.querySelector(".workout-hud-controls > .next")
+
+
+
+
+
+
+
+	if(state == "initial"){
+		toggleBtnVisibilty(abandonBtn,false)
+		toggleBtnVisibilty(pauseBtn,false)
+		toggleBtnVisibilty(continueBtn,false)
+		toggleBtnVisibilty(startWorkoutBtn,true)
+		toggleBtnVisibilty(lastExerciseBtn,false)
+		toggleBtnVisibilty(nextExerciseBtn,false)
+
+
+		return
+	}
+
+	if(state == "pause"){
+		toggleBtnVisibilty(abandonBtn,true)
+		toggleBtnVisibilty(pauseBtn,false)
+		toggleBtnVisibilty(continueBtn,true)
+		toggleBtnVisibilty(startWorkoutBtn,false)
+		return
+	}
+
+	if(state == "continue"){
+		toggleBtnVisibilty(abandonBtn,true)
+		toggleBtnVisibilty(pauseBtn,true)
+		toggleBtnVisibilty(continueBtn,false)
+		toggleBtnVisibilty(startWorkoutBtn,false)
+		return
+	}
+
+	if(state == "playing"){
+		toggleBtnVisibilty(abandonBtn,false)
+		toggleBtnVisibilty(pauseBtn,true)
+		toggleBtnVisibilty(continueBtn,false)
+		toggleBtnVisibilty(startWorkoutBtn,false)
+		return
+	}
+
+
+	if(state == "first"){
+		toggleBtnVisibilty(lastExerciseBtn,false)
+		toggleBtnVisibilty(nextExerciseBtn,true)
+		return
+	}
+
+	if(state == "middle"){
+		toggleBtnVisibilty(lastExerciseBtn,true)
+		toggleBtnVisibilty(nextExerciseBtn,true)
+		return
+	}
+
+	if(state == "last"){
+		toggleBtnVisibilty(lastExerciseBtn,true)
+		toggleBtnVisibilty(nextExerciseBtn,false)
+		return
+	}
+
+
+
+}
+
+function renderExercise(bundle_number = 0){
+	const stepsCollection = document.querySelectorAll(".step-bundle")
+	const titlesCollection = document.querySelectorAll(".exercise-label")
+	const setsRepsCollection = document.querySelectorAll(".sets-reps > div")
+
+	const exerciseTitlesCollection = document.querySelectorAll(".workout-hud > .exercise-label")
+
+
+	//Checking requested step against available steps
+
+	if(!(bundle_number < stepsCollection.length && bundle_number >= 0)){
+		return false;
+	}
+
+	setExerciseScope(bundle_number)
+
+	UI_toggle_workoutMode(false)
+
+	stepsCollection.forEach(stepBundle =>{
+		stepBundle.style.setProperty("display","none")
+	})
+	titlesCollection.forEach(title =>{
+		title.style.setProperty("display","none")
+	})
+
+	setsRepsCollection.forEach(setsReps =>{
+		setsReps.style.setProperty("display","none")
+	})
+
+	exerciseTitlesCollection.forEach(setsReps =>{
+		setsReps.style.setProperty("display","none")
+	})
+
+
+
+	stepsCollection[bundle_number].style.setProperty("display","flex")
+	titlesCollection[bundle_number].style.setProperty("display","block")
+	setsRepsCollection[bundle_number].style.setProperty("display","grid")
+	exerciseTitlesCollection[bundle_number].style.setProperty("display","grid")
+
+	setTimeout(()=>{
+		UI_toggle_workoutMode(true)
+	},500)
+
+	return true
+}
+
+function UI_toggle_stepContainer(toggle=true){
+	const stepsContainer = document.querySelector(".steps-container")
+	toggle ? stepsContainer.classList.add("visible") : stepsContainer.classList.remove("visible")
+}
+
+function toggleBtnVisibilty(btn,state){
+	if(!state){
+		btn.style.setProperty("display","none")
+	return	
+	}
+
+
+	btn.style.setProperty("display","block")
+}
+
+function UI_toggle_workoutHud(toggle=true){
+	const hudContainer = document.querySelector(".workout-view")
+
+	hudContainer.style.setProperty("transition","margin-left .5s ease")
+
+	toggle ? hudContainer.classList.remove("collapsed") : hudContainer.classList.add("collapsed")
+}
+
+
+function UI_toggle_exerciseBrief(toggle=true){
+	const exerciceBrief = document.querySelector(".workout-briefing")
+	toggle ? exerciceBrief.classList.add("visible") : exerciceBrief.classList.remove("visible")
+}
+
+function centerDivByMargin(divId) {
+	const div = document.querySelector(divId);
+	if (!div) return;
+  
+	const parent = div.parentElement;
+	const parentWidth = parent.clientWidth;
+	const divWidth = div.offsetWidth;
+  
+	const leftMargin = (parentWidth - divWidth) / 2;
+	div.style.marginLeft = `0px`;
+
+	div.style.marginLeft = `${leftMargin}px`;
+  }
+
+function UI_toggle_workoutMode(visible = true){
+	UI_toggle_exerciseBrief(!visible)
+	UI_toggle_workoutHud(!visible)
+	UI_toggle_stepContainer(visible)
+
+
+	if(!visible){
+		document.querySelectorAll(".workout-hud > .exercise-label").forEach((ele)=>{
+			ele.style.setProperty("display","none")
+		})
+	} 
+  }
+
+
+
+
+
+
+
+
+</script>
+
+
+
+<script>
+    class Timer {
+      constructor(displaySelector) {
+        this.displayEl = document.querySelector(displaySelector);
+        this.startTime = 0;
+        this.elapsedTime = 0;
+        this.timerInterval = null;
+        this.running = false;
+      }
+
+      formatTime(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+        const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+        const milliseconds = Math.floor((ms % 1000) / 10).toString().padStart(2, '0');
+        return `${minutes}:${seconds}.${milliseconds}`;
+      }
+
+      updateDisplay() {
+        if (this.displayEl) {
+          this.displayEl.innerText = this.formatTime(this.elapsedTime);
+        }
+      }
+
+      start(fromTime = 0) {
+        this.reset();
+        this.elapsedTime = fromTime;
+        this.startTime = Date.now() - this.elapsedTime;
+        this.running = true;
+        this.timerInterval = setInterval(() => {
+          this.elapsedTime = Date.now() - this.startTime;
+          this.updateDisplay();
+        }, 50);
+      }
+
+      pause() {
+        if (this.running) {
+          clearInterval(this.timerInterval);
+          this.elapsedTime = Date.now() - this.startTime;
+          this.running = false;
+        }
+      }
+
+      resume() {
+        if (!this.running) {
+          this.startTime = Date.now() - this.elapsedTime;
+          this.running = true;
+          this.timerInterval = setInterval(() => {
+            this.elapsedTime = Date.now() - this.startTime;
+            this.updateDisplay();
+          }, 50);
+        }
+      }
+
+      reset() {
+        clearInterval(this.timerInterval);
+        this.startTime = 0;
+        this.elapsedTime = 0;
+        this.running = false;
+        this.updateDisplay();
+      }
+    }
+
+
+
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }}
+
+<style>
+
+	.workout-hud {
+
+
+		.exercise-label{
+			display: none;
+		}
+
+		img{
+			width: 60%;
+			height: auto;
+			border-radius: .875rem;
+		}
+
+
+		z-index: 9999;
+
+		width: 25lvw;
+
+
+		text-align: center;
+		padding: .5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+  	    background-color: #222529;
+		border-radius: 0.875rem;
+		color: white;
+
+		
+
+		transition: all 3s ease;
+		.label {
+			font-size: 2rem;
+		}
+
+		.sets-reps {
+
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+			div {
+				display: none;
+				grid-template-columns: 1fr 1fr;
+				border-radius: 0.875rem;
+
+				.sets,
+				.reps {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+					margin: 0 .5rem;
+					border: 2px solid white;
+					padding: 0.5rem 1rem;
+				}
+			}
+		}
+	}
+
+	.workout-briefing {
+		opacity: 0;
+		transition: opacity .5s ease;
+		background-color: #EBEBEB;
+		padding: .5rem;
+		border-radius: .875rem;
+
+		.header{
+			font-size: 1.2rem;
+		}
+		.content {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 1rem;
+			transition: all .5s ease;
+			flex-wrap: wrap;
+			max-width: 60lvw;
+
+			.exercise-briefing {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				text-align: center;
+				width: fit-content;
+				aspect-ratio: 16/9;
+				background-size: cover;
+				width: 12rem;
+				align-items: center;
+				justify-content: center;
+				color: white;
+				border-radius: 0.875rem;
+
+
+				.exercise-title {
+					font-size: 1.2rem;
+				}
+			}
+		}
+	}
+
+	.workout-view {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+		border-radius: 0.875rem;
+		align-items: center;
+		position: fixed;
+		z-index: 9999;
+	}
+
+	.step {
+		border: 0.875rem;
+		display: flex;
+		justify-content: space-between;
+		width: 60lvw;
+
+		video {
+			aspect-ratio: 16/9;
+			height: 8rem;
+			border-top-right-radius: 0.875rem;
+			border-bottom-right-radius: 0.875rem;
+		}
+	}
+
+
+
+
+	.steps-container{
+		opacity: 0;
+		transition: opacity 0.5s ease;
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		max-height: 80lvh;
+		
+		.step-bundle{
+		   padding-left: 36rem;
+		   width: 100lvw;
+		   border-radius: 0.875rem;
+		   display: flex;
+		   flex-direction: column;
+		   color: white;
+		   gap: .5rem;
+		   .step{
+			background-color: #EBEBEB;
+			color: black;
+			display: flex;
+			align-items: center;
+			text-align: center;
+			border-radius: 0.875rem;
+			.text{
+				width: 100%;
+				padding: .5rem;
+			}
+		   }
+		   
+	
+
+
+	
+		}
+
+	}
+
+
+
+	.collapsed{
+		margin-left: 5lvw!important;
+	}
+	
+	.visible{
+		opacity: 1;
+	}
+
+	.workout-hud-controls{
+		display: flex;
+		flex-direction: row;
+		gap: .5rem;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.workout-label{
+		font-size: 2rem;
+	}
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+
+
+
+<div class="workout-view">
+	<div class="workout-hud">
+		<span class="workout-label">{{ workout.label | capitalize }}</span>
+		<img src="{{ workout.img }}" alt="">
+		{% for exercice in exercices %}
+
+		<span class="exercise-label badge text-bg-secondary">
+			{{
+				exercice.title
+			}}
+		</span>
+
+		{% endfor %}
+
+		<div class="sets-reps">
+			{% for exercice in exercices %}
+			<div>
+
+				<div class="sets">
+					<span>Sets</span>
+					<span>{{exercice.sets}}</span>
+				</div>
+				<div class="reps">
+					<span>Reps</span>
+					<span>{{exercice.reps}}</span>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+
+		<div id="timer">00:00:00.000</div>
+
+		<div class="workout-hud-controls">
+			<button class="btn btn-secondary last"> <i class="fa-solid fa-arrow-left"></i> </button> <!-- Back -->
+			<button class="btn btn-danger btn-secondary abandon"> <i class="fa-solid fa-circle-stop"> </i>Abandon </button> <!-- Abandon -->
+			<button class="btn btn-warning pause"> <i class="fa-solid fa-circle-pause"></i> Pause </button> <!-- pause -->
+			<button class="btn btn-success continue"> <i class="fa-solid fa-circle-play"></i> Continue </button> <!-- continue -->
+			<button class="btn btn-success start"> <i class="fa-solid fa-circle-play"></i> Start workout</button> <!-- pause -->
+			<button class="btn btn-secondary next"> <i class="fa-solid fa-arrow-right"></i> </button> <!-- Next -->
+
+		</div>
+	</div>
+	<div class="workout-briefing visible">
+
+		<div class="header">
+		</div>
+
+		<div class="content">
+			{% for exercice in exercices %}
+
+			{% set embedUrl = exercice.video_url %}
+
+			{% set videoId = embedUrl|split('/')|last|split('?')|first %}
+
+			{% set thumbnailUrl = 'https://img.youtube.com/vi/' ~ videoId ~ '/maxres2.jpg' %}
+
+			<div class="exercise-briefing shadow" style="
+		background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url({{ thumbnailUrl }});
+		background-size: cover;
+		background-position: center;">
+				<span class="exercise-title">{{exercice.title}}</span>
+				<span class="exercise-difficulty badge text-bg-secondary">{{exercice.difficulty | capitalize}}</span>
+			</div>
+			{% endfor %}
+		</div>
+
+	</div>
+</div>
+
+
+<div class="steps-container expanded" data-simplebar>
+	{% for exercice in exercices %}
+	<div class="step-bundle">
+		{% for step in exercice.stepsObject %}
+		<div class="step">
+			<div class="text">{{ step.text }}</div>
+			<video src="{{ step.video }}" class="video" autoplay muted loop></video>
+		</div>
+	{% endfor %}
+	</div>
+
+	
+	
+	
+	{% endfor %}
+	
+</div>
+
+
+{% endblock %}

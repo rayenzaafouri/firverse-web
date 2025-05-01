@@ -17,13 +17,24 @@ final class ExerciceController extends AbstractController
 
     //User methods :
 
-    #[Route('/exercise/{id}', name: 'user_exercice_show', methods: ['GET'])]
+    
+    #[Route('/exercise/browse', name: 'user_exercice_searchByMuscle', methods: ['GET'])]
+    public function browse(): Response
+    {
+            return $this->render('/front/exercise/searchByMuscle.html.twig');
+    }
+
+
+
+    #[Route('/exercise/show/{id}', name: 'user_exercice_show', methods: ['GET'])]
     public function show(Exercice $exercice): Response
     {
         return $this->render('/front/exercise/show.html.twig', [
             'exercice' => $exercice,
         ]);
     }
+
+
 
 
     
@@ -145,4 +156,29 @@ final class ExerciceController extends AbstractController
         );
         return isset($equipment[$id]) ? $equipment[$id] : null;
     }
+
+
+
+    #[Route('/fragment/exercise/{id}/steps', name: 'fragment_exercise_steps', methods: ['GET'])]
+    public function showSteps(Exercice $exercice): Response
+    {
+        return $this->render('/front/exercise/fragment-steps.html.twig', [
+            'exercice' => $exercice,
+        ]);
+    }
+
+    #[Route('/fragment/exercise/{id}/info', name: 'fragment_exercise_info', methods: ['GET'])]
+    public function showInfo(Exercice $exercice): Response
+    {
+        return $this->render('/front/exercise/fragment-info.html.twig', [
+            'exercice' => $exercice,
+        ]);
+    }
+    
+
+    
+
+
+
+
 }

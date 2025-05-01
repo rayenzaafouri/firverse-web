@@ -1,0 +1,187 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{{ exercice.title }} - Fitverse
+{% endblock %}
+
+
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+
+    const iconMap = {
+        "1": "barbell.png",
+        "2": "dumbells.png",
+        "3": "bodyweight.png",
+        "4": "machine.png",
+        "5": "medicine-ball.png",
+        "6": "kettlebells.png",
+        "7": "stretches.png",
+        "8": "cables.png",
+        "9": "band.png",
+        "10": "plate.png",
+        "11": "trx.png",
+        "12": "yoga.png",
+        "13": "bosu-ball.png",
+        "14": "vitruvian.png",
+        "15": "cardio.png",
+        "16": "smith-machine.png",
+        "17": "recovery.png",
+    };
+
+
+
+    document.addEventListener("DOMContentLoaded", (event) => {
+
+
+        let equipment = JSON.parse(new DOMParser().parseFromString("{{ exercice.equipment }}", "text/html").documentElement.textContent)
+        const targetDiv = document.querySelector(".equipment-icons")
+
+        equipment.forEach(item => {
+            let image = document.createElement("img")
+            image.src = "/icons/" + iconMap[item]
+            image.alt = iconMap[item]
+            targetDiv.appendChild(image)
+
+        })
+    })
+
+
+
+</script>
+
+<script>
+    //Renders steps
+
+    document.addEventListener("DOMContentLoaded", (event) => {
+
+        const stepElement = (text, video, number = "?") => {
+
+            const cloningDiv = document.querySelector(".steps > .step").cloneNode(true)
+            cloningDiv.querySelector(".step-description").innerHTML = text
+            cloningDiv.querySelector(".step-video").src = video
+            cloningDiv.querySelector(".step-count").innerHTML = "#" + number
+            cloningDiv.classList.remove("json-assist")
+            return cloningDiv
+        }
+
+        let steps = JSON.parse(new DOMParser().parseFromString("{{ exercice.steps }}", "text/html").documentElement.textContent)
+
+        let stepCounter = 0;
+        steps.forEach(step => {
+            stepCounter++
+            const newStep = stepElement(step.text, step.video, stepCounter)
+            document.querySelector(".steps").appendChild(newStep)
+
+        })
+    })
+
+</script>
+
+
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }}
+{# Your CSS goes here #}
+<style>
+
+    .json-assist {
+        display: none !important;
+    }
+
+    .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 0 .5rem;
+
+            /* Hide scrollbar for all browsers */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+
+
+
+
+
+
+        .step {
+            background: #E8E8E8;
+            display:flex;
+            border-radius: 0.875rem;
+            position: relative;
+            transition: transform .33s ease;
+            justify-content:space-between;
+
+            &:hover {
+                transform: scale(1.02);
+            }
+
+            .step-count {
+                position: absolute;
+                left: 0;
+                top: 0;
+                background: #c5c5c5;
+                padding: .5rem;
+                border-top-left-radius: 0.875rem;
+                border-bottom-right-radius: 0.875rem;
+                font-weight: 600;
+            }
+
+            div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin: 0 1rem;
+            }
+
+        }
+
+
+        video {
+            aspect-ratio: 16/9;
+            height: 12rem;
+            border-top-right-radius: 0.875rem;
+            border-bottom-right-radius: 0.875rem;
+            
+
+        }
+    }
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+<body>
+
+        <div>
+            <div class="steps">
+                <div class="step json-assist">
+                    <div>
+                        <span class="step-count">#?</span>
+                        <p class="step-description"></p>
+                    </div>
+
+                    <video class="step-video" autoplay muted loop></video>
+
+                </div>
+
+
+
+            </div>
+
+    
+        </div>
+
+
+
+</body>
+
+{% endblock %}

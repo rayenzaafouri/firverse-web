@@ -1,80 +1,61 @@
-{% extends 'base.html.twig' %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
 
-{% block title %}Admin Dashboard - Fitverse
+{% block title %}Exercise Details{% endblock %}
+
+
+
+{% block info %}
+This section allows you to manage all aspects of the workouts included in the platform.
+{% endblock %}
+
+
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_workout_index_admin') }}">Workouts</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">List</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-	{# Your javascript goes here #}
+{{ parent() }}
+<script></script>
 {% endblock %}
-
 
 {% block stylesheets %}
-	{{ parent() }}
-	{# Your CSS goes here #}
-	<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{{ parent() }}
+<style>
+
+	.table{
+		text-align: center;
+        vertical-align: middle;
+	}
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+
 {% endblock %}
 
 
-{% block body %}
-
-	<div class="admin-dashboard-layout">
-
-		{% include 'back/admin/sidenav.html.twig' %}
-
-		<div class="container">
-			<h1>Admin dashboard</h1>
 
 
-			<div class="alert alert-secondary">
-				Manage and oversee all aspects of the platform
-			</div>
 
 
-			<figcaption class="blockquote-footer">
-				Statistics
-			</figcaption>
 
 
-			<div class="overview-stats">
-				<div class="card">
-					<div class="card-body">
-						<h3>7</h3>
-						<h2>Users</h2>
-					</div>
-				</div>
-				<div class="card">
-					<div class="card-body">
-						<h3>7</h3>
-						<h2>Workouts</h2>
-					</div>
-				</div>
-				<div class="card">
-					<div class="card-body">
-						<h3>7</h3>
-						<h2>Orders</h2>
-					</div>
-				</div>
-				<div class="card">
-					<div class="card-body">
-						<h3>7</h3>
-						<h2>Events</h2>
-					</div>
-				</div>
-				<div class="card">
-					<div class="card-body">
-						<h3>7</h3>
-						<h2>Gyms</h2>
-					</div>
-				</div>
-			</div>
 
 
-		</div>
-
-	</div>
 
 
-	<body></body>
 
-{% endblock %}
+
+
+
+

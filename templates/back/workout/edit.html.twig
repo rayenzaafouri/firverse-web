@@ -6,9 +6,15 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
-            <a href="{{ path('app_workout_index_admin') }}">Workout</a>
+            <a href="{{ path('admin_dashboard') }}">Dashboard</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_workout_index_admin') }}">Workouts</a>
+        </li>
+
+        <li class="breadcrumb-item active">
+            <a>Edit</a>
+        </li>
     </ol>
 </nav>
 {% endblock %}
@@ -16,8 +22,67 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
+    let exercisesCache = [
+    {% for exercice in exercices %}
+        {
+            id : {{ exercice.id }},
+            title : "{{ exercice.title }}"
+        },
+           
+    {% endfor %}
+    ]
+
+    //Loops through all exercises and hides the exercises not matching the query in the DOM
+    function renderSearchResults(queryResult) {
+        const exerciseButtons = document.querySelectorAll(".exercise-choice");
+
+        exerciseButtons.forEach(element => {
+          if(queryResult.includes(parseInt(element.getAttribute("data-id")))){
+                element.classList.remove("d-none")
+          }
+        else{
+                element.classList.add("d-none")
+        }
+        });
+    }
+
+
+    //Returns an array of exercise ids matching search keyword
+    function exerciseSearchHandler(keyword) {
+        keyword = keyword.toLowerCase()
+        let search_result = []
+
+
+        if(!exercisesCache){
+            return search_result 
+        }
+
+        exercisesCache.forEach(element => {
+            if(element.title.toLowerCase().includes(keyword)){
+                search_result.push(element.id)
+            }
+        });
+
+        console.log(search_result)
+
+        return search_result
+
+
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById("exerciseModal");
+        const searchBox = document.getElementById("exercise-search-filter");
+
+
+        searchBox.addEventListener("input",(event)=>{
+        
+           const searchQuery =  exerciseSearchHandler(searchBox.value)
+
+           renderSearchResults(searchQuery)
+        })
+
+        
 
         modal.addEventListener('shown.bs.modal', () => {
             prepForm();
@@ -29,6 +94,12 @@
         restoreExercisesFromTextarea();
     });
 
+
+
+
+
+
+    
     function attachClickEvents() {
         const targetElts = document.querySelectorAll(".exercise-choice");
         targetElts.forEach(element => {
@@ -39,9 +110,9 @@
     }
 
     function exerciseChoice_onclick(e) {
+        console.log("exerciseChoice_onclick")
         const exercise = extractDataFromDiv(e.target.closest(".exercise-choice"));
 
-        // Avoid duplicates
         if (document.querySelector(`[data-card-id="${exercise.id}"]`)) return;
 
         const card = generateCard(exercise);
@@ -155,6 +226,7 @@
         border-radius: 0.375rem;
         padding: 0.33rem;
         transition: transform 0.33s ease, filter 0.33s ease, padding 0.33s ease, background 0.33s ease;
+        margin: .5rem 0;
     }
 
     .exercise-choice:hover {
@@ -190,6 +262,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+
+                <div class="input-group mb-3">
+                  <span class="input-group-text material-symbols-outlined">search</span>
+
+                   <input id="exercise-search-filter" type="text" class="form-control" placeholder="Search" aria-label="Search" >
+                </div>
+
                 {% for exercice in exercices %}
                     <div class="exercise-choice" data-id="{{ exercice.id }}" data-title="{{ exercice.title }}">
                         <span class="badge text-bg-dark">ID:{{ exercice.id }}</span>
@@ -202,7 +281,13 @@
         </div>
     </div>
 </div>
-{{ include('/back/workout/_delete_form.html.twig') }}
+
+
+<div class="action-area">
+    <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+    {{ include('/back/workout/_delete_form.html.twig') }}
+</div>
+</form>
 
 {% endblock %}
 

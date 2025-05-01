@@ -4,8 +4,6 @@
 {{ exercice.title }} - Fitverse
 {% endblock %}
 
-
-
 {% block javascripts %}
 {{ parent() }}
 <script>
@@ -51,34 +49,6 @@
 
 </script>
 
-<script>
-    //Renders steps
-
-    document.addEventListener("DOMContentLoaded", (event) => {
-
-        const stepElement = (text, video, number = "?") => {
-
-            const cloningDiv = document.querySelector(".steps > .step").cloneNode(true)
-            cloningDiv.querySelector(".step-description").innerHTML = text
-            cloningDiv.querySelector(".step-video").src = video
-            cloningDiv.querySelector(".step-count").innerHTML = "#" + number
-            cloningDiv.classList.remove("json-assist")
-            return cloningDiv
-        }
-
-        let steps = JSON.parse(new DOMParser().parseFromString("{{ exercice.steps }}", "text/html").documentElement.textContent)
-
-        let stepCounter = 0;
-        steps.forEach(step => {
-            stepCounter++
-            const newStep = stepElement(step.text, step.video, stepCounter)
-            document.querySelector(".steps").appendChild(newStep)
-
-        })
-    })
-
-</script>
-
 {% endblock %}
 
 
@@ -86,15 +56,7 @@
 {{ parent() }}
 {# Your CSS goes here #}
 <style>
-    .header {
-        display: flex;
-        margin: 1rem;
-        flex-direction: row;
-        align-items: center;
-    }
-
     .details {
-        width: 40lvw;
         display: flex;
         flex-direction: column;
         gap: .5rem;
@@ -108,14 +70,7 @@
         display: none !important;
     }
 
-    .exercise-view {
-        display: flex;
-        flex-direction: row-reverse;
-        gap: 1rem;
-        height:84lvh;
-        overflow:hidden;
 
-    }
 
 
     .body-maps {
@@ -173,55 +128,6 @@
         }
     }
 
-    .steps {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        width: fit-content;
-        margin: 0 .5rem;
-
-        .step {
-            background: #E8E8E8;
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            border-radius: 0.875rem;
-            position: relative;
-            transition: transform .33s ease;
-
-            &:hover {
-                transform: scale(1.02);
-            }
-
-            .step-count {
-                position: absolute;
-                left: 0;
-                top: 0;
-                background: #c5c5c5;
-                padding: .5rem;
-                border-top-left-radius: 0.875rem;
-                border-bottom-right-radius: 0.875rem;
-                font-weight: 600;
-            }
-
-            div {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                margin: 0 1rem;
-            }
-
-        }
-
-
-        video {
-            aspect-ratio: 16/9;
-            height: 12rem;
-            border-top-right-radius: 0.875rem;
-            border-bottom-right-radius: 0.875rem;
-
-        }
-    }
 
 
     .video-guide {
@@ -263,140 +169,14 @@
             }
         }
 
-    .difficulty-badge {
-        display: flex;
-        flex-direction: row;
-        width: fit-content;
-        align-items: center;
-        justify-content: center;
-        background: #e8e8e8;
-        color: black;
-        padding: 1rem;
-        height: 3rem;
-        border-radius: 0.875rem;
-        gap: .5rem;
-        scale: 0.8;
-        position: relative;
-
-        .progress {
-            width: 3rem;
-            height: 1rem;
-            border: 1px solid gray;
-            position: relative;
-            margin-left: 1rem;
-            width: 4rem;
-        }
-
-        .emoji {
-            left: 1rem;
-            scale: 3.2;
-            margin-left: .5rem;
-            z-index: 3;
-            position: absolute;
-        }
-
-        .difficulty-label {
-            text-transform: capitalize;
-            font-size: 1rem;
-        }
-
-
-    }
 </style>
 {% endblock %}
 
 
 
 {% block body %}
-{% include 'navbar.html.twig' %}
 
 <body data-context="exercise">
-
-    <div class="header">
-        <h2>{{ exercice.title }}</h2>
-
-
-        <div class="difficulty-badge badge">
-
-
-
-            {% if exercice.difficulty == 'novice' %}
-
-            <span class="emoji">🔥</span>
-            <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar novice" style="width: 35%"></div>
-            </div>
-            {% endif %}
-
-
-            {% if exercice.difficulty == 'beginner' %}
-
-            <span class="emoji">🔥</span>
-            <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar intermediate" style="width: 50%"></div>
-            </div>
-
-
-            {% endif %}
-
-
-            {% if exercice.difficulty == 'intermediate' %}
-
-            <span class="emoji">🔥</span>
-            <div class="progress intermediate" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar intermediate" style="width: 70%"></div>
-            </div>
-
-
-            {% endif %}
-
-
-
-            {% if exercice.difficulty == 'advanced' %}
-
-            <span class="emoji">🔥</span>
-            <div class="progress advanced" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar" style="width:95%"></div>
-            </div>
-
-
-            {% endif %}
-
-            <span class="difficulty-label">{{ exercice.difficulty }}</span>
-
-        </div>
-
-
-        {% if exercice.difficulty == 'beginner' %}
-        <span class="material-symbols-outlined">
-            fitness_center
-        </span>
-        <span class="material-symbols-outlined">
-            signal_cellular_2_bar
-        </span>
-        {% endif %}
-
-
-        {% if exercice.difficulty == 'intermediate' %}
-        <span class="material-symbols-outlined">
-            fitness_center
-        </span>
-        <span class="material-symbols-outlined">
-            signal_cellular_3_bar
-        </span>
-        {% endif %}
-
-
-        {% if exercice.difficulty == 'advanced' %}
-        <span class="material-symbols-outlined">
-            fitness_center
-        </span>
-        <span class="material-symbols-outlined">
-            signal_cellular_4_bar
-        </span>
-        {% endif %}
-
-    </div>
 
     <div class="exercise-view">
 
@@ -510,9 +290,6 @@
         </div>
 
     </div>
-
-
-    <a href="{{ path('app_exercice_index') }}">Browse Exercises</a>
 
 
 </body>

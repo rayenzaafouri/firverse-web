@@ -2,13 +2,22 @@
 
 {% block title %}Exercise Details{% endblock %}
 
+
+
+{% block info %}
+This section allows you to manage all aspects of the workouts included in the platform.
+{% endblock %}
+
+
 {% block header %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
+            <a href="{{ path('admin_dashboard') }}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
             <a href="{{ path('app_workout_index_admin') }}">Workouts</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">List</li>
     </ol>
 </nav>
 {% endblock %}
@@ -42,7 +51,7 @@
                 <th>Description</th>
                 <th>Featured</th>
                 <th>Enabled</th>
-                <th>actions</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -54,8 +63,7 @@
                 <td>{{ workout.featured ? '✅' : '❌' }}</td>
                 <td>{{ workout.enabled ? '✅' : '❌' }}</td>
                 <td>
-                    <a class="btn btn-success" href="{{ path('app_workout_show', {'id': workout.id}) }}"><i class="fa-solid fa-eye"></i> Show</a>
-                    <a  class="btn btn-danger" href="{{ path('app_workout_edit', {'id': workout.id}) }}"><i class="fa-solid fa-pen"></i> Manage</a>
+                    <a  class="btn btn-tetr" href="{{ path('app_workout_edit', {'id': workout.id}) }}"><i class="fa-solid fa-pen"></i></a>
 
                 </td>
             </tr>

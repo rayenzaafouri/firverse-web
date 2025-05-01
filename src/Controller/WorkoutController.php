@@ -6,6 +6,7 @@ use App\Entity\Workout;
 use App\Entity\Exercice;
 use App\Form\WorkoutType;
 use App\Repository\WorkoutRepository;
+use App\Repository\ExerciceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,7 +52,7 @@ final class WorkoutController extends AbstractController
             
         ]);
     }
-
+    
     #[Route('/admin/workout/{id}', name: 'app_workout_show', methods: ['GET'])]
     public function show(Workout $workout): Response
     {
@@ -102,4 +103,60 @@ final class WorkoutController extends AbstractController
 
         return $this->redirectToRoute('app_workout_index_admin', [], Response::HTTP_SEE_OTHER);
     }
+
+
+    // -------------------------------------------------------------
+    // User methods
+    // -------------------------------------------------------------
+
+#[Route('/workout/{id}', name: 'app_workout_show', methods: ['GET'])]
+public function showUser(Workout $workout, ExerciceRepository $exerciceRepository): Response
+{
+    $exerciceIds = array_map(function($exercice) {
+        return $exercice['id'];
+    }, json_decode($workout->getExercises(), true));
+
+    $exercices = $exerciceRepository->findBy(['id' => $exerciceIds]);
+
+
+    foreach ($exercices as $exercice) {
+        $stepsObject = json_decode($exercice->getSteps());
+
+        if (json_last_error() !== JSON_ERROR_NONE) {    
+            $this->addFlash('error_message', $exercice->getTitle() . 'Failed to process exercise steps.');
+        }
+
+        $exercice->stepsObject = $stepsObject;
+
+
+
+    }
+
+    $orderedExercices = [];
+    foreach ($exerciceIds as $id) {
+        foreach ($exercices as $exercice) {
+
+            if ($exercice->getId() === (int) $id) {
+                $orderedExercices[] = $exercice;
+                break;
+            }
+        }
+    }
+
+
+
+    // Render the template and pass the ordered exercices
+    return $this->render('/front/workout/show.html.twig', [
+        'workout' => $workout,
+        'exercices' => $orderedExercices,
+    ]);
+}
+
+
+    // -------------------------------------------------------------
+    // Helper functions
+    // -------------------------------------------------------------
+    
+
+    
 }

@@ -47,6 +47,7 @@ class WorkoutType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Workout::class,
+            'csrf_protection' => false
         ]);
     }
 }

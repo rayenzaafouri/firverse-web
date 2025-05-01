@@ -54,6 +54,14 @@
 		crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 
+	<!-- SimpleBar -->
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css"/>
+	<script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
+
+
+
+
 	<script>
 		function showToast(type, message, duration = 3000) {
 			if (typeof Notyf !== 'undefined') {
@@ -161,7 +169,10 @@
 
 
 <body>
-	{% block body %}{% endblock %}
+	<span class="nav-safe"></span>
+	{% block body %}
+		
+	{% endblock %}
 </body>
 
 </html>

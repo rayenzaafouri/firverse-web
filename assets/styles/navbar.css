@@ -1,17 +1,164 @@
-body {
-  padding-top: 6rem;
+.nav-safe{
+  display: block;
+  margin-top: 7rem;
+}
+
+
+
+
+.navbar-enhance{
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100lvw;
+  flex-direction: column;
+  color: white;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+
+
+
+  &:hover{
+    .hover-menu{
+      height: auto;
+      padding: 1rem;
+      padding-top: 2rem;
+      position: relative;
+      bottom: 1rem;
+
+     
+    }
+  }
+}
+
+
+.navbar-enhance > .hover-menu {
+  height: 0;
+  padding: 0;
+  background-color: #222529;
+  width: 100% ;
+  width: 80lvw;
+
+  border-bottom-left-radius: 0.875rem;
+  border-bottom-right-radius: 0.875rem;
+
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:  
+    "x y z"
+    "x t p";
+
+  gap:1rem;
+  
+
+
+  &>div:first-of-type{ grid-area: x; background: lightblue; }
+  &>div:nth-of-type(2) { grid-area: y; background: lightgreen; }
+  &>div:nth-of-type(3){ grid-area: z; background: lightcoral; }
+  &>div:nth-of-type(4){ grid-area: t; background: lightyellow; }
+
+  div.workout{
+    background-image: url("../images/landing/hero-exercise.png");
+    background-position-x:98%;
+    padding: .5rem;
+  }
+
+  div.nutrition{
+    background-image: url("../images/landing/hero-nutrition.png");
+    background-position-x:98%;
+    padding: .5rem;
+    
+  }
+
+  div.events{
+    background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/landing/sport-event.png");
+    background-position-x:98%;
+    padding: .5rem;
+  }
+
+  div.gym{
+    background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/landing/sport-event.png");
+    background-position-x:98%;
+    padding: .5rem;
+  }
+
+
+  div.shop{
+    background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/landing/sport-tile.png");
+    background-position-x:98%;
+    padding: .5rem;
+    object-fit: cover;
+    background-size: contain;
+  }
+
+  
+  div.more{
+    background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/landing/more.png");
+    background-position-x:98%;
+    padding: .5rem;
+    background-size: contain;
+
+  }
+
+
+
+
+
+
+
+
+
+  div{
+    border-radius: 0.875rem;
+    padding: 1rem;
+
+    span.title{
+      font-size: 2.5rem;
+    }
+
+    ul{
+      list-style-type: none;
+      a{
+        text-decoration: none;
+      color: white;
+
+      }
+    }
+  }
+
+
+
+
 }
 
 .fitverse-navbar {
+  border-top-left-radius: 0.875rem;
+  border-top-right-radius: 0.875rem;
+
+  border-radius: 0.875rem;
+
+
+
+
+
+  margin-top: .5rem;
+
   z-index: 9999;
-  min-height: 6rem;
   background-color: #222529 !important;
   border-bottom: 4px solid #9ff856;
   transition: border 0.5s linear;
-  position: fixed;
-  width: 100lvw;
+  width: 100%;
   top: 0px;
   backdrop-filter: blur(15px);
+  width: 80lvw;
+
+  
+
+  
 
   .navbar-brand > img {
     width: 10rem;

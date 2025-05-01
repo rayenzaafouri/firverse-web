@@ -6,8 +6,6 @@ body{
 .admin-dashboard-layout{
     width: 100lvw;
     display: grid;
-
-
     .dashboard-content{
         width: 99lvw;
         position: relative;
@@ -16,16 +14,39 @@ body{
             margin-top: 1rem;
         }
     }
-
 }
 aside{
+
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.6);
+
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;    
+  
+    ul {
+      li {
+        a {
+          user-select: none;
+          -webkit-user-select: none;
+          -ms-user-select: none;
+        }
+      }
+    }
+  
+
+
+
+
+
     z-index: 9999;
     padding: 1.44rem  0;
-    background-color: #222529 !important;
     height: 100lvh;
     display: flex;
     align-items: center;
     flex-direction: column;
+
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+
 
     position: fixed;
     top: 0;
@@ -33,7 +54,8 @@ aside{
     width: 15lvw;
     
     img.logo{
-        height: 2rem;
+        position: relative;
+        width: 75%;
     }
 
     ul{
@@ -46,6 +68,10 @@ aside{
             align-items: center;
             justify-content: center;
             font-size: .8rem!important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
             img{
                 height: 1.5rem;
             }
@@ -104,4 +130,15 @@ aside{
     padding: .5rem;
     border-top: 1px solid #232529;
     gap: .5rem;
+}
+
+
+
+.breadcrumb{
+    font-size: 2rem;
+    
+    a {
+        all: unset;
+        cursor: pointer;
+    }
 }
