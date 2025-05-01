@@ -18,12 +18,13 @@ class NutritionPreferencesType extends AbstractType
             ->add('diet', ChoiceType::class, [
                 'label'    => 'Diet Type',
                 'choices'  => [
+                    'Standard'       => 'standard',
                     'Keto'           => 'keto',
                     'Carnivore'      => 'carnivore',
                     'Vegetarian'     => 'vegetarian',
                     'Mediterranean'  => 'mediterranean',
                 ],
-                'expanded' => true,
+                'expanded' => false,
             ])
             // Disliked foods input
             ->add('dislikes', TextareaType::class, [
@@ -35,14 +36,17 @@ class NutritionPreferencesType extends AbstractType
             ->add('proteinPct', IntegerType::class, [
                 'label' => 'Protein (%)',
                 'attr'  => ['min' => 0, 'max' => 100],
+                'data'  => 30,
             ])
             ->add('fatPct', IntegerType::class, [
                 'label' => 'Fat (%)',
                 'attr'  => ['min' => 0, 'max' => 100],
+                'data'  => 20,
             ])
             ->add('carbPct', IntegerType::class, [
                 'label' => 'Carbs (%)',
                 'attr'  => ['min' => 0, 'max' => 100],
+                'data'  => 50,
             ])
             // Submit
             ->add('generate', SubmitType::class, [

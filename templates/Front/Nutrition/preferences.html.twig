@@ -7,7 +7,7 @@
 <div class="container-fluid content-container" data-context="nutrition">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow">
+            <div class="card shadow" style="margin-top: 48px;">
                 <div class="card-header bg-primary text-white">
                     <h1 class="h3 mb-0">Select Your Nutrition Preferences</h1>
                 </div>
@@ -40,11 +40,7 @@
                             </div>
                         </div>
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                {{ button_label|default('Get Nutrition Plan') }}
-                            </button>
-                        </div>
+                        {# Submit button is rendered by the form type #}
                     {{ form_end(form) }}
                 </div>
             </div>
