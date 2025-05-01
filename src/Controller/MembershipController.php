@@ -101,4 +101,26 @@ final class MembershipController extends AbstractController
 
         return $this->redirectToRoute('app_membership_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/statsm', name: 'app_membership_stats', methods: ['GET'], priority: 1)]
+    public function stats(MembershipRepository $membershipRepository): Response
+    {
+        $memberships = $membershipRepository->findAll();
+        $statusStats = [];
+
+        foreach ($memberships as $membership) {
+            $status = strtolower($membership->getStatus());
+            if ($status) {
+                $statusStats[$status] = ($statusStats[$status] ?? 0) + 1;
+            }
+        }
+
+        ksort($statusStats);
+
+        return $this->render('back/membership/statsm.html.twig', [
+            'statusStats' => $statusStats,
+        ]);
+    }
+
+
 }
