@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+
 
 use GuzzleHttp\Client;
 
@@ -90,7 +93,24 @@ final class ExerciceController extends AbstractController
             'tip' => $data["tip"],
         ]);
     }
+
+
+    #[Route('/exercise/api/search/{keywords}', name: 'exercise_search_keywords', methods: ['GET'])]
+    public function searchKeywords(string $keywords, ExerciceRepository $exerciceRepository): JsonResponse
+    {
+        if (!$keywords) {
+            return new JsonResponse(['error' => 'Missing search keywords'], 400);
+        }
     
+        $results = $exerciceRepository->createQueryBuilder('e')
+            ->where('LOWER(e.title) LIKE :keywords')
+            ->setParameter('keywords', '%' . strtolower($keywords) . '%')
+            ->getQuery()
+            ->getResult();
+    
+        return $this->json($results);
+    }
+     
 
 
 

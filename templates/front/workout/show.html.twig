@@ -1,424 +1,420 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% endblock %}
+{% block title %} {{ workout.label }}{% endblock %}
 
 {% block javascripts %}
 {{ parent() }}
 
 <script>
 
-
 let timer;
 
-
-
 document.addEventListener("DOMContentLoaded", ()=>{
-	UI_toggle_timer(false)
+    UI_toggle_timer(false);
+    centerDivByMargin(".workout-view");
+    attachHUDControlsClickEvents();
+    initExerciseScope();
+    pushState("initial");
 
-	centerDivByMargin(".workout-view")
-	attachHUDControlsClickEvents()
-	initExerciseScope()
-	pushState("initial")
+    timer = new Timer('#timer');
+    
+	setTimeout(function(){
+		checkForUnfinishedWorkout()
+	},500)
+});
 
-	timer = new Timer('#timer');
-
-})
-
-
-
-function initExerciseScope()
-{
-	sessionStorage.setItem('exercise', "0");
+function initExerciseScope() {
+    sessionStorage.setItem('exercise', "0");
+    // Store workout ID in localStorage when initializing
+    const workoutId = "{{ workout.id }}";
+    localStorage.setItem('last_workout_id', workoutId);
 }
 
-function setExerciseScope(value)
-{
-	sessionStorage.setItem('exercise', ""+value);
+function setExerciseScope(value) {
+    sessionStorage.setItem('exercise', ""+value);
 }
 
-function getExerciseScope()
-{
-	if(sessionStorage.getItem('exercise')){
-		return parseInt(sessionStorage.getItem('exercise'))
-	}
-	initExerciseScope()
+function getExerciseScope() {
+    if(sessionStorage.getItem('exercise')){
+        return parseInt(sessionStorage.getItem('exercise'));
+    }
+    initExerciseScope();
+    return 0;
 }
 
-// ---------------------------------------------------------
+function checkForUnfinishedWorkout() {
+    const lastWorkout = localStorage.getItem('last_workout');
+    if (lastWorkout) {
+        const { id, time, exercise } = JSON.parse(lastWorkout);
+        const currentWorkoutId = "{{ workout.id }}";
+        
+        if (id === currentWorkoutId) {
+            const shouldResume = confirm("You have an unfinished workout. Would you like to resume it?");
+            if (shouldResume) {
+                timer.start(time);
+                setExerciseScope(exercise);
+                renderExercise(exercise);
+                UI_toggle_timer(true);
+                UI_toggle_workoutMode(true);
+                pushState("playing");
+                syncNavigationControls();
+            } else {
+                // Clear the unfinished workout if user chooses not to resume
+                localStorage.removeItem('last_workout');
+            }
+        }
+    }
+}
+
+function saveWorkoutProgress() {
+    const workoutId = "{{ workout.id }}";
+    const progress = {
+        id: workoutId,
+        time: timer.elapsedTime,
+        exercise: getExerciseScope()
+    };
+    localStorage.setItem('last_workout', JSON.stringify(progress));
+}
+
+function clearWorkoutProgress() {
+    localStorage.removeItem('last_workout');
+}
 
 function attachHUDControlsClickEvents(){
+    const abandonBtn = document.querySelector(".workout-hud-controls > .abandon");
+    const pauseBtn = document.querySelector(".workout-hud-controls > .pause");
+    const continueBtn = document.querySelector(".workout-hud-controls  > .continue");
+    const startWorkoutBtn = document.querySelector(".workout-hud-controls > .start");
+    const lastExerciseBtn = document.querySelector(".workout-hud-controls > .last");
+    const nextExerciseBtn = document.querySelector(".workout-hud-controls > .next");
 
+    abandonBtn.addEventListener("click",()=>{
+        abandonWorkout_onclick();
+        UI_toggle_timer(false);
+    });
 
-	const abandonBtn = document.querySelector(".workout-hud-controls > .abandon")
+    pauseBtn.addEventListener("click",()=>{
+        pauseWorkout_onclick();
+    });
 
-	const pauseBtn = document.querySelector(".workout-hud-controls > .pause")
-	const continueBtn = document.querySelector(".workout-hud-controls  > .continue")
-	const startWorkoutBtn = document.querySelector(".workout-hud-controls > .start")
-	const lastExerciseBtn = document.querySelector(".workout-hud-controls > .last")
-	const nextExerciseBtn = document.querySelector(".workout-hud-controls > .next")
+    continueBtn.addEventListener("click",()=>{
+        continueWorkout_onclick();
+    });
 
-	abandonBtn.addEventListener("click",()=>{
-		abandonWorkout_onclick()
-		UI_toggle_timer(false)
+    startWorkoutBtn.addEventListener("click",()=>{
+        startWorkout_onclick();
+    });
+    
+    lastExerciseBtn.addEventListener("click",()=>{
+        lastExerciseBtn_onclick();
+    });
 
-	})
-
-	pauseBtn.addEventListener("click",()=>{
-		pauseWorkout_onclick()
-	})
-
-	continueBtn.addEventListener("click",()=>{
-		continueWorkout_onclick()
-
-	})
-
-
-	startWorkoutBtn.addEventListener("click",()=>{
-		startWorkout_onclick()
-	})
-
-	
-	lastExerciseBtn.addEventListener("click",()=>{
-		lastExerciseBtn_onclick()
-	})
-
-	nextExerciseBtn.addEventListener("click",()=>{
-		nextExerciseBtn_onclick()
-	})
-
+    nextExerciseBtn.addEventListener("click",()=>{
+        nextExerciseBtn_onclick();
+    });
 }
 
-
-function lastExerciseBtn_onclick()
-{
-	renderExercise(getExerciseScope()-1)
-	syncNavigationControls()
+function lastExerciseBtn_onclick() {
+    renderExercise(getExerciseScope()-1);
+    syncNavigationControls();
 }
 
-
-function nextExerciseBtn_onclick()
-{
-	renderExercise(getExerciseScope()+1)
-	syncNavigationControls()
-	
+function nextExerciseBtn_onclick() {
+    renderExercise(getExerciseScope()+1);
+    syncNavigationControls();
 }
-
 
 function continueWorkout_onclick(){
-	timer.resume();
-	pushState("playing")
+    timer.resume();
+    pushState("playing");
+    saveWorkoutProgress();
 }
-
-
 
 function abandonWorkout_onclick(){
-	timer.reset();
-	UI_toggle_workoutMode(false)
-	pushState("initial")
-
-
+    if (confirm("Are you sure you want to abandon this workout?")) {
+        timer.reset();
+        UI_toggle_workoutMode(false);
+        pushState("initial");
+        clearWorkoutProgress();
+    }
 }
 
-
 function pauseWorkout_onclick(){
-	timer.pause()
-	
-	pushState("pause")
-
+    timer.pause();
+    pushState("pause");
+    saveWorkoutProgress();
 }
 
 function startWorkout_onclick(){
-	timer.start()
-	UI_toggle_timer(true)
-	UI_toggle_workoutMode(true)
-	pushState("playing")
-	exerciceScope = 0
-	renderExercise(exerciceScope)
-	syncNavigationControls()
+    const lastWorkout = localStorage.getItem('last_workout');
+    if (lastWorkout) {
+        const { id } = JSON.parse(lastWorkout);
+        const currentWorkoutId = "{{ workout.id }}";
+        
+        if (id === currentWorkoutId) {
+            checkForUnfinishedWorkout();
+            return;
+        }
+    }
+    
+    timer.start();
+    UI_toggle_timer(true);
+    UI_toggle_workoutMode(true);
+    pushState("playing");
+    renderExercise(0);
+    syncNavigationControls();
+    saveWorkoutProgress();
 }
 
 function UI_toggle_timer(state){
-	const timerDisplay = document.querySelector("#timer")
-	if(!state){
-		timerDisplay.style.setProperty("display","none")
-		return
-	}
-	timerDisplay.style.setProperty("display","block")
-
-
+    const timerDisplay = document.querySelector("#timer");
+    if(!state){
+        timerDisplay.style.setProperty("display","none");
+        return;
+    }
+    timerDisplay.style.setProperty("display","block");
 }
 
-
-
 function syncNavigationControls(){
+    const stepsCollection = document.querySelectorAll(".step-bundle");
 
-	const stepsCollection = document.querySelectorAll(".step-bundle")
+    //check for last
+    if(getExerciseScope() == stepsCollection.length -1){
+        pushState("last");
+        return;
+    }
 
-	//check for last
-	if(getExerciseScope() == stepsCollection.length -1){
-		pushState("last")
-		return
-	}
+    if(getExerciseScope() == 0){
+        pushState("first");
+        return;
+    }
 
-	if(getExerciseScope() == 0){
-		pushState("first")
-		return
-	}
-
-	pushState("middle")
+    pushState("middle");
 }
 
 function pushState(state){
-	const abandonBtn = document.querySelector(".workout-hud-controls > .abandon")
-	const pauseBtn = document.querySelector(".workout-hud-controls > .pause")
-	const continueBtn = document.querySelector(".workout-hud-controls  > .continue")
-	const startWorkoutBtn = document.querySelector(".workout-hud-controls > .start")
-	const lastExerciseBtn = document.querySelector(".workout-hud-controls > .last")
-	const nextExerciseBtn = document.querySelector(".workout-hud-controls > .next")
+    const abandonBtn = document.querySelector(".workout-hud-controls > .abandon");
+    const pauseBtn = document.querySelector(".workout-hud-controls > .pause");
+    const continueBtn = document.querySelector(".workout-hud-controls  > .continue");
+    const startWorkoutBtn = document.querySelector(".workout-hud-controls > .start");
+    const lastExerciseBtn = document.querySelector(".workout-hud-controls > .last");
+    const nextExerciseBtn = document.querySelector(".workout-hud-controls > .next");
 
+    if(state == "initial"){
+        toggleBtnVisibilty(abandonBtn,false);
+        toggleBtnVisibilty(pauseBtn,false);
+        toggleBtnVisibilty(continueBtn,false);
+        toggleBtnVisibilty(startWorkoutBtn,true);
+        toggleBtnVisibilty(lastExerciseBtn,false);
+        toggleBtnVisibilty(nextExerciseBtn,false);
+        return;
+    }
 
+    if(state == "pause"){
+        toggleBtnVisibilty(abandonBtn,true);
+        toggleBtnVisibilty(pauseBtn,false);
+        toggleBtnVisibilty(continueBtn,true);
+        toggleBtnVisibilty(startWorkoutBtn,false);
+        return;
+    }
 
+    if(state == "continue"){
+        toggleBtnVisibilty(abandonBtn,true);
+        toggleBtnVisibilty(pauseBtn,true);
+        toggleBtnVisibilty(continueBtn,false);
+        toggleBtnVisibilty(startWorkoutBtn,false);
+        return;
+    }
 
+    if(state == "playing"){
+        toggleBtnVisibilty(abandonBtn,true);
+        toggleBtnVisibilty(pauseBtn,true);
+        toggleBtnVisibilty(continueBtn,false);
+        toggleBtnVisibilty(startWorkoutBtn,false);
+        return;
+    }
 
+    if(state == "first"){
+        toggleBtnVisibilty(lastExerciseBtn,false);
+        toggleBtnVisibilty(nextExerciseBtn,true);
+        return;
+    }
 
+    if(state == "middle"){
+        toggleBtnVisibilty(lastExerciseBtn,true);
+        toggleBtnVisibilty(nextExerciseBtn,true);
+        return;
+    }
 
-	if(state == "initial"){
-		toggleBtnVisibilty(abandonBtn,false)
-		toggleBtnVisibilty(pauseBtn,false)
-		toggleBtnVisibilty(continueBtn,false)
-		toggleBtnVisibilty(startWorkoutBtn,true)
-		toggleBtnVisibilty(lastExerciseBtn,false)
-		toggleBtnVisibilty(nextExerciseBtn,false)
-
-
-		return
-	}
-
-	if(state == "pause"){
-		toggleBtnVisibilty(abandonBtn,true)
-		toggleBtnVisibilty(pauseBtn,false)
-		toggleBtnVisibilty(continueBtn,true)
-		toggleBtnVisibilty(startWorkoutBtn,false)
-		return
-	}
-
-	if(state == "continue"){
-		toggleBtnVisibilty(abandonBtn,true)
-		toggleBtnVisibilty(pauseBtn,true)
-		toggleBtnVisibilty(continueBtn,false)
-		toggleBtnVisibilty(startWorkoutBtn,false)
-		return
-	}
-
-	if(state == "playing"){
-		toggleBtnVisibilty(abandonBtn,false)
-		toggleBtnVisibilty(pauseBtn,true)
-		toggleBtnVisibilty(continueBtn,false)
-		toggleBtnVisibilty(startWorkoutBtn,false)
-		return
-	}
-
-
-	if(state == "first"){
-		toggleBtnVisibilty(lastExerciseBtn,false)
-		toggleBtnVisibilty(nextExerciseBtn,true)
-		return
-	}
-
-	if(state == "middle"){
-		toggleBtnVisibilty(lastExerciseBtn,true)
-		toggleBtnVisibilty(nextExerciseBtn,true)
-		return
-	}
-
-	if(state == "last"){
-		toggleBtnVisibilty(lastExerciseBtn,true)
-		toggleBtnVisibilty(nextExerciseBtn,false)
-		return
-	}
-
-
-
+    if(state == "last"){
+        toggleBtnVisibilty(lastExerciseBtn,true);
+        toggleBtnVisibilty(nextExerciseBtn,false);
+        return;
+    }
 }
 
 function renderExercise(bundle_number = 0){
-	const stepsCollection = document.querySelectorAll(".step-bundle")
-	const titlesCollection = document.querySelectorAll(".exercise-label")
-	const setsRepsCollection = document.querySelectorAll(".sets-reps > div")
+    const stepsCollection = document.querySelectorAll(".step-bundle");
+    const titlesCollection = document.querySelectorAll(".exercise-label");
+    const setsRepsCollection = document.querySelectorAll(".sets-reps > div");
+    const exerciseTitlesCollection = document.querySelectorAll(".workout-hud > .exercise-label");
 
-	const exerciseTitlesCollection = document.querySelectorAll(".workout-hud > .exercise-label")
+    //Checking requested step against available steps
+    if(!(bundle_number < stepsCollection.length && bundle_number >= 0)){
+        return false;
+    }
 
+    setExerciseScope(bundle_number);
+    saveWorkoutProgress();
+    UI_toggle_workoutMode(false);
 
-	//Checking requested step against available steps
+    stepsCollection.forEach(stepBundle =>{
+        stepBundle.style.setProperty("display","none");
+    });
+    titlesCollection.forEach(title =>{
+        title.style.setProperty("display","none");
+    });
 
-	if(!(bundle_number < stepsCollection.length && bundle_number >= 0)){
-		return false;
-	}
+    setsRepsCollection.forEach(setsReps =>{
+        setsReps.style.setProperty("display","none");
+    });
 
-	setExerciseScope(bundle_number)
+    exerciseTitlesCollection.forEach(setsReps =>{
+        setsReps.style.setProperty("display","none");
+    });
 
-	UI_toggle_workoutMode(false)
+    stepsCollection[bundle_number].style.setProperty("display","flex");
+    titlesCollection[bundle_number].style.setProperty("display","block");
+    setsRepsCollection[bundle_number].style.setProperty("display","grid");
+    exerciseTitlesCollection[bundle_number].style.setProperty("display","grid");
 
-	stepsCollection.forEach(stepBundle =>{
-		stepBundle.style.setProperty("display","none")
-	})
-	titlesCollection.forEach(title =>{
-		title.style.setProperty("display","none")
-	})
+    setTimeout(()=>{
+        UI_toggle_workoutMode(true);
+    },500);
 
-	setsRepsCollection.forEach(setsReps =>{
-		setsReps.style.setProperty("display","none")
-	})
-
-	exerciseTitlesCollection.forEach(setsReps =>{
-		setsReps.style.setProperty("display","none")
-	})
-
-
-
-	stepsCollection[bundle_number].style.setProperty("display","flex")
-	titlesCollection[bundle_number].style.setProperty("display","block")
-	setsRepsCollection[bundle_number].style.setProperty("display","grid")
-	exerciseTitlesCollection[bundle_number].style.setProperty("display","grid")
-
-	setTimeout(()=>{
-		UI_toggle_workoutMode(true)
-	},500)
-
-	return true
+    return true;
 }
 
 function UI_toggle_stepContainer(toggle=true){
-	const stepsContainer = document.querySelector(".steps-container")
-	toggle ? stepsContainer.classList.add("visible") : stepsContainer.classList.remove("visible")
+    const stepsContainer = document.querySelector(".steps-container");
+    toggle ? stepsContainer.classList.add("visible") : stepsContainer.classList.remove("visible");
 }
 
 function toggleBtnVisibilty(btn,state){
-	if(!state){
-		btn.style.setProperty("display","none")
-	return	
-	}
-
-
-	btn.style.setProperty("display","block")
+    if(!state){
+        btn.style.setProperty("display","none");
+        return;    
+    }
+    btn.style.setProperty("display","block");
 }
 
 function UI_toggle_workoutHud(toggle=true){
-	const hudContainer = document.querySelector(".workout-view")
-
-	hudContainer.style.setProperty("transition","margin-left .5s ease")
-
-	toggle ? hudContainer.classList.remove("collapsed") : hudContainer.classList.add("collapsed")
+    const hudContainer = document.querySelector(".workout-view");
+    hudContainer.style.setProperty("transition","margin-left .5s ease");
+    toggle ? hudContainer.classList.remove("collapsed") : hudContainer.classList.add("collapsed");
 }
 
-
 function UI_toggle_exerciseBrief(toggle=true){
-	const exerciceBrief = document.querySelector(".workout-briefing")
-	toggle ? exerciceBrief.classList.add("visible") : exerciceBrief.classList.remove("visible")
+    const exerciceBrief = document.querySelector(".workout-briefing");
+    toggle ? exerciceBrief.classList.add("visible") : exerciceBrief.classList.remove("visible");
 }
 
 function centerDivByMargin(divId) {
-	const div = document.querySelector(divId);
-	if (!div) return;
+    const div = document.querySelector(divId);
+    if (!div) return;
   
-	const parent = div.parentElement;
-	const parentWidth = parent.clientWidth;
-	const divWidth = div.offsetWidth;
+    const parent = div.parentElement;
+    const parentWidth = parent.clientWidth;
+    const divWidth = div.offsetWidth;
   
-	const leftMargin = (parentWidth - divWidth) / 2;
-	div.style.marginLeft = `0px`;
-
-	div.style.marginLeft = `${leftMargin}px`;
-  }
+    const leftMargin = (parentWidth - divWidth) / 2;
+    div.style.marginLeft = `0px`;
+    div.style.marginLeft = `${leftMargin}px`;
+}
 
 function UI_toggle_workoutMode(visible = true){
-	UI_toggle_exerciseBrief(!visible)
-	UI_toggle_workoutHud(!visible)
-	UI_toggle_stepContainer(visible)
+    UI_toggle_exerciseBrief(!visible);
+    UI_toggle_workoutHud(!visible);
+    UI_toggle_stepContainer(visible);
 
+    if(!visible){
+        document.querySelectorAll(".workout-hud > .exercise-label").forEach((ele)=>{
+            ele.style.setProperty("display","none");
+        });
+    } 
+}
 
-	if(!visible){
-		document.querySelectorAll(".workout-hud > .exercise-label").forEach((ele)=>{
-			ele.style.setProperty("display","none")
-		})
-	} 
-  }
-
-
-
-
-
-
-
-
-</script>
-
-
-
-<script>
-    class Timer {
-      constructor(displaySelector) {
+class Timer {
+    constructor(displaySelector) {
         this.displayEl = document.querySelector(displaySelector);
         this.startTime = 0;
         this.elapsedTime = 0;
         this.timerInterval = null;
         this.running = false;
-      }
+    }
 
-      formatTime(ms) {
+    formatTime(ms) {
         const totalSeconds = Math.floor(ms / 1000);
         const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
         const seconds = (totalSeconds % 60).toString().padStart(2, '0');
         const milliseconds = Math.floor((ms % 1000) / 10).toString().padStart(2, '0');
         return `${minutes}:${seconds}.${milliseconds}`;
-      }
+    }
 
-      updateDisplay() {
+    updateDisplay() {
         if (this.displayEl) {
-          this.displayEl.innerText = this.formatTime(this.elapsedTime);
+            this.displayEl.innerText = this.formatTime(this.elapsedTime);
         }
-      }
+    }
 
-      start(fromTime = 0) {
+    start(fromTime = 0) {
         this.reset();
         this.elapsedTime = fromTime;
         this.startTime = Date.now() - this.elapsedTime;
         this.running = true;
         this.timerInterval = setInterval(() => {
-          this.elapsedTime = Date.now() - this.startTime;
-          this.updateDisplay();
-        }, 50);
-      }
-
-      pause() {
-        if (this.running) {
-          clearInterval(this.timerInterval);
-          this.elapsedTime = Date.now() - this.startTime;
-          this.running = false;
-        }
-      }
-
-      resume() {
-        if (!this.running) {
-          this.startTime = Date.now() - this.elapsedTime;
-          this.running = true;
-          this.timerInterval = setInterval(() => {
             this.elapsedTime = Date.now() - this.startTime;
             this.updateDisplay();
-          }, 50);
-        }
-      }
+            // Save progress every second
+            if (this.elapsedTime % 1000 < 50) {
+                saveWorkoutProgress();
+            }
+        }, 50);
+    }
 
-      reset() {
+    pause() {
+        if (this.running) {
+            clearInterval(this.timerInterval);
+            this.elapsedTime = Date.now() - this.startTime;
+            this.running = false;
+            saveWorkoutProgress();
+        }
+    }
+
+    resume() {
+        if (!this.running) {
+            this.startTime = Date.now() - this.elapsedTime;
+            this.running = true;
+            this.timerInterval = setInterval(() => {
+                this.elapsedTime = Date.now() - this.startTime;
+                this.updateDisplay();
+                // Save progress every second
+                if (this.elapsedTime % 1000 < 50) {
+                    saveWorkoutProgress();
+                }
+            }, 50);
+        }
+    }
+
+    reset() {
         clearInterval(this.timerInterval);
         this.startTime = 0;
         this.elapsedTime = 0;
         this.running = false;
         this.updateDisplay();
-      }
+        clearWorkoutProgress();
     }
-
-
+}
 
 </script>
 
@@ -432,6 +428,7 @@ function UI_toggle_workoutMode(visible = true){
 
 	.workout-hud {
 
+	
 
 		.exercise-label{
 			display: none;
@@ -458,6 +455,8 @@ function UI_toggle_workoutMode(visible = true){
   	    background-color: #222529;
 		border-radius: 0.875rem;
 		color: white;
+
+		background-image:url("/overlay.png");
 
 		
 
