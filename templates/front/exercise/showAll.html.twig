@@ -6,53 +6,64 @@
 
 
 {% block javascripts %}
-	{{ parent() }}
+  {{ parent() }}
 
 
- <script>
+  <script>
 
-		document.addEventListener("DOMContentLoaded",()=>{
-		    const dialog = document.querySelector("dialog");
-		    const showButton = document.querySelector("#testModal");
-		    const closeButton = document.querySelector("dialog button");
-		
-		    showButton.addEventListener("click", () => {
-		    dialog.showModal();
-		    });
-		
-		    closeButton.addEventListener("click", () => {
-		    dialog.close();
-		    });
+	document.addEventListener('DOMContentLoaded', function() {
+    // Get the input element (replace 'exercise-search' with your input's ID)
+    const searchInput = document.getElementById('title-search');
+    
+    if (searchInput) {
+        // Add event listener for input changes
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+            
+            // Only make request if query is not empty
+            if (query.length > 0) {
+                fetch(`/exercise/api/search/${encodeURIComponent(query)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(exercises => {
+                        console.log('Found exercises:', exercises);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching exercises:', error);
+                    });
+            } else {
+                console.log('Query is empty - not making request');
+            }
+        });
+    }
+});
 
-            checkTipOfTheDay();
-		    
-		
-		})
-		</script>
 
-	 <script>
-		function checkTipOfTheDay() {
-		  const key = 'tip_of_the_day';
-		  const storedValue = localStorage.getItem(key);
-		  const today = new Date().toISOString().split('T')[0]; // Format: 'YYYY-MM-DD'
-		
-		  if (!storedValue || new Date(storedValue) < new Date(today)) {
+
+</script>
+
 	
-		    showModal();
-		    localStorage.setItem(key, today);
-		  }
-		}
-	
-	
-	    function showModal(){
-			const dialog = document.querySelector("dialog");
-	        dialog.showModal()
-	
-	    }
-		</script>
 
+  <script>
+      const dialog = document.querySelector("dialog");
+      const showButton = document.querySelector("#testModal");
+      const closeButton = document.querySelector("dialog button");
 
+      showButton.addEventListener("click", () => {
+        dialog.showModal();
+      });
+
+      closeButton.addEventListener("click", () => {
+        dialog.close();
+      });
+    });
+  </script>
 {% endblock %}
+
 
 
 {% block stylesheets %}
@@ -62,7 +73,10 @@
 
 	<style>
 		dialog {
+
+			background-image: url(/overlay.png);
             border:none;
+			color:white;
 			.branding {
 				display: flex;
 				align-items: center;
@@ -77,11 +91,31 @@
             p{
                 font-size:1.3rem;
             }
+
+			button{
+				    position: absolute;
+					top: 0;
+					right: 0;
+					margin: .5rem;
+			}
 		}
 
 		dialog::backdrop {
 			background-image: linear-gradient(45deg, #000000, /* black */ #1a1a1a, /* very dark gray */ #2e2e2e, /* dark gray */ #444444, /* medium-dark gray */ #5c5c5c, /* medium gray */ #a6a6a6, /* light gray */ #ffffff /* white */);
 			opacity: 0.75;
+		}
+
+
+		.results > a {
+			all:unset!important;
+			cursor:pointer!important;
+			
+		}
+
+		.results{
+			display:flex;
+			flex-wrap:wrap;
+			gap:1rem;
 		}
 	</style>
 
@@ -91,20 +125,140 @@
 {% block body %}
 	{% include 'navbar.html.twig' %}
 
-	<div data-context="exercise">
-		<h1>Exercise Page</h1>
 
-		<!-- Trigger button -->
-		<button id="testModal">Show the dialog</button>
 
-		<!-- Modal dialog -->
+	<div class="container">
+<form method="get" class="p-4 bg-light rounded shadow-sm">
+
+  <!-- Title Search (Always Visible) -->
+  <div class="mb-3">
+    <label for="title" class="form-label">Title</label>
+    <input type="text" class="form-control" id="title-input" name="title" placeholder="Search by exercise title">
+  </div>
+
+  <!-- Toggle Button for Advanced Search -->
+  <div class="mb-3">
+    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch" aria-expanded="false" aria-controls="advancedSearch">
+      Advanced Search
+    </button>
+  </div>
+
+  <!-- Advanced Filters -->
+  <div class="collapse" id="advancedSearch">
+    <!-- Sets and Reps -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="sets" class="form-label">Sets</label>
+        <input type="number" class="form-control" id="sets" name="sets" min="1">
+      </div>
+      <div class="col-md-6">
+        <label for="reps" class="form-label">Reps</label>
+        <input type="number" class="form-control" id="reps" name="reps" min="1">
+      </div>
+    </div>
+
+    <!-- Grips -->
+    <div class="mb-3">
+      <label for="grip" class="form-label">Grip</label>
+      <select class="form-select" id="grip" name="grip">
+        <option value="">Any</option>
+        <option value="abdominals">Abdominals</option>
+        <option value="biceps">Biceps</option>
+        <option value="calves">Calves</option>
+        <option value="chest">Chest</option>
+        <option value="forearms">Forearms</option>
+        <option value="front-shoulders">Front Shoulders</option>
+        <option value="glutes">Glutes</option>
+        <option value="hamstrings">Hamstrings</option>
+        <option value="hands">Hands</option>
+        <option value="lats">Lats</option>
+        <option value="lowerback">Lower Back</option>
+        <option value="obliques">Obliques</option>
+        <option value="quads">Quads</option>
+        <option value="rear-shoulders">Rear Shoulders</option>
+        <option value="traps">Traps</option>
+        <option value="traps-middle">Middle Traps</option>
+        <option value="triceps">Triceps</option>
+      </select>
+    </div>
+
+    <!-- Difficulty -->
+    <div class="mb-3">
+      <label for="difficulty" class="form-label">Difficulty</label>
+      <select class="form-select" id="difficulty" name="difficulty">
+        <option value="">Any</option>
+        <option value="novice">Novice</option>
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+    </div>
+
+    <!-- Muscle Group Booleans -->
+    <div class="mb-3">
+      <label class="form-label d-block">Muscle Group Level</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="m_primary" name="m_primary">
+        <label class="form-check-label" for="m_primary">Primary</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="m_secondary" name="m_secondary">
+        <label class="form-check-label" for="m_secondary">Secondary</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="m_tertiary" name="m_tertiary">
+        <label class="form-check-label" for="m_tertiary">Tertiary</label>
+      </div>
+    </div>
+
+    <!-- Push / Pull -->
+    <div class="mb-3">
+      <label class="form-label d-block">Exercise Type</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="push" name="push">
+        <label class="form-check-label" for="push">Push</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="pull" name="pull">
+        <label class="form-check-label" for="pull">Pull</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <button type="submit" class="btn btn-primary mt-3">Filter</button>
+</form>
+
+
+	</div>
+
+	<div class="container">
+		<h2>Discover</h2>
+		<div class="results">
+		{% for exercice in recommended %}
+			<a href="{{ path('user_exercice_show', { id: exercice.id }) }}" class="btn btn-primary">
+				<div class="card" style="width: 14rem;">
+					{% set videoId = exercice.video_url|split('/')|last|split('?')|first %}
+					<img src="https://img.youtube.com/vi/{{ videoId }}/maxresdefault.jpg" class="card-img-top" alt="Card image">
+					<div class="card-body">
+						<h5 class="card-title">{{ exercice.title }}</h5>
+						<span class="badge text-bg-dark">{{ exercice.difficulty | capitalize }}</span>
+					</div>
+				</div>
+			</a>
+		{% endfor %}
+		</div>
+
+
+
+
 		<dialog class="shadow">
 			<div class="branding">
-				<img src="/fitverse-black.png">
+				<img src="/fitverse-white.png">
 				<span>| Tip of the day ⚡</span>
 			</div>
 			<p>{{ tip }}</p>
-			<button class="btn btn-secondary" autofocus>Dismiss</button>
+			<button class="btn btn-secondary" autofocus>x</button>
 		</dialog>
 	</div>
 {% endblock %}

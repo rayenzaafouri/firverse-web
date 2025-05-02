@@ -69,23 +69,28 @@ final class ExerciceController extends AbstractController
     }
 
 
-    #[Route('/exercises',name: 'app_exercice_index', methods: ['GET'])]
+    #[Route('/exercises', name: 'app_exercice_index', methods: ['GET'])]
     public function userIndex(ExerciceRepository $exerciceRepository): Response
     {
-    
         $client = new Client();
         $response = $client->get('http://127.0.0.1:3000');
-        
         $body = $response->getBody();
         $data = json_decode($body, true);
-
-
+    
+        $allExercises = $exerciceRepository->findAll();
+    
+        // Shuffle and get the first 5 as recommended
+        $recommended = $allExercises;
+        shuffle($recommended);
+        $recommended = array_slice($recommended, 0, 5);
+    
         return $this->render('front/exercise/showAll.html.twig', [
-            'exercices' => $exerciceRepository->findAll(),
-            'tip'=>$data["tip"]
-
+            'exercices' => $allExercises,
+            'recommended' => $recommended,
+            'tip' => $data["tip"],
         ]);
     }
+    
 
 
 
