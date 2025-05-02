@@ -14,23 +14,34 @@ use Knp\Component\Pager\PaginatorInterface;
 class ShopController extends AbstractController
 {
     #[Route('/', name: 'shop_home')]
-    public function index(
-        ProductRepository $productRepository,
-        CategoryRepository $categoryRepository,
-        Request $request,
-        PaginatorInterface $paginator
-    ): Response {
-        $query = $productRepository->createQueryBuilder('p')->getQuery();
+public function index(
+    ProductRepository $productRepository,
+    CategoryRepository $categoryRepository,
+    Request $request,
+    PaginatorInterface $paginator
+): Response {
+    $categoryName = $request->query->get('category');
 
-        $products = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            8 // Items per page
-        );
+    $qb = $productRepository->createQueryBuilder('p');
 
-        return $this->render('front/shop/index.html.twig', [
-            'products' => $products,
-            'categories' => $categoryRepository->findAll(),
-        ]);
+    if ($categoryName) {
+        $qb->join('p.category', 'c')
+           ->andWhere('c.name = :category')
+           ->setParameter('category', $categoryName);
     }
+
+    $query = $qb->getQuery();
+
+    $products = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        8
+    );
+
+    return $this->render('front/shop/index.html.twig', [
+        'products' => $products,
+        'categories' => $categoryRepository->findAll(),
+        'currentCategory' => $categoryName,
+    ]);
+}
 }
