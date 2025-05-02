@@ -19,14 +19,13 @@ class NutritionRecipe
     private ?Recipe $recipe = null;
 
     #[ORM\Column(type: 'string', length: 20, nullable: false)]
-    private string $mealType;
+    private string $mealType = '';
 
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $serving = 1;
 
     public function __construct()
     {
-        $this->mealType = '';
     }
 
     public function getNutrition(): ?Nutrition

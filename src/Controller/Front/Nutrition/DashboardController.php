@@ -103,28 +103,10 @@ class DashboardController extends AbstractController
         $macronutrientBarChart->getOptions()->getVAxis()->setTitle('Grams');
         $macronutrientBarChart->getOptions()->setColors(['#4285F4', '#34A853', '#FBBC05']);
 
-        // 4. Water Consumption Line Chart
-        $waterChart = new LineChart();
-        $waterChart->getData()->setArrayToDataTable([
-            ['Date', 'Water (ml)'],
-            ...array_map(function($day) {
-                return [
-                    $day['date']->format('M d'),
-                    $day['amount']
-                ];
-            }, $waterData)
-        ]);
-        $waterChart->getOptions()->setTitle('Daily Water Consumption');
-        $waterChart->getOptions()->setHeight(400);
-        $waterChart->getOptions()->setWidth(800);
-        $waterChart->getOptions()->getHAxis()->setTitle('Date');
-        $waterChart->getOptions()->getVAxis()->setTitle('Milliliters');
-
         return $this->render('Front/Nutrition/dashboard.html.twig', [
             'caloricChart' => $caloricChart,
             'macronutrientChart' => $macronutrientChart,
             'macronutrientBarChart' => $macronutrientBarChart,
-            'waterChart' => $waterChart,
             'selectedPeriod' => $period
         ]);
     }

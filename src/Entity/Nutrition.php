@@ -196,6 +196,10 @@ class Nutrition
             throw new \InvalidArgumentException('Invalid meal type');
         }
 
+        if (!$this->entityManager) {
+            throw new \RuntimeException('EntityManager is not set. Call setEntityManager() first.');
+        }
+
         // Check if a NutritionRecipe entity already exists for this recipe and meal type
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('nr')
