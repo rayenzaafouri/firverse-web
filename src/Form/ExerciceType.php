@@ -54,27 +54,28 @@ class ExerciceType extends AbstractType
                 'empty_data' => 0
             ])
             ->add('grips', ChoiceType::class, [
-                'label' => 'Grip type',
+                'label' => 'Target Muscle',
                 'attr' => [
                     'class' => 'form-control' // CSS class
                 ],
                 'choices' => [
-                    // Format: 'Display Text' => 'stored_value'
-                    'Overhand Grip' => 'overhand',
-                    'Underhand Grip' => 'underhand',
-                    'Mixed Grip' => 'mixed',
-                    'Hook Grip' => 'hook',
-                    'False Grip' => 'false',
-                    'Neutral Grip' => 'neutral',
-                    'Supinated Grip' => 'supinated',
-                    'Pronated Grip' => 'pronated',
-                    'Hammer Grip' => 'hammer',
-                    'Rotational Grip' => 'rotational',
-                    'Angled Grip' => 'angled',
-                    'Adjustable Grip' => 'adjustable',
-                    'Wide Grip' => 'wide',
-                    'Close Grip' => 'close',
-                    'Rotating Grip' => 'rotating',
+                    'Abdominals' => 'abdominals',
+                    'Biceps' => 'biceps',
+                    'Calves' => 'calves',
+                    'Chest' => 'chest',
+                    'Forearms' => 'forearms',
+                    'Front Shoulders' => 'front-shoulders',
+                    'Glutes' => 'glutes',
+                    'Hamstrings' => 'hamstrings',
+                    'Hands' => 'hands',
+                    'Lats' => 'lats',
+                    'Lower Back' => 'lowerback',
+                    'Obliques' => 'obliques',
+                    'Quads' => 'quads',
+                    'Rear Shoulders' => 'rear-shoulders',
+                    'Traps' => 'traps',
+                    'Middle Traps' => 'traps-middle',
+                    'Triceps' => 'triceps'
                 ],
                 'placeholder' => 'Pick a grip',
                 'empty_data' => 'overhand'

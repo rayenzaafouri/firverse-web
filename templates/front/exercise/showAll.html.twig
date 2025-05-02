@@ -1,63 +1,110 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Exercice index{% endblock %}
+{% block title %}
+	Exercise - Fitverse
+{% endblock %}
+
+
+{% block javascripts %}
+	{{ parent() }}
+
+
+ <script>
+
+		document.addEventListener("DOMContentLoaded",()=>{
+		    const dialog = document.querySelector("dialog");
+		    const showButton = document.querySelector("#testModal");
+		    const closeButton = document.querySelector("dialog button");
+		
+		    showButton.addEventListener("click", () => {
+		    dialog.showModal();
+		    });
+		
+		    closeButton.addEventListener("click", () => {
+		    dialog.close();
+		    });
+
+            checkTipOfTheDay();
+		    
+		
+		})
+		</script>
+
+	 <script>
+		function checkTipOfTheDay() {
+		  const key = 'tip_of_the_day';
+		  const storedValue = localStorage.getItem(key);
+		  const today = new Date().toISOString().split('T')[0]; // Format: 'YYYY-MM-DD'
+		
+		  if (!storedValue || new Date(storedValue) < new Date(today)) {
+	
+		    showModal();
+		    localStorage.setItem(key, today);
+		  }
+		}
+	
+	
+	    function showModal(){
+			const dialog = document.querySelector("dialog");
+	        dialog.showModal()
+	
+	    }
+		</script>
+
+
+{% endblock %}
+
+
+{% block stylesheets %}
+	{{ parent() }}
+	{# Your CSS goes here #}
+
+
+	<style>
+		dialog {
+            border:none;
+			.branding {
+				display: flex;
+				align-items: center;
+				justify-content: start;
+
+
+				img {
+					height: 2rem;
+				}
+			}
+
+            p{
+                font-size:1.3rem;
+            }
+		}
+
+		dialog::backdrop {
+			background-image: linear-gradient(45deg, #000000, /* black */ #1a1a1a, /* very dark gray */ #2e2e2e, /* dark gray */ #444444, /* medium-dark gray */ #5c5c5c, /* medium gray */ #a6a6a6, /* light gray */ #ffffff /* white */);
+			opacity: 0.75;
+		}
+	</style>
+
+{% endblock %}
+
 
 {% block body %}
-    <h1>Exercice index</h1>
+	{% include 'navbar.html.twig' %}
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Steps</th>
-                <th>Sets</th>
-                <th>Reps</th>
-                <th>Grips</th>
-                <th>Difficulty</th>
-                <th>Body_map_front</th>
-                <th>Body_map_back</th>
-                <th>Video_url</th>
-                <th>M_primary</th>
-                <th>M_secondary</th>
-                <th>M_tertiary</th>
-                <th>Equipment</th>
-                <th>Push</th>
-                <th>Pull</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for exercice in exercices %}
-            <tr>
-                <td>{{ exercice.id }}</td>
-                <td>{{ exercice.title }}</td>
-                <td>{{ exercice.steps }}</td>
-                <td>{{ exercice.sets }}</td>
-                <td>{{ exercice.reps }}</td>
-                <td>{{ exercice.grips }}</td>
-                <td>{{ exercice.difficulty }}</td>
-                <td>{{ exercice.bodyMapFront }}</td>
-                <td>{{ exercice.bodyMapBack }}</td>
-                <td>{{ exercice.videoUrl }}</td>
-                <td>{{ exercice.mPrimary ? 'Yes' : 'No' }}</td>
-                <td>{{ exercice.mSecondary ? 'Yes' : 'No' }}</td>
-                <td>{{ exercice.mTertiary ? 'Yes' : 'No' }}</td>
-                <td>{{ exercice.equipment }}</td>
-                <td>{{ exercice.push ? 'Yes' : 'No' }}</td>
-                <td>{{ exercice.pull ? 'Yes' : 'No' }}</td>
-                <td>
-                    <a href="{{ path('app_exercice_show_admin', {'id': exercice.id}) }}">show</a>
-                    <a href="{{ path('app_exercice_edit', {'id': exercice.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="17">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	<div data-context="exercise">
+		<h1>Exercise Page</h1>
 
-    <a href="{{ path('app_exercice_new') }}">Create new</a>
+		<!-- Trigger button -->
+		<button id="testModal">Show the dialog</button>
+
+		<!-- Modal dialog -->
+		<dialog class="shadow">
+			<div class="branding">
+				<img src="/fitverse-black.png">
+				<span>| Tip of the day ⚡</span>
+			</div>
+			<p>{{ tip }}</p>
+			<button class="btn btn-secondary" autofocus>Dismiss</button>
+		</dialog>
+	</div>
 {% endblock %}

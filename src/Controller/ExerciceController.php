@@ -11,6 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+
+use GuzzleHttp\Client;
+
+
 final class ExerciceController extends AbstractController
 {
 
@@ -26,11 +30,31 @@ final class ExerciceController extends AbstractController
 
 
 
+
+    
+
+    #[Route('/exercise/muscle/{class}', name: 'user_exercice_searchByMuscle_query', methods: ['GET'])]
+    public function showSearchByMuscleResults(string $class, ExerciceRepository $exerciceRepository): Response
+    {
+        $grip = strtolower($class); 
+
+        $exercises = $exerciceRepository->findBy(['grips' => $grip]);
+    
+    
+        return $this->render('/front/exercise/searchByMuscleResults.html.twig', [
+            'exercices' => $exercises,
+            'query' => $class,
+        ]);
+    }
+    
+
+
+
     #[Route('/exercise/show/{id}', name: 'user_exercice_show', methods: ['GET'])]
     public function show(Exercice $exercice): Response
     {
         return $this->render('/front/exercise/show.html.twig', [
-            'exercice' => $exercice,
+            'exercice' => $exercice,    
         ]);
     }
 
@@ -48,8 +72,18 @@ final class ExerciceController extends AbstractController
     #[Route('/exercises',name: 'app_exercice_index', methods: ['GET'])]
     public function userIndex(ExerciceRepository $exerciceRepository): Response
     {
+    
+        $client = new Client();
+        $response = $client->get('http://127.0.0.1:3000');
+        
+        $body = $response->getBody();
+        $data = json_decode($body, true);
+
+
         return $this->render('front/exercise/showAll.html.twig', [
             'exercices' => $exerciceRepository->findAll(),
+            'tip'=>$data["tip"]
+
         ]);
     }
 

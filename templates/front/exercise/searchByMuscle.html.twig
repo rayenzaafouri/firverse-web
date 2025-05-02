@@ -37,7 +37,18 @@ function attachHoverEffect(){
 
 function self(ele){
      ele.addEventListener("mouseover",(e)=>{
-            renderName(capitalize(ele.id    ))
+            renderName(capitalize(ele.id))
+    })
+
+    ele.addEventListener("click",(e)=>{
+
+
+            const base = "{{ path('user_exercice_searchByMuscle_query', { class: 'test' }) }}"
+
+            const trimmedUrl = base.split('/').slice(0, -1).join('/');
+
+            window.location.href = trimmedUrl + '/' + ele.id;
+
     })
 }
 
