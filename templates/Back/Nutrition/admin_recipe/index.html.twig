@@ -14,11 +14,9 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="fas fa-search"></i>
-                                </span>
-                            </div>
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
                             <input type="text" id="recipeSearch" class="form-control" placeholder="Search recipes...">
                         </div>
                     </div>
@@ -109,9 +107,9 @@
                                         <strong>Times Used:</strong> {{ recipe.timesUsed|default(0) }}<br>
                                         <strong>Favorite:</strong> 
                                         {% if recipe.isFavoris %}
-                                            <span class="badge badge-success">Yes</span>
+                                            <span class="badge bg-success">Yes</span>
                                         {% else %}
-                                            <span class="badge badge-secondary">No</span>
+                                            <span class="badge bg-secondary">No</span>
                                         {% endif %}
                                     </p>
                                 </div>

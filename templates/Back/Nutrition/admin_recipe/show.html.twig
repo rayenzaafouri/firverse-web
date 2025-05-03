@@ -31,9 +31,9 @@
                         <h5>Favorite Status</h5>
                         <p>
                             {% if recipe.isFavoris %}
-                                <span class="badge badge-success">Favorite</span>
+                                <span class="badge bg-success">Favorite</span>
                             {% else %}
-                                <span class="badge badge-secondary">Not a favorite</span>
+                                <span class="badge bg-secondary">Not a favorite</span>
                             {% endif %}
                         </p>
                     </div>
@@ -43,7 +43,7 @@
                         <h5>Ingredients</h5>
                         <div class="d-flex flex-wrap">
                             {% for food in recipe.foods %}
-                                <span class="badge badge-info p-2 m-1">{{ food.name }}</span>
+                                <span class="badge bg-info p-2 m-1">{{ food.name }}</span>
                             {% endfor %}
                         </div>
                     </div>
