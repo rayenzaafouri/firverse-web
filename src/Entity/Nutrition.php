@@ -215,11 +215,7 @@ class Nutrition
         $existingNutritionRecipe = $qb->getQuery()->getOneOrNullResult();
 
         if (!$existingNutritionRecipe) {
-            if (!$this->getRecipes()->contains($recipe)) {
-                $this->getRecipes()->add($recipe);
-            }
-            
-            // Create and persist the NutritionRecipe entity
+            // Create and persist the NutritionRecipe entity first
             $nutritionRecipe = new NutritionRecipe();
             $nutritionRecipe->setNutrition($this);
             $nutritionRecipe->setRecipe($recipe);
@@ -228,6 +224,11 @@ class Nutrition
             
             $this->entityManager->persist($nutritionRecipe);
             $this->entityManager->flush();
+            
+            // Then add to the ManyToMany collection if not already present
+            if (!$this->getRecipes()->contains($recipe)) {
+                $this->getRecipes()->add($recipe);
+            }
         }
         
         return $this;
