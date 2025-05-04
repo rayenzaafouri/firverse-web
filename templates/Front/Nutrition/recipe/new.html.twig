@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Recipe{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Create New Recipe</h1>
+        </div>
+
+        {{ include('Front/Nutrition/recipe/_form.html.twig') }}
+    </div>
+{% endblock %} 

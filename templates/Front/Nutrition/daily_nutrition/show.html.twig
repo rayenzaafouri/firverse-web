@@ -1,0 +1,440 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nutrition for {{ nutrition.date|date('Y-m-d') }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .search-container {
+            position: relative;
+        }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        .search-result-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            color: #000000;
+        }
+        .search-result-item:hover {
+            background-color: #f8f9fa;
+        }
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        .item-type-badge {
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+        .nutrition-info {
+            font-size: 0.8em;
+            color: #666;
+        }
+        .meal-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .meal-header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 15px;
+            border-bottom: none;
+        }
+        .meal-body {
+            padding: 20px;
+        }
+        .meal-table {
+            margin-bottom: 0;
+        }
+        .meal-table th {
+            background-color: #f8f9fa;
+            border-top: none;
+        }
+        .meal-total {
+            background-color: #f0f7ff;
+            font-weight: bold;
+        }
+        .nutrition-summary {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .nutrition-summary-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 10px;
+        }
+        .nutrition-summary-item h4 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .nutrition-summary-item small {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .btn-add-item {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        .btn-add-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        .search-input {
+            border-radius: 20px;
+            padding-left: 15px;
+        }
+        .serving-input {
+            border-radius: 20px;
+            text-align: center;
+        }
+        .content-container {
+            padding-left: 80px;
+            padding-right: 80px;
+        }
+        @media (max-width: 768px) {
+            .content-container {
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+    <div class="container-fluid content-container">
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
+            <h1 class="mb-0">Nutrition for {{ nutrition.date|date('Y-m-d') }}</h1>
+            <div class="dropdown">
+                <button class="btn btn-secondary" type="button" id="nutritionActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="background: none; border: none; color: #333; font-size: 1.8em;">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nutritionActionsDropdown">
+                    <li><a class="dropdown-item" href="{{ path('app_recipe_index') }}">Check Recipes</a></li>
+                    <li><a class="dropdown-item" href="{{ path('app_food_view_only') }}">Food</a></li>
+                    <li><a class="dropdown-item" href="{{ path('app_nutrition_progress') }}">Check Progress</a></li>
+                    <li><a class="dropdown-item" href="{{ path('app_nutrition_preferences') }}">AI Generated Plan</a></li>
+                    <li><a class="dropdown-item" href="{{ path('app_nutrition_dashboard') }}">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="date-navigation">
+                {% if prevDate %}
+                    <a href="{{ path('app_daily_nutrition_show', {'date': prevDate}) }}" class="btn btn-outline-primary">
+                        <i class="fas fa-chevron-left"></i> Previous Day
+                    </a>
+                {% endif %}
+                
+                <span class="mx-3 h4 mb-0">{{ currentDate|date('F j, Y') }}</span>
+                
+                {% if nextDate %}
+                    <a href="{{ path('app_daily_nutrition_show', {'date': nextDate}) }}" class="btn btn-outline-primary">
+                        Next Day <i class="fas fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if isToday %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> You are viewing today's nutrition. Add your meals and track your progress!
+            </div>
+        {% endif %}
+
+        {% for mealType in ['breakfast', 'lunch', 'dinner', 'snack'] %}
+            <div class="meal-card">
+                <div class="card-header meal-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">{{ mealType|capitalize }}</h2>
+                    <div class="d-flex gap-2">
+                        <form action="{{ path('app_daily_nutrition_add_item', {'date': nutrition.date|date('Y-m-d'), 'mealType': mealType}) }}" method="post" class="d-flex gap-2 search-container">
+                            <input type="hidden" name="type" class="item-type-input">
+                            <input type="hidden" name="id" class="item-id-input">
+                            <input type="text" name="search" class="form-control form-control-sm search-input" placeholder="Search food or recipe..." required>
+                            <div class="search-results"></div>
+                            <input type="number" name="serving" value="1" min="1" class="form-control form-control-sm serving-input" style="width: 80px;">
+                            <button type="submit" class="btn btn-sm btn-add-item">Add</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body meal-body">
+                    {% set mealItems = [] %}
+                    {% for food in nutrition.getFoodsByMealType(mealType) %}
+                        {% set nutritionFood = nutrition.getNutritionFood(food, mealType) %}
+                        {% set mealItems = mealItems|merge([{
+                            'name': food.name,
+                            'type': 'food',
+                            'id': food.id,
+                            'serving': nutritionFood.serving,
+                            'calories': food.calories * nutritionFood.serving,
+                            'protein': food.protein * nutritionFood.serving,
+                            'carbs': food.carbohydrate * nutritionFood.serving,
+                            'fats': food.fats * nutritionFood.serving,
+                            'updatePath': 'app_daily_nutrition_update_food_serving',
+                            'removePath': 'app_daily_nutrition_remove_food'
+                        }]) %}
+                    {% endfor %}
+                    {% for recipe in nutrition.getRecipesByMealType(mealType) %}
+                        {% set nutritionRecipe = nutrition.getNutritionRecipe(recipe, mealType) %}
+                        {% set mealItems = mealItems|merge([{
+                            'name': recipe.name,
+                            'type': 'recipe',
+                            'id': recipe.id,
+                            'serving': nutritionRecipe.serving,
+                            'calories': recipe.getTotalCalories() * nutritionRecipe.serving,
+                            'protein': recipe.getTotalProtein() * nutritionRecipe.serving,
+                            'carbs': recipe.getTotalCarbohydrate() * nutritionRecipe.serving,
+                            'fats': recipe.getTotalFats() * nutritionRecipe.serving,
+                            'updatePath': 'app_daily_nutrition_update_recipe_serving',
+                            'removePath': 'app_daily_nutrition_remove_recipe'
+                        }]) %}
+                    {% endfor %}
+
+                    {% if mealItems|length > 0 %}
+                        <div class="table-responsive">
+                            <table class="table table-sm meal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Serving</th>
+                                        <th>Calories</th>
+                                        <th>Protein</th>
+                                        <th>Carbs</th>
+                                        <th>Fats</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in mealItems %}
+                                        <tr>
+                                            <td>{{ item.name }}</td>
+                                            <td>
+                                                <form action="{{ path(item.updatePath, {'date': nutrition.date|date('Y-m-d'), (item.type == 'food' ? 'foodId' : 'recipeId'): item.id, 'mealType': mealType}) }}" method="post" class="d-inline">
+                                                    <div class="input-group input-group-sm" style="width: 120px;">
+                                                        <input type="number" name="serving" value="{{ item.serving }}" min="1" class="form-control form-control-sm serving-input">
+                                                        <button type="submit" class="btn btn-outline-secondary btn-sm">Update</button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                            <td>{{ item.calories|round }}</td>
+                                            <td>{{ item.protein|round }}g</td>
+                                            <td>{{ item.carbs|round }}g</td>
+                                            <td>{{ item.fats|round }}g</td>
+                                            <td>
+                                                <form action="{{ path(item.removePath, {'date': nutrition.date|date('Y-m-d'), (item.type == 'food' ? 'foodId' : 'recipeId'): item.id, 'mealType': mealType}) }}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr class="meal-total">
+                                        <td colspan="2"><strong>Total</strong></td>
+                                        <td><strong>{{ mealItems|reduce((sum, item) => sum + item.calories, 0)|round }}</strong></td>
+                                        <td><strong>{{ mealItems|reduce((sum, item) => sum + item.protein, 0)|round }}g</strong></td>
+                                        <td><strong>{{ mealItems|reduce((sum, item) => sum + item.carbs, 0)|round }}g</strong></td>
+                                        <td><strong>{{ mealItems|reduce((sum, item) => sum + item.fats, 0)|round }}g</strong></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No items added for this meal.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- Nutrition Summary -->
+        <div class="nutrition-summary">
+            <h3 class="text-center mb-4">Daily Nutrition Summary</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="nutrition-summary-item">
+                        <h4 class="mb-0">
+                            {% set totalCalories = 0 %}
+                            {% for mealType in ['breakfast', 'lunch', 'dinner', 'snack'] %}
+                                {% for food in nutrition.getFoodsByMealType(mealType) %}
+                                    {% set nutritionFood = nutrition.getNutritionFood(food, mealType) %}
+                                    {% set serving = nutritionFood ? nutritionFood.serving : 1 %}
+                                    {% set totalCalories = totalCalories + (food.calories * serving) %}
+                                {% endfor %}
+                                {% for recipe in nutrition.getRecipesByMealType(mealType) %}
+                                    {% set nutritionRecipe = nutrition.getNutritionRecipe(recipe, mealType) %}
+                                    {% set serving = nutritionRecipe ? nutritionRecipe.serving : 1 %}
+                                    {% for food in recipe.foods %}
+                                        {% set recipeFoodServing = get_recipe_food_serving(recipe, food) %}
+                                        {% set totalCalories = totalCalories + (food.calories * recipeFoodServing * serving) %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                            {{ totalCalories|round }}
+                        </h4>
+                        <small>Calories</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="nutrition-summary-item">
+                        <h4 class="mb-0">
+                            {% set totalProtein = 0 %}
+                            {% for mealType in ['breakfast', 'lunch', 'dinner', 'snack'] %}
+                                {% for food in nutrition.getFoodsByMealType(mealType) %}
+                                    {% set nutritionFood = nutrition.getNutritionFood(food, mealType) %}
+                                    {% set serving = nutritionFood ? nutritionFood.serving : 1 %}
+                                    {% set totalProtein = totalProtein + (food.protein * serving) %}
+                                {% endfor %}
+                                {% for recipe in nutrition.getRecipesByMealType(mealType) %}
+                                    {% set nutritionRecipe = nutrition.getNutritionRecipe(recipe, mealType) %}
+                                    {% set serving = nutritionRecipe ? nutritionRecipe.serving : 1 %}
+                                    {% for food in recipe.foods %}
+                                        {% set recipeFoodServing = get_recipe_food_serving(recipe, food) %}
+                                        {% set totalProtein = totalProtein + (food.protein * recipeFoodServing * serving) %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                            {{ totalProtein|round }}g
+                        </h4>
+                        <small>Protein</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="nutrition-summary-item">
+                        <h4 class="mb-0">
+                            {% set totalCarbs = 0 %}
+                            {% for mealType in ['breakfast', 'lunch', 'dinner', 'snack'] %}
+                                {% for food in nutrition.getFoodsByMealType(mealType) %}
+                                    {% set nutritionFood = nutrition.getNutritionFood(food, mealType) %}
+                                    {% set serving = nutritionFood ? nutritionFood.serving : 1 %}
+                                    {% set totalCarbs = totalCarbs + (food.carbohydrate * serving) %}
+                                {% endfor %}
+                                {% for recipe in nutrition.getRecipesByMealType(mealType) %}
+                                    {% set nutritionRecipe = nutrition.getNutritionRecipe(recipe, mealType) %}
+                                    {% set serving = nutritionRecipe ? nutritionRecipe.serving : 1 %}
+                                    {% for food in recipe.foods %}
+                                        {% set recipeFoodServing = get_recipe_food_serving(recipe, food) %}
+                                        {% set totalCarbs = totalCarbs + (food.carbohydrate * recipeFoodServing * serving) %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                            {{ totalCarbs|round }}g
+                        </h4>
+                        <small>Carbs</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="nutrition-summary-item">
+                        <h4 class="mb-0">
+                            {% set totalFats = 0 %}
+                            {% for mealType in ['breakfast', 'lunch', 'dinner', 'snack'] %}
+                                {% for food in nutrition.getFoodsByMealType(mealType) %}
+                                    {% set nutritionFood = nutrition.getNutritionFood(food, mealType) %}
+                                    {% set serving = nutritionFood ? nutritionFood.serving : 1 %}
+                                    {% set totalFats = totalFats + (food.fats * serving) %}
+                                {% endfor %}
+                                {% for recipe in nutrition.getRecipesByMealType(mealType) %}
+                                    {% set nutritionRecipe = nutrition.getNutritionRecipe(recipe, mealType) %}
+                                    {% set serving = nutritionRecipe ? nutritionRecipe.serving : 1 %}
+                                    {% for food in recipe.foods %}
+                                        {% set recipeFoodServing = get_recipe_food_serving(recipe, food) %}
+                                        {% set totalFats = totalFats + (food.fats * recipeFoodServing * serving) %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                            {{ totalFats|round }}g
+                        </h4>
+                        <small>Fat</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add search functionality to all search inputs
+            document.querySelectorAll('.search-input').forEach(searchInput => {
+                const form = searchInput.closest('form');
+                const searchResults = form.querySelector('.search-results');
+                const itemTypeInput = form.querySelector('.item-type-input');
+                const itemIdInput = form.querySelector('.item-id-input');
+                
+                let searchTimeout;
+
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    const query = this.value.trim();
+                    
+                    if (query.length < 2) {
+                        searchResults.style.display = 'none';
+                        return;
+                    }
+
+                    searchTimeout = setTimeout(function() {
+                        fetch(`{{ path('app_daily_nutrition_search_items') }}?q=${encodeURIComponent(query)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                searchResults.innerHTML = '';
+                                
+                                if (data.length === 0) {
+                                    searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+                                } else {
+                                data.forEach(item => {
+                                    const div = document.createElement('div');
+                                    div.className = 'search-result-item';
+                                        div.textContent = `${item.name} (${item.type})`;
+                                        
+                                        div.addEventListener('click', function() {
+                                            itemTypeInput.value = item.type.toLowerCase();
+                                            itemIdInput.value = item.id.split('_')[1];
+                                            searchInput.value = item.name;
+                                            searchResults.style.display = 'none';
+                                        });
+                                        
+                                        searchResults.appendChild(div);
+                                    });
+                                }
+                                
+                                searchResults.style.display = 'block';
+                            });
+                    }, 300);
+                });
+
+                // Hide search results when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!form.contains(e.target)) {
+                        searchResults.style.display = 'none';
+                    }
+                });
+                
+                // Form submission validation
+                form.addEventListener('submit', function(e) {
+                    if (!itemTypeInput.value || !itemIdInput.value) {
+                        e.preventDefault();
+                        alert('Please select an item from the search results');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %} 
