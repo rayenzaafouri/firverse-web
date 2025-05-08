@@ -11,18 +11,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use App\Form\RegistrationFormType;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Knp\Component\Pager\PaginatorInterface;
 
-#[Route('/user')]
 final class UserController extends AbstractController
 {
-    #[Route(name: 'app_user_index', methods: ['GET'])]
+    #[Route('/admin/user', name: 'app_user_index', methods: ['GET'])]
     public function index(
         Request $request,
         UserRepository $userRepository,
@@ -85,7 +82,7 @@ final class UserController extends AbstractController
             'sortDir'    => strtolower($sortDir),
         ]);
     }
-    #[Route('/user/list', name: 'app_user_list', methods: ['GET'])]
+    #[Route('/admin/user/list', name: 'app_user_list', methods: ['GET'])]
     public function list(Request $request, UserRepository $repo): JsonResponse
     {
         $search    = $request->query->get('search', '');
@@ -110,7 +107,7 @@ final class UserController extends AbstractController
 
         return $this->json($users);
     }
-    #[Route('/user/stats', name: 'app_user_stats', methods: ['GET'])]
+    #[Route('/admin/user/stats', name: 'app_user_stats', methods: ['GET'])]
     public function stats(UserRepository $userRepository): Response
     {
         $qb = $userRepository->createQueryBuilder('u')
@@ -126,7 +123,7 @@ final class UserController extends AbstractController
             'data'   => json_encode($data),
         ]);
     }
-    #[Route('/user/export/pdf', name: 'app_user_export_pdf', methods: ['GET'])]
+    #[Route('/admin/user/export/pdf', name: 'app_user_export_pdf', methods: ['GET'])]
     public function exportPdf(UserRepository $userRepository): Response
     {
         $users = $userRepository->findAll();
@@ -159,7 +156,7 @@ final class UserController extends AbstractController
         return $response;
     }
 
-    #[Route('/profile/edit', name: 'app_user_profile_edit', methods: ['GET', 'POST'])]
+    #[Route('/user/profile/edit', name: 'app_user_profile_edit', methods: ['GET', 'POST'])]
     public function editProfile(
         Request $request,
         EntityManagerInterface $em,
@@ -193,7 +190,7 @@ final class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
+    #[Route('/admin/user/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User();
@@ -228,7 +225,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
+    #[Route('/admin/user/{id}/show', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): Response
     {
         return $this->render('user/show.html.twig', [
@@ -236,7 +233,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
+    #[Route('/admin/user/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(UserType::class, $user);
@@ -262,7 +259,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
+    #[Route('/admin/user/{id}/delete', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
