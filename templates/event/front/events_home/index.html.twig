@@ -1,0 +1,398 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Events Home{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchEvent");
+        const monthFilter = document.getElementById("monthFilter");
+        const yearFilter = document.getElementById("yearFilter");
+        const minPriceFilter = document.getElementById("minPrice");
+        const maxPriceFilter = document.getElementById("maxPrice");
+        const filterBtn = document.getElementById("filterBtn");
+        const eventCards = document.querySelectorAll(".event-card");
+        const noResult = document.getElementById("noResult");
+
+        function filterEvents() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedMonth = parseInt(monthFilter.value);
+            const selectedYear = parseInt(yearFilter.value);
+            const minPrice = parseFloat(minPriceFilter.value) || 0;
+            const maxPrice = parseFloat(maxPriceFilter.value) || Infinity;
+
+            let found = false;
+
+            eventCards.forEach(function (card) {
+                const eventName = card.querySelector(".event-title").textContent.toLowerCase();
+                const eventLocation = card.querySelector(".event-location").textContent.toLowerCase();
+                const eventDate = new Date(card.dataset.date);
+                const eventMonth = eventDate.getMonth() + 1;
+                const eventYear = eventDate.getFullYear();
+                const eventPrice = parseFloat(card.dataset.price) || 0;
+
+                const matchesSearch = eventName.includes(searchTerm) || eventLocation.includes(searchTerm);
+                const matchesMonth = !selectedMonth || eventMonth === selectedMonth;
+                const matchesYear = !selectedYear || eventYear === selectedYear;
+                const matchesPrice = eventPrice >= minPrice && eventPrice <= maxPrice;
+
+                if (matchesSearch && matchesMonth && matchesYear && matchesPrice) {
+                    card.style.display = "block";
+                    found = true;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            noResult.style.display = found ? "none" : "block";
+        }
+       // 🔁 Rechercher dynamiquement à la frappe
+        searchInput.addEventListener("input", filterEvents);
+        // 📅 Filtrer 
+        filterBtn.addEventListener("click", filterEvents);
+    });
+
+</script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* Styles for the event page */
+    .events-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .event-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        background-color: #f9f9f9; /* Light background on hover */
+    }
+
+    .event-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        object-position: center;
+        transition: opacity 0.3s ease;
+    }
+
+    .event-image:hover {
+        opacity: 0.8;
+    }
+
+    .event-details {
+        padding: 15px;
+        text-align: left;
+    }
+
+    .event-title {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .event-date {
+        color: #777;
+        margin-bottom: 15px;
+        font-size: 1.1em;
+        text-align: center;
+    }
+
+    .event-description {
+        color: #555;
+        margin-bottom: 15px;
+        font-size: 1.1em;
+        line-height: 1.5;
+        word-wrap: break-word;
+    }
+
+    .event-location {
+        color: #007bff;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+
+    .event-price {
+        font-size: 1.3em;
+        color: #28a745;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .event-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.1em;
+        transition: background-color 0.3s ease;
+    }
+
+    .event-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Search bar styles */
+    .search-bar {
+        margin: 20px auto;
+        max-width: 400px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 1.1em;
+        width: 100%;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    .search-bar:focus {
+        border-color: #007bff;
+    }
+
+    /* Emoji Styles for search filters */
+    .search-icon {
+        margin-right: 8px;
+        font-size: 1.3em;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .events-container {
+            grid-template-columns: 1fr;
+        }
+
+        .event-title {
+            font-size: 1.6em;
+        }
+
+        .event-date {
+            font-size: 1em;
+        }
+
+        .event-description {
+            font-size: 1em;
+        }
+
+        .event-price {
+            font-size: 1.1em;
+        }
+    }
+    /* Filters */
+        .filters-container {
+        margin: 20px auto;
+        max-width: 900px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .filter-input {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 1em;
+        min-width: 150px;
+    }
+
+    .filter-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .filter-button:hover {
+        background-color: #0056b3;
+    }
+
+    .no-result {
+        text-align: center;
+        font-size: 1.2em;
+        color: #999;
+        margin-top: 20px;
+    }
+    /* Sidebar styles */
+.sidebar {
+    position: fixed;
+    top: 20%;
+    right: 0;
+    width: 60px;
+    background-color: #fff;
+    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 20px 10px;
+    z-index: 100;
+}
+
+.sidebar-icon {
+    text-align: center;
+    font-size: 1.2em;
+    color: #333;
+    margin: 10px 0;
+    text-decoration: none;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.sidebar-icon:hover {
+    color: #007bff;
+}
+
+.sidebar-icon i {
+    display: block;
+    font-size: 2em;
+    margin-bottom: 5px;
+}
+
+/* Optional: Adjust size for mobile view */
+@media (max-width: 768px) {
+    .sidebar {
+        top: 15%;
+        width: 50px;
+    }
+    .sidebar-icon i {
+        font-size: 1.5em;
+    }
+}
+.fav-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #ccc;  /* Default star color */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.fav-btn.active {
+    color: #f39c12; /* Yellow color for active favorite */
+}
+
+.fav-btn:hover {
+    color: #f39c12; /* Hover effect to show yellow when hovering over */
+}
+
+
+</style>
+{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+<div class="container" data-context="events" style="text-align: center;">
+<div class="sidebar">
+    <a href="#" class="sidebar-icon" id="passedEvents">
+        <i class="fas fa-check-circle"></i> Déjà Passé
+    </a>
+    <a href="#" class="sidebar-icon" id="favorites">
+        <i class="fas fa-star"></i> Favoris
+    </a>
+    <a href="#" class="sidebar-icon" id="participated">
+        <i class="fas fa-user-check"></i> Participé
+    </a>
+</div>
+    <h1>Upcoming Events</h1>
+
+    <!-- Search Bar with Emojis -->
+    <input type="text" id="searchEvent" class="search-bar" placeholder="🔍 Search by name, 📍 location ...">
+
+    <!-- Filters -->
+    <div class="filters-container">
+        <select id="monthFilter" class="filter-input">
+            <option value="">📅 Filter by Month</option>
+            {% for i in 1..12 %}
+                <option value="{{ i }}">{{ date('2000-' ~ i ~ '-01')|date('F') }}</option>
+            {% endfor %}
+        </select>
+
+        <select id="yearFilter" class="filter-input">
+            <option value="">📆 Filter by Year</option>
+            {% for i in 2024..2030 %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="number" id="minPrice" class="filter-input" placeholder="💰 Min Price (TND)">
+        <input type="number" id="maxPrice" class="filter-input" placeholder="💰 Max Price (TND)">
+    <button id="filterBtn" class="filter-button">Filtrer</button>
+    </div>
+
+    {% if eventsdata is not empty %}
+    <div class="events-container">
+        {% for event in eventsdata %}
+        
+        <div class="event-card"
+             data-date="{{ event.date|date('Y-m-d') }}"
+             data-price="{{ event.price }}">
+{% if event.photo %}
+    <a href="{{ path('event_detail', {'id': event.id}) }}" class="event-link">
+        <img src="{{ asset('uploads/events/' ~ event.photo) }}" 
+             alt="{{ event.name }}" 
+             class="event-image"
+             onerror="this.onerror=null;this.src='{{ asset('images/default-event.jpg') }}'">
+    </a>
+{% else %}
+    <a href="{{ path('event_detail', {'id': event.id}) }}" class="event-link">
+        <img src="{{ asset('images/default-event.jpg') }}" 
+             alt="Default event image" 
+             class="event-image">
+    </a>
+{% endif %}
+
+<div class="event-title">{{ event.name }}</div>
+
+<button class="fav-btn" data-event-id="{{ event.id }}">
+    <i class="fas fa-star"></i>
+</button>
+
+<div class="event-details">
+    <div class="event-date">📅 {{ event.date|date('F j, Y') }} ⏰ {{ event.time|date('H:i') }}</div>
+    <div class="event-location">📍 {{ event.location }}</div>
+    <div class="event-price">💸 {{ event.price }} TND</div>
+</div>
+
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div id="noResult" class="no-result" style="display: none;">❌ Aucun événement trouvé avec ces critères !</div>
+    {% else %}
+    <p>No upcoming events at the moment.</p>
+    {% endif %}
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event Details{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container event-container" style="text-align: center; background-color: #1e1e1e; color: #e0e0e0;">
+    <h2 style="color: #92ff44;">Event Details</h2>
+
+    <div class="event-details" style="max-width: 800px; margin: 0 auto; text-align: left;">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="detail-item mb-3">
+                    <h5 style="color: #92ff44;">Name:</h5>
+                    <p>{{ event.name }}</p>
+                </div>
+                <div class="detail-item mb-3">
+                    <h5 style="color: #92ff44;">Location:</h5>
+                    <p>{{ event.location }}</p>
+                </div>
+                <div class="detail-item mb-3">
+                    <h5 style="color: #92ff44;">Date & Time:</h5>
+                    <p>{{ event.date ? event.date|date('Y-m-d') : '' }} at {{ event.time ? event.time|date('H:i') : '' }}</p>
+                </div>
+                <div class="detail-item mb-3">
+                    <h5 style="color: #92ff44;">Price:</h5>
+                    <p>{{ event.price }} DT</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                {% if event.photo %}
+                    <div class="event-photo mb-3">
+                        <h5 style="color: #92ff44;">Photo:</h5>
+                        <img src="{{ asset('uploads/events/' ~ event.photo) }}" alt="Event photo" style="max-width: 100%; max-height: 200px; border-radius: 4px;">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-item mb-4">
+            <h5 style="color: #92ff44;">Description:</h5>
+            <p>{{ event.description }}</p>
+        </div>
+
+        {# Add this after the description section #}
+<div class="participations-section mt-5">
+    <h3 style="color: #92ff44;">Participations</h3>
+    
+    {% if event.participations|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Gender</th>
+                        <th>Participant Type</th>
+                        <th>Number of Participants</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for participation in event.participations %}
+                        <tr>
+                            <td>
+                                {% if participation.user %}
+                                    {{ participation.user.username }}
+                                {% else %}
+                                    Guest
+                                {% endif %}
+                            </td>
+                            <td>{{ participation.email }}</td>
+                            <td>{{ participation.phoneNumber }}</td>
+                            <td>{{ participation.gender }}</td>
+                            <td>{{ participation.participantType }}</td>
+                            <td>{{ participation.numberOfParticipants }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No participations for this event yet.
+        </div>
+    {% endif %}
+</div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <a href="{{ path('app_event_index') }}" class="btn btn-outline-secondary me-md-2" style="border-color: #92ff44; color: #92ff44;">
+                Back to list
+            </a>
+            <a href="{{ path('app_event_edit', {'id': event.id}) }}" class="btn" style="background-color: #92ff44; color: #1a1a1a;">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    .event-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .detail-item p {
+        background-color: #2d2d2d;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 0;
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .event-container {
+            padding: 20px;
+        }
+    }
+
+    .participations-section {
+        margin-top: 40px;
+        padding: 20px;
+        background-color: #2d2d2d;
+        border-radius: 8px;
+    }
+    
+    .table {
+        margin-top: 20px;
+    }
+    
+    .table th {
+        color: #92ff44;
+    }
+    
+    .alert {
+        background-color: #3d3d3d;
+        border-color: #92ff44;
+        color: #e0e0e0;
+    }
+</style>
+{% endblock %}

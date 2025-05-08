@@ -16,28 +16,24 @@ class ParticipationRepository extends ServiceEntityRepository
         parent::__construct($registry, Participation::class);
     }
 
-    //    /**
-    //     * @return Participation[] Returns an array of Participation objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    // Example: A custom query to find participations by a specific field, e.g., 'event' or 'gender'.
+    public function findByGender($gender): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.gender = :gender')
+            ->setParameter('gender', $gender)
+            ->orderBy('p.id', 'ASC') // Optionally, order results by ID
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Participation
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    // Example: Find one participation based on a specific field, e.g., 'email'.
+    public function findOneByEmail($email): ?Participation
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

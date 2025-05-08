@@ -1,0 +1,87 @@
+{# templates/participation/stats.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Participations Stats{% endblock %}
+
+{% block body %}
+    <div class="container" style="text-align: center; background-color: #1e1e1e; color: #e0e0e0;">
+        <h2 style="color: #92ff44;">Participations Stats</h2>
+        
+        <div style="display: flex; justify-content: space-between;">
+            <canvas id="genderChart" style="width: 45%; height: 300px;"></canvas>
+            <canvas id="typeChart" style="width: 45%; height: 300px;"></canvas>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Get gender and type counts from Symfony passed variables
+    const genderCounts = {{ genderCounts|json_encode|raw }};
+    const typeCounts = {{ typeCounts|json_encode|raw }};
+
+    const genderLabels = Object.keys(genderCounts);
+    const genderData = Object.values(genderCounts);
+
+    const typeLabels = Object.keys(typeCounts);
+    const typeData = Object.values(typeCounts);
+
+    // Gender chart
+    const ctxGender = document.getElementById('genderChart').getContext('2d');
+    new Chart(ctxGender, {
+        type: 'pie',
+        data: {
+            labels: genderLabels,
+            datasets: [{
+                label: 'Participants by Gender',
+                data: genderData,
+                backgroundColor: ['#92ff44', '#44c4ff', '#ff4473', '#ffdd44'],
+                borderColor: '#1e1e1e',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: '#e0e0e0' }
+                }
+            }
+        }
+    });
+
+    // Type chart
+    const ctxType = document.getElementById('typeChart').getContext('2d');
+    new Chart(ctxType, {
+        type: 'bar',
+        data: {
+            labels: typeLabels,
+            datasets: [{
+                label: 'Participants by Type',
+                data: typeData,
+                backgroundColor: '#92ff44',
+                borderColor: '#1a1a1a',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { ticks: { color: '#e0e0e0' } },
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#e0e0e0' }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: '#e0e0e0' }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
