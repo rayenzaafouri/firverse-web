@@ -1,0 +1,270 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Recipe Information</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    {{ form_row(form.name, {
+                        'attr': {'class': 'form-control'},
+                        'label_attr': {'class': 'form-label'}
+                    }) }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    {{ form_row(form.is_favoris, {
+                        'attr': {'class': 'form-check-input'},
+                        'label_attr': {'class': 'form-check-label'}
+                    }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Ingredients</h6>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="foodSearch" class="form-label">Search Foods</label>
+                <input type="text" class="form-control" id="foodSearch" placeholder="Type to search...">
+                <div id="foodSearchResults" class="list-group mt-2" style="display: none;"></div>
+            </div>
+
+            <div id="selectedIngredients" class="mb-3">
+                <!-- Selected ingredients will be displayed here -->
+            </div>
+
+            <div id="nutritionSummary" class="card mb-3" style="display: none;">
+                <div class="card-header py-2">
+                    <h6 class="m-0 font-weight-bold text-primary">Recipe Nutrition Summary</h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center p-2 rounded bg-light">
+                                <h4 class="text-primary mb-0" id="totalCalories">0</h4>
+                                <small class="text-muted">Calories</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-2 rounded bg-light">
+                                <h4 class="text-success mb-0" id="totalProtein">0g</h4>
+                                <small class="text-muted">Protein</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-2 rounded bg-light">
+                                <h4 class="text-info mb-0" id="totalCarbs">0g</h4>
+                                <small class="text-muted">Carbs</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-2 rounded bg-light">
+                                <h4 class="text-warning mb-0" id="totalFat">0g</h4>
+                                <small class="text-muted">Fat</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <div class="text-center p-2 rounded bg-light">
+                                <h4 class="text-secondary mb-0" id="totalFiber">0g</h4>
+                                <small class="text-muted">Fiber</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-2 rounded bg-light">
+                                <h4 class="text-danger mb-0" id="totalSugar">0g</h4>
+                                <small class="text-muted">Sugar</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-2 rounded bg-light">
+                                <h4 class="text-info mb-0" id="totalSodium">0mg</h4>
+                                <small class="text-muted">Sodium</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-2 rounded bg-light">
+                                <h4 class="text-success mb-0" id="totalPotassium">0mg</h4>
+                                <small class="text-muted">Potassium</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{ form_widget(form.foods, {'attr': {'style': 'display: none;'}}) }}
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+        <a href="{{ path('app_admin_recipe_index') }}" class="btn btn-secondary">Back to list</a>
+    </div>
+{{ form_end(form) }}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const foodSearch = document.getElementById('foodSearch');
+    const foodSearchResults = document.getElementById('foodSearchResults');
+    const selectedIngredients = document.getElementById('selectedIngredients');
+    const foodsInput = document.querySelector('#recipe_foods');
+    let selectedFoods = new Set();
+
+    // Load existing foods if any
+    if (foodsInput.value) {
+        selectedFoods = new Set(foodsInput.value.split(','));
+        updateSelectedIngredientsDisplay();
+    }
+
+    foodSearch.addEventListener('input', function() {
+        const query = this.value.trim();
+        if (query.length < 2) {
+            foodSearchResults.style.display = 'none';
+            return;
+        }
+
+        fetch(`/admin/recipe/search-foods?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                foodSearchResults.innerHTML = '';
+                data.forEach(food => {
+                    const item = document.createElement('a');
+                    item.href = '#';
+                    item.className = 'list-group-item list-group-item-action';
+                    item.textContent = food.name;
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        addFood(food);
+                        foodSearch.value = '';
+                        foodSearchResults.style.display = 'none';
+                    });
+                    foodSearchResults.appendChild(item);
+                });
+                foodSearchResults.style.display = data.length ? 'block' : 'none';
+            });
+    });
+
+    function addFood(food) {
+        if (!selectedFoods.has(food.id.toString())) {
+            selectedFoods.add(food.id.toString());
+            updateSelectedIngredientsDisplay();
+            updateFoodsInput();
+            updateNutritionTotals();
+        }
+    }
+
+    function removeFood(foodId) {
+        selectedFoods.delete(foodId.toString());
+        updateSelectedIngredientsDisplay();
+        updateFoodsInput();
+        updateNutritionTotals();
+    }
+
+    function updateSelectedIngredientsDisplay() {
+        selectedIngredients.innerHTML = '';
+        selectedFoods.forEach(foodId => {
+            fetch(`/admin/recipe/search-foods?q=${foodId}`)
+                .then(response => response.json())
+                .then(foods => {
+                    if (foods.length > 0) {
+                        const food = foods[0];
+                        const card = document.createElement('div');
+                        card.className = 'card mb-2';
+                        card.innerHTML = `
+                            <div class="card-body p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">${food.name}</h6>
+                                        <div class="serving-size-container d-inline-block ml-2">
+                                            <input type="number" class="form-control form-control-sm serving-size" 
+                                                   name="serving_size[${food.id}]" value="1" min="0.1" step="0.1" 
+                                                   style="width: 60px; display: inline-block;"
+                                                   onchange="updateNutritionTotals()">
+                                            <span class="serving-unit ml-1">serving</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="removeFood(${food.id})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-3">
+                                        <small class="text-muted">Calories:</small>
+                                        <span class="calories">${food.calories}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <small class="text-muted">Protein:</small>
+                                        <span class="protein">${food.protein}g</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <small class="text-muted">Carbs:</small>
+                                        <span class="carbs">${food.carbohydrate}g</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <small class="text-muted">Fat:</small>
+                                        <span class="fat">${food.fats}g</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        card.setAttribute('data-calories', food.calories);
+                        card.setAttribute('data-protein', food.protein);
+                        card.setAttribute('data-carbs', food.carbohydrate);
+                        card.setAttribute('data-fat', food.fats);
+                        card.setAttribute('data-fiber', food.fiber);
+                        card.setAttribute('data-sugar', food.sugar);
+                        card.setAttribute('data-sodium', food.sodium);
+                        card.setAttribute('data-potassium', food.potassium);
+                        selectedIngredients.appendChild(card);
+                    }
+                });
+        });
+    }
+
+    function updateFoodsInput() {
+        foodsInput.value = Array.from(selectedFoods).join(',');
+    }
+
+    function updateNutritionTotals() {
+        let totalCalories = 0;
+        let totalProtein = 0;
+        let totalCarbs = 0;
+        let totalFat = 0;
+        let totalFiber = 0;
+        let totalSugar = 0;
+        let totalSodium = 0;
+        let totalPotassium = 0;
+
+        document.querySelectorAll('#selectedIngredients .card').forEach(card => {
+            const servingSize = parseFloat(card.querySelector('.serving-size').value) || 1;
+            totalCalories += parseFloat(card.getAttribute('data-calories')) * servingSize;
+            totalProtein += parseFloat(card.getAttribute('data-protein')) * servingSize;
+            totalCarbs += parseFloat(card.getAttribute('data-carbs')) * servingSize;
+            totalFat += parseFloat(card.getAttribute('data-fat')) * servingSize;
+            totalFiber += parseFloat(card.getAttribute('data-fiber')) * servingSize;
+            totalSugar += parseFloat(card.getAttribute('data-sugar')) * servingSize;
+            totalSodium += parseFloat(card.getAttribute('data-sodium')) * servingSize;
+            totalPotassium += parseFloat(card.getAttribute('data-potassium')) * servingSize;
+        });
+
+        document.getElementById('totalCalories').textContent = Math.round(totalCalories);
+        document.getElementById('totalProtein').textContent = Math.round(totalProtein) + 'g';
+        document.getElementById('totalCarbs').textContent = Math.round(totalCarbs) + 'g';
+        document.getElementById('totalFat').textContent = Math.round(totalFat) + 'g';
+        document.getElementById('totalFiber').textContent = Math.round(totalFiber) + 'g';
+        document.getElementById('totalSugar').textContent = Math.round(totalSugar) + 'g';
+        document.getElementById('totalSodium').textContent = Math.round(totalSodium) + 'mg';
+        document.getElementById('totalPotassium').textContent = Math.round(totalPotassium) + 'mg';
+
+        document.getElementById('nutritionSummary').style.display = selectedFoods.size > 0 ? 'block' : 'none';
+    }
+});
+</script>
+{% endblock %} 

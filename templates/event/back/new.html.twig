@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create Event{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+<style>
+    .form-wrapper {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+
+    .form-label {
+        font-weight: 500;
+        color: #212529;
+    }
+
+    .form-control {
+        border-radius: 6px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+
+    <div class="container py-5">
+        <div class="form-wrapper">
+            <h2>Create New Event</h2>
+
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+
+            {% for error in form.vars.errors %}
+                <div class="alert alert-danger text-center mb-3">
+                    {{ error.message }}
+                </div>
+            {% endfor %}
+
+            <div class="mb-3">
+                {{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.location, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.location) }}
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.date, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.date) }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.time, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.time, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.time) }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.price, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.price) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.photo, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.photo) }}
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ path('app_event_index') }}" class="btn btn-outline-secondary">← Back to List</a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Save
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

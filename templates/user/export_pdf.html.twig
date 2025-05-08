@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Helvetica, Arial, sans-serif; font-size: 12px; }
+    header { text-align: center; margin-bottom: 20px; }
+    header img { width: 150px; margin-bottom: 10px; }
+    h1 { margin: 0; font-size: 24px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #444; padding: 8px; text-align: left; }
+    th { background-color: #1abc9c; color: #fff; }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+  </style>
+</head>
+<body>
+  <header>
+  <img src="file://{{ logoPath }}" alt="Fitverse Logo">
+  <h1>List of users</h1>
+</header>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Role</th>
+        <th>Birth Date</th>
+        <th>Avatar</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.firstName }} {{ user.lastName }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.birthDate ? user.birthDate|date('Y-m-d') : '—' }}</td>
+        <td>
+          {% if user.image %}
+            <img src="file://{{ avatarBasePath ~ user.image }}" class="avatar" />
+            
+            —
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

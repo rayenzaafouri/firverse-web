@@ -1,0 +1,11 @@
+{% for wishlist in wishlists %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <img src="{{ wishlist.product.imageUrl }}" alt="{{ wishlist.product.name }}" width="100">
+            <h5>{{ wishlist.product.name }}</h5>
+            <p>Added at: {{ wishlist.addedAt|date('Y-m-d H:i') }}</p>
+        </div>
+    </div>
+{% else %}
+    <p>No wishlist items found.</p>
+{% endfor %}

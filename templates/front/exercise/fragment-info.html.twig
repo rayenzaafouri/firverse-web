@@ -1,0 +1,297 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{{ exercice.title }} - Fitverse
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+
+    const iconMap = {
+        "1": "barbell.png",
+        "2": "dumbells.png",
+        "3": "bodyweight.png",
+        "4": "machine.png",
+        "5": "medicine-ball.png",
+        "6": "kettlebells.png",
+        "7": "stretches.png",
+        "8": "cables.png",
+        "9": "band.png",
+        "10": "plate.png",
+        "11": "trx.png",
+        "12": "yoga.png",
+        "13": "bosu-ball.png",
+        "14": "vitruvian.png",
+        "15": "cardio.png",
+        "16": "smith-machine.png",
+        "17": "recovery.png",
+    };
+
+
+
+    document.addEventListener("DOMContentLoaded", (event) => {
+
+
+        let equipment = JSON.parse(new DOMParser().parseFromString("{{ exercice.equipment }}", "text/html").documentElement.textContent)
+        const targetDiv = document.querySelector(".equipment-icons")
+
+        equipment.forEach(item => {
+            let image = document.createElement("img")
+            image.src = "/icons/" + iconMap[item]
+            image.alt = iconMap[item]
+            targetDiv.appendChild(image)
+
+        })
+    })
+
+
+
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }}
+{# Your CSS goes here #}
+<style>
+    .details {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+
+        img {
+            object-fit: cover;
+        }
+    }
+
+    .json-assist {
+        display: none !important;
+    }
+
+
+
+
+    .body-maps {
+        display: flex;
+        gap: 1rem;
+        background: #E8E8E8;
+        border-radius: 0.875rem;
+        padding: .5rem;
+        height: 40lvh;
+        display: flex;
+        align-items: center;
+        height: fit-content;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+
+        transition: transform .33s ease;
+
+        &:hover {
+            transform: scale(1.02);
+        }
+
+
+        img {
+            object-fit: cover;
+            height: 25lvh;
+        }
+    }
+
+    .sets-reps {
+        width: fit-content;
+        display: flex;
+        gap: 1rem;
+        background: #E8E8E8;
+        padding: .5rem 1rem;
+        border-radius: 0.875rem;
+
+        div {
+            display:flex;
+            text-align: center;
+        }
+    }
+
+    .equipment-icons {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        padding: 1rem;
+
+        img {
+            height: 2rem;
+            width: auto;
+        }
+    }
+
+
+
+    .video-guide {
+
+        iframe {
+            border-radius: 0.875rem;
+            width: 100%;
+            height: 25lvh;
+
+        }
+    }
+
+    
+    .general-info {
+            display: flex;
+            flex-direction: row;
+            align-items: start;
+            flex-wrap: wrap;
+            gap: .5rem;
+            align-items: stretch;
+            justify-content: center;
+
+            &>div{
+                background-color: #E8E8E8;
+                border-radius: 0.875rem;
+                padding: .5rem;
+
+                display: flex;
+                align-items: center;
+                gap: .5rem;
+
+                transition: transform .33s ease;
+                &:hover {
+                    transform: scale(1.02);
+                }
+
+
+
+            }
+        }
+
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+
+<body data-context="exercise">
+
+    <div class="exercise-view">
+
+        <div>
+            <div class="steps">
+                <div class="step json-assist">
+                    <div>
+                        <span class="step-count">#?</span>
+                        <p class="step-description"></p>
+                    </div>
+
+                    <video class="step-video" autoplay muted loop></video>
+
+                </div>
+
+
+
+            </div>
+
+    
+        </div>
+
+
+
+
+
+        <div class="details">
+
+            <div class="video-guide">
+                <iframe src="{{ exercice.videoUrl }}" frameborder="0"></iframe>
+            </div>
+
+
+            <div class="body-maps">
+                <img src="{{ exercice.bodyMapFront }}" alt="Impacted muscles front side">
+                <img src="{{ exercice.bodyMapBack }}" alt="Impacted muscles back side">
+            </div>
+
+  
+
+
+            <div class="general-info">
+
+                <div>
+                    <span>Equipment</span>
+                    <div class="equipment-icons">
+                    </div>
+                </div>
+
+
+                <div class="sets-reps">
+                    <div>
+                        <span>Sets</span>
+                        <span>{{exercice.sets}}</span>
+
+                    </div>
+
+                    <div>
+                        <span>Reps</span>
+                        <span>{{exercice.reps}}</span>
+                    </div>
+
+                </div>
+
+
+                <div>
+                    <span>Grip type</span>
+                    <span class="badge badge-pill text-bg-dark">{{ exercice.grips | capitalize }} </span>
+                </div>
+
+
+                <div>
+
+                    <span>Mechanic</span>
+
+                    {% if exercice.push %}
+                    <span class="badge badge-pill text-bg-dark">Push</span>
+                    {% endif %}
+
+                    {% if exercice.pull %}
+                    <span class="badge badge-pill text-bg-dark">Pull</span>
+                    {% endif %}
+
+                </div>
+
+
+
+
+                <div>
+                    <span>Impacted Muscles</span>
+                    <div class="muscle-class">
+                        {% if exercice.m_primary %}
+                        <span class="badge badge-pill text-bg-success">Primary</span>
+                        {% endif %}
+
+                        {% if exercice.m_secondary %}
+                        <span class="badge badge-pill text-bg-warning">Secondary</span>
+
+                        {% endif %}
+
+
+                        {% if exercice.m_tertiary %}
+                        <span class="badge badge-pill text-bg-danger">Tertiary</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</body>
+
+{% endblock %}

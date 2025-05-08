@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Categories{% endblock %}
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
+{% block body %}
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
+
+    <div class="container">
+        <h1 class="mb-4">Manage Categories</h1>
+
+        <div class="mb-3">
+            <a href="{{ path('app_category_new') }}" class="btn btn-success">+ Create New Category</a>
+        </div>
+
+        <table class="table table-striped text-center align-middle">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Actions</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for category in category %}
+                <tr>
+                    <td class="gap-2">
+                        <a href="{{ path('app_category_show', {'id': category.id}) }}" class="btn btn-sm btn-primary mr-1">View</a>
+                        <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-sm btn-warning mr-1">Edit</a>
+                        {{ include('back/shop/category/_delete_form.html.twig') }}
+                    </td>
+                    <td>{{ category.id }}</td>
+                    <td>{{ category.name }}</td>
+                    <td class="w-50">{{ category.description }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-muted">No categories found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

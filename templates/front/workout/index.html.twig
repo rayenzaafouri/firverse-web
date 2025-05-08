@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Workout index{% endblock %}
+
+{% block body %}
+    <h1>Workout index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Label</th>
+                <th>Description</th>
+                <th>Img</th>
+                <th>Featured</th>
+                <th>Enabled</th>
+                <th>Exercises</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for workout in workouts %}
+            <tr>
+                <td>{{ workout.id }}</td>
+                <td>{{ workout.label }}</td>
+                <td>{{ workout.description }}</td>
+                <td>{{ workout.img }}</td>
+                <td>{{ workout.featured ? 'Yes' : 'No' }}</td>
+                <td>{{ workout.enabled ? 'Yes' : 'No' }}</td>
+                <td>{{ workout.exercises }}</td>
+
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_workout_new') }}">Create new</a>
+{% endblock %}

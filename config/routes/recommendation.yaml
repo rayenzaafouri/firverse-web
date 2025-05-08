@@ -1,0 +1,4 @@
+api_recommend_product:
+  path: /api/recommend/product/{id}
+  controller: App\RecommendationBundle\Controller\RecommendationController::byProduct
+  methods: GET

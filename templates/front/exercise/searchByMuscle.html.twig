@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+
+<script>
+
+
+document.addEventListener("DOMContentLoaded",()=>{
+    attachHoverEffect()
+})
+
+function renderName(text){
+    const element = document.querySelector(".render-name")
+    element.style.setProperty("opacity","1")
+    element.innerText = text
+
+    if(text == "" || text == undefined){
+        hideName()
+    }
+}
+
+function hideName(){
+    renderName("N/A")
+    const element = document.querySelector(".render-name")
+    element.style.setProperty("opacity","0")
+}
+
+
+function attachHoverEffect(){
+    document.querySelectorAll("g").forEach((ele)=>{
+        self(ele)
+    })
+}
+
+function self(ele){
+     ele.addEventListener("mouseover",(e)=>{
+            renderName(capitalize(ele.id))
+    })
+
+    ele.addEventListener("click",(e)=>{
+
+
+            const base = "{{ path('user_exercice_searchByMuscle_query', { class: 'test' }) }}"
+
+            const trimmedUrl = base.split('/').slice(0, -1).join('/');
+
+            window.location.href = trimmedUrl + '/' + ele.id;
+
+    })
+}
+
+
+function capitalize(s)
+{
+    return String(s[0]).toUpperCase() + String(s).slice(1);
+}
+
+
+
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }}
+
+<style>
+
+ .render-name{
+            display:block;
+            text-align:center;
+    }
+
+    .body-maps{
+        display: flex;
+        justify-content:center;
+        align-items:center;
+        gap:10rem;
+        width:100%;
+
+
+        svg{
+            height:60lvh;
+            color:white;
+
+            &>*:hover{
+                color: #DDFE67;
+                cursor:crosshair;
+            }
+        }
+    }
+</style>
+
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+<div class="container">
+    
+
+    <h1> Exercise search </h1>
+    <p>Find exercise by clicking the corresponding muscle.</p>
+    
+
+    <span class="render-name">Click on desired muscle</span>
+
+
+    <div class="body-maps">
+
+    {% include '/front/exercise/front-map.html.twig' %}
+    {% include '/front/exercise/back-map.html.twig' %}
+
+    </div>
+
+    
+
+   
+<div>
+{% endblock %}

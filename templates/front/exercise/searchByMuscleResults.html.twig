@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        // Add your custom JavaScript code here
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <style>
+        .container a {
+            all: unset!important;
+            cursor: pointer!important;
+
+            transition: transform .5s linear;
+
+            &:hover{
+                transform: translateY(-.5rem)
+            }
+
+
+        }
+        .results{
+            display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% include 'navbar.html.twig' %}
+
+    <div class="container">
+        <h1>Exercise search</h1>
+
+        {% if exercices|length == 0 %}
+            <!-- Add your HTML message or content here when no exercises are found -->
+            <p>No exercises found for this query. Please try again with different criteria.</p>
+           <a href="{{ path('user_exercice_searchByMuscle')}}" class="btn btn-primary"> <b> Back to exercise search </b></a>
+
+        {% else %}
+            <p>We found {{ exercices|length }} exercise(s) that target the {{ query }}.</p>
+            <div class="results">
+            {% for exercice in exercices %}
+
+                <a href="{{ path('user_exercice_show', { id: exercice.id }) }}" class="btn btn-primary">
+                    <div class="card" style="width: 18rem;">
+                        {% set videoId = exercice.video_url|split('/')|last|split('?')|first %}
+                        <img src="https://img.youtube.com/vi/{{ videoId }}/maxresdefault.jpg" class="card-img-top" alt="Card image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ exercice.title }}</h5>
+                            <span class="badge text-bg-dark">{{ exercice.difficulty | capitalize }}</span>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

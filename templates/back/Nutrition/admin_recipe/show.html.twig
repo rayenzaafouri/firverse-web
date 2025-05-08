@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - {{ recipe.name }}{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Admin - {{ recipe.name }}</h1>
+            <div>
+                <a href="{{ path('app_admin_recipe_edit', {'id': recipe.id}) }}" class="btn btn-primary">Edit</a>
+                <a href="{{ path('app_admin_recipe_index') }}" class="btn btn-secondary">Back to list</a>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Recipe Details</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>User</h5>
+                        <p>{{ recipe.user ? recipe.user.email : 'No user assigned' }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Times Used</h5>
+                        <p>{{ recipe.timesUsed|default(0) }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Favorite Status</h5>
+                        <p>
+                            {% if recipe.isFavoris %}
+                                <span class="badge bg-success">Favorite</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Not a favorite</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h5>Ingredients</h5>
+                        <div class="d-flex flex-wrap">
+                            {% for food in recipe.foods %}
+                                <span class="badge bg-info p-2 m-1">{{ food.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

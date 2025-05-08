@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Fitverse : The all in one fitness hub!
+			{% endblock %}
+		</title>
+
+		{% block javascripts %}
+			<!-- Google fonts -->
+			<link rel="preconnect" href="https://fonts.googleapis.com">
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+			<link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+			<link
+			href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Train+One&display=swap" rel="stylesheet">
+
+			<!-- Less CSS pre-processor -->
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/4.2.2/less.min.js" integrity="sha512-RvWSOL32duQKqvfcdl2aKktT2VHgL1Nst/cO7EzPhuuVSMKDu86eXkAEi9AUJjSzcpA4XZfK8EaPNNzIP7MlBw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+			<!-- Bootstrap -->
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+			<link
+			rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+			<!-- Font awesome -->
+			<link
+			rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+			<!-- Swiper.js-->
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js" integrity="sha512-Ysw1DcK1P+uYLqprEAzNQJP+J4hTx4t/3X2nbVwszao8wD+9afLjBQYjz7Uk4ADP+Er++mJoScI42ueGtQOzEA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+			<link
+			rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css" integrity="sha512-rd0qOHVMOcez6pLWPVFIv7EfSdGKLt+eafXh4RO/12Fgr41hDQxfGvoi1Vy55QIVcQEujUE1LQrATCLl2Fs+ag==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+			<!-- Typed js -->
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.10/typed.min.js" integrity="sha512-hIlMpy2enepx9maXZF1gn0hsvPLerXoLHdb095CmRY5HG3bZfN7XPBZ14g+TUDH1aGgfLyPHmY9/zuU53smuMw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+			<!-- Animate css -->
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+			{% block importmap %}
+				{{ importmap('app') }}
+			{% endblock %}
+
+
+		{% endblock %}
+
+
+		{% block stylesheets %}
+			<link rel="stylesheet" href="{{ asset('/styles/landing.css') }}">
+		{% endblock %}
+	</head>
+	<body>
+		{% block body %}
+
+
+			<!-- Home hero  -->
+			<div class="landing-hero" data-controller="landing-page">
+				<img src="{{asset('images/landing/fitverse.png')}}" alt="">
+				<div class="hero-content ">
+					<span>CRAFT YOUR</span>
+					<span>PHYSIQUE</span>
+					<h2>We are dedicated to helping you transform your body and mind</h2>
+					<a class="btn btn-cta-start" href="/login">Start using fitverse</a>
+
+					<div class="scroll-down-cta animate__animated animate__fadeInDown animate__delay-0_7s">
+						<div>
+							<i class="fa-solid fa-computer-mouse"></i>
+							<i class="fa-solid fa-arrow-down"></i>
+						</div>Scroll to learn more</div>
+
+
+				</div>
+
+			</div>
+
+
+			<div class="landing-exercise">
+
+
+				<div class="landing-exersice-text">
+					<img src="{{asset('images/landing/exercice.png')}}" class="hero-leading-icon" alt="">
+					<h2>Workouts Tailored to Your Goals</h2>
+
+					<p>
+						No matter your fitness goal, we have the perfect plan for you. Explore step-by-step exercises,
+						                    expert-designed workout plans, and AI-powered guidance to help you train smarter and achieve results
+						                    faster.
+					</p>
+
+
+					<div class="landing-exercise-goals">
+						<div>
+							<i class="fa-solid fa-dumbbell"></i>
+							<p>Build Muscle</p>
+						</div>
+						<div>
+							<i class="fa-solid fa-weight-scale"></i>
+							<p>Lose Weight</p>
+						</div>
+						<div>
+							<i class="fa-solid fa-hand-fist"></i>
+							<p>Improve Endurance</p>
+						</div>
+						<div>
+							<i class="fa-solid fa-ranking-star"></i>
+							<p>Increase Strength</p>
+						</div>
+						<div>
+							<i class="fa-solid fa-person-running"></i>
+							<p>Enhance Flexibility</p>
+						</div>
+						<div>
+							<i class="fa-solid fa-people-group"></i>
+							<p>Stay Active</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="landing-gym">
+				<div class="search-function-promo">
+					<div class="text-content">
+						<img src="{{asset('images/landing/gyms.png')}}" class="hero-leading-icon" alt="">
+
+						<h2>Find, compare and manage nearby gyms</h2>
+						<h2>Keep track of your subscription
+						</h2>
+
+						<div class="gym-search-box">
+							<i class="fa-solid fa-magnifying-glass"></i>
+							<span id="gym-search-animation"></span>
+						</div>
+
+					</div>
+
+
+					<div id="screenshots-wrapper">
+
+
+						<div class="screenshot-item screenshot-inactive">
+							<img src="{{asset('images/landing/california-gym.png')}}" alt="">
+						</div>
+
+
+						<div class="screenshot-item screenshot-inactive">
+							<img src="{{asset('images/landing/hardbeat.png')}}" alt="">
+						</div>
+
+
+						<div class="screenshot-item screenshot-inactive">
+							<img src="{{asset('images/landing/volcano.png')}}" alt="">
+						</div>
+
+
+						<div class="screenshot-item screenshot-inactive">
+							<img src="{{asset('images/landing/xtra-bbf.png')}}" alt="">
+						</div>
+					</div>
+
+
+				</div>
+
+			</div>
+
+
+			<div class="landing-events">
+				<div></div>
+				<div class="landing-events-text">
+					<img src="{{asset('images/landing/events.png')}}" class="hero-leading-icon" alt="">
+					<h2>Elevate Your Fitness Journey with Exclusive Events!</h2>
+					<p>Stay motivated and engaged with live challenges, expert-led workshops, and community workouts—all in one
+						                    place. Whether you're competing, learning, or just having fun, there's always something exciting to keep
+						                    you moving!</p>
+				</div>
+			</div>
+
+
+			<div class="landing-shop">
+
+				<div class="landing-shop-text">
+					<h1 class="display-5">
+						<img src="{{asset('images/landing/shop.png')}}" class="hero-leading-icon"><br>
+						Get fit in style with a curated list of fitness gear
+					</h1>
+					<p class="display-6">
+
+						We believe that looking good and feeling good go hand in hand.
+						                    Thats why we partner up with leading brands to offer products available for purchase exclusively for our
+						                    gym
+						                    members.
+					</p>
+				</div>
+
+				<div class="shop-swiper">
+					<div
+						class="swiper-wrapper">
+						<!-- Slides -->
+
+
+						<div class="swiper-slide landing-shop-card">
+							<img src="{{asset('images/landing/clothing.png')}}" alt="">
+
+
+							<span>Clothing</span>
+						</div>
+
+
+						<div class="swiper-slide landing-shop-card">
+							<img src="{{asset('images/landing/gloves.png')}}" alt="">
+							<span>Equipment</span>
+						</div>
+
+
+						<div class="swiper-slide landing-shop-card">
+							<img src="{{asset('images/landing/water-bottle.png')}}" alt="">
+							<span>Hydration</span>
+						</div>
+
+
+						<div class="swiper-slide landing-shop-card">
+							<img src="{{asset('images/landing/bag.png')}}" alt="">
+							<span>Essentials</span>
+						</div>
+
+
+						<div class="swiper-slide landing-shop-card">
+							<img src="{{asset('images/landing/buds.png')}}" alt="">
+							<span>Sound</span>
+						</div>
+
+
+						<div class="swiper-slide landing-shop-card">
+							<img src="{{asset('images/landing/meditation.png')}}" alt="">
+							<span>Meditation</span>
+						</div>
+
+					</div>
+				</div>
+
+
+			</div>
+
+
+			<div class="landing-nutrition">
+
+
+				<div class="landing-nutrition-text">
+					<img src="{{asset('images/landing/meals.png')}}" class="hero-leading-icon" alt="">
+					<h2>Smarter Nutrition for Better Results</h2>
+
+					<p>Take the guesswork out of nutrition. Track your calories, discover expert-curated recipes, and get
+						                    AI-generated meal plans tailored to your goals</p>
+				</div>
+			</div>
+
+
+			<div class="landing-cta">
+
+				<div class="cta-icons">
+					<img src="{{asset('images/landing/meals.png')}}" alt="">
+					<img src="{{asset('images/landing/exercice.png')}}" alt="">
+					<img src="{{asset('images/landing/gyms.png')}}" alt="">
+					<img src="{{asset('images/landing/events.png')}}" alt="">
+					<img src="{{asset('images/landing/shop.png')}} " alt="">
+				</div>
+
+				<div class="cta-content">
+					<p>
+						Everything you need to crush your fitness goals workouts, nutrition tracking, AI-powered guidance, and more all in one place</p>
+					<h3>Ready to take the next step?</h3>
+				</div>
+
+
+				<button class="btn btn-cta-start">
+					<a href="/login">Start using fitverse</a>
+				</button>
+
+			</div>
+
+		{% endblock %}
+	</body>
+</html>

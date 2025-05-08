@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ recipe.name }}{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+    <div class="container py-5 mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold mb-1"><i class="fas fa-book-open text-primary me-2"></i>{{ recipe.name }}</h1>
+            <div class="text-muted small">Recipe Details</div>
+        </div>
+        <div>
+            <a href="{{ path('app_recipe_edit', {'id': recipe.id}) }}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{{ path('app_recipe_index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to list
+            </a>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-body py-4">
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="d-flex align-items-center">
+                                <span class="fs-4 text-primary me-2"><i class="fas fa-redo"></i></span>
+                                <div>
+                                    <div class="fw-bold">Times Used</div>
+                                    <div class="fs-5">{{ recipe.timesUsed }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <span class="fs-4 text-warning me-2"><i class="fas fa-star"></i></span>
+                                <div>
+                                    <div class="fw-bold">Favorite Status</div>
+                                    {% if recipe.isFavoris %}
+                                        <span class="badge bg-success px-3 py-2">Favorite</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary px-3 py-2">Not a favorite</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-2">
+                        <div class="fw-bold mb-2"><i class="fas fa-utensils text-info me-2"></i>Ingredients</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for food in recipe.foods %}
+                                <span class="badge bg-light text-dark border border-secondary fs-6 px-3 py-2">{{ food.name }}</span>
+                            {% endfor %}
+                            {% if recipe.foods|length == 0 %}
+                                <span class="text-muted">No ingredients listed.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+{% endblock %}

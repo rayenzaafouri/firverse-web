@@ -1,0 +1,204 @@
+{# templates/event/front/events_home/detail.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Event Details{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+ <!-- Flèche de retour à la page d'accueil en haut à gauche -->
+    <div style="text-align: left; margin-left: 20px; margin-top : 20px;">
+        <a href="{{ path('events_home') }}" class="btn btn-primary" style="margin-bottom: 20px;">← Back to Events</a>
+    </div>
+
+<div class="container event-detail-container" style="text-align: center;">
+
+    <h1 class="event-title">{{ event.name }}</h1>
+    
+    {# <img src="{{ asset('uploads/photos/' ~ event.photo) }}" alt="{{ event.name }}" class="event-image"/> #}
+<img src="{{ asset('uploads/events/' ~ event.photo) }}" 
+     alt="{{ event.name }}" 
+     class="event-image"
+     onerror="this.onerror=null;this.src='{{ asset('images/default-event.jpg') }}'">
+
+    <div class="event-details">
+        <p><strong>Date:</strong> 🗓️ {{ event.date|date('F j, Y') }} at {{ event.time }}</p>
+<p><strong>Location:</strong> 📍 
+    <span>{{ event.location }}</span>
+    <button id="location-button" class="btn btn-success btn-sm" style="margin-left: 8px;">
+        <i class="fas fa-map-marked-alt"></i> Show on Maps
+    </button>
+    <span id="geo-message" style="display:none; color: green; margin-left:10px;">
+        Redirection vers Google Maps...
+    </span>
+</p>
+        <p><strong>Description:</strong> 📝 {{ event.description }}</p>
+        <p><strong>Price:</strong> 💰 {{ event.price }}  D.T</p>
+    </div>
+    
+ {# Add a "Reserve" button that links to the participation form #}
+    <a href="{{ path('app_participation_new', {'event_id': event.id}) }}" class="btn reserve-button" style="margin-top: 20px;">
+        Reserve this event
+    </a>
+    
+</div>
+<div id="geo-message" class="geo-message" style="display:none;">
+    <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
+    <span>Nous sommes ici, bienvenue !</span>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const locationButton = document.getElementById('location-button');
+        const eventLocation = "{{ event.location|e('js') }}";
+
+        locationButton.addEventListener('click', function () {
+            const apiKey = 'AIzaSyCc-Wlcr47oT5EDZW7DJA5CLLNXCGxfKs0'; 
+            const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(eventLocation)}&key=${apiKey}`;
+
+            fetch(geocodeUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "OK") {
+                        const lat = data.results[0].geometry.location.lat;
+                        const lng = data.results[0].geometry.location.lng;
+
+                        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`;
+                        window.open(googleMapsUrl, '_blank');
+
+                        const geoMessage = document.getElementById('geo-message');
+                        geoMessage.style.display = 'block';
+                        setTimeout(() => {
+                            geoMessage.style.display = 'none';
+                        }, 5000);
+                    } else {
+                        alert("Erreur de géolocalisation : " + data.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur :', error);
+                    alert("Une erreur est survenue.");
+                });
+        });
+    });
+</script>
+{% endblock %}
+{% block stylesheets %}
+{{ parent() }}
+<style>
+  /* Style pour le message de géolocalisation */
+#geo-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-size: 1.2em;
+    display: none; /* Initialement caché */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#geo-message i {
+    color: red;
+    margin-right: 10px;
+    font-size: 1.5em;
+}
+
+
+        /* Customize for mobile responsiveness */
+        @media (max-width: 768px) {
+            #geo-message {
+                font-size: 1em;
+            }
+        }
+    /* Modern design for event detail page */
+    .event-detail-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Back button */
+    .back-button {
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: white;
+        background-color: #007bff;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Event title */
+    .event-title {
+        font-size: 2em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Event image */
+    .event-image {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Event details */
+    .event-details {
+        text-align: left;
+        font-size: 1.2em;
+        color: #444;
+    }
+
+  /* Reserve button */
+    .reserve-button{
+        display: inline-block;
+        padding: 12px 20px;
+        background-color: #28a745;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 1.1em;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .reserve-button:hover {
+        background-color: #218838;
+    }
+
+    /* Mobile responsive design */
+    @media (max-width: 768px) {
+        .event-detail-container {
+            padding: 20px;
+        }
+
+        .event-title {
+            font-size: 1.6em;
+        }
+
+        .event-details {
+            font-size: 1.1em;
+        }
+
+        .reserve-button {
+            font-size: 1em;
+        }
+    }
+</style>
+{% endblock %}

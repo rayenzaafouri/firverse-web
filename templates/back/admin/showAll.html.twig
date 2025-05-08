@@ -1,0 +1,93 @@
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
+
+{% block title %}Exercise Details{% endblock %}
+
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_exercice_index') }}">Exercises</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">List</li>
+    </ol>
+</nav>
+{% endblock %}
+
+
+{% block info %}
+This section allows you to preview and manage all aspects of exercises used by the workout module.
+{% endblock %}
+
+
+{% block javascripts %}
+{{ parent() }}
+<script></script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+	.video-preview-img{
+		aspect-ratio: 16/9;
+		width: 15rem;
+	}
+
+	.table{
+		text-align: center;
+        vertical-align: middle;
+	}
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<a class="btn btn-primary" href="{{ path('app_exercice_new') }}"><i class="fa-solid fa-plus"></i>  New exercise</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Preview</th>
+            <th>Title</th>
+            <th>Difficulty</th>
+            <th>Muscle Group</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exercice in exercices %}
+            <tr>
+
+				{% set cleanUrl = exercice.videoUrl|split('?')|first %}
+				{% set videoId = cleanUrl|split('/')|last %}
+
+                <td><img class="video-preview-img" src="https://img.youtube.com/vi/{{ videoId }}/maxresdefault.jpg" alt="Video thumbnail">
+
+				</iframe></td>
+                <td>{{ exercice.title }}</td>
+                <td>{{ exercice.difficulty | capitalize }}</td>
+                <td>
+                    {% if exercice.mPrimary %}
+                        <span class="badge text-bg-secondary">Primary</span>
+                    {% endif %}
+                    {% if exercice.mSecondary %}
+                        <span class="badge text-bg-secondary">Secondary</span>
+                    {% endif %}
+                    {% if exercice.mTertiary %}
+                        <span class="badge text-bg-secondary">Tertiary</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a class="btn btn-outline-primary" href="{{ path('app_exercice_show_admin', {'id': exercice.id}) }}"><i class="fa-solid fa-eye"></i></a>
+                    <a  class="btn btn-outline-secondary" href="{{ path('app_exercice_edit', {'id': exercice.id}) }}"><i class="fa-solid fa-pen"></i></a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="15">No records found</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

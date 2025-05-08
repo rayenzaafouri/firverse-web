@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}???? - Fitverse Dashboard
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}
+
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
+
+
+{% block body %}
+	<div class="admin-dashboard-layout">
+
+		<div class="dashboard-content">
+			<h1>
+				{% block header %}{% endblock %}
+			</h1>
+
+
+			{% if block('info') is not empty %}
+				<div class="alert alert-secondary"> {% block info %}{% endblock %}</div>
+
+			{% endif %}
+
+
+			{% block content %}{% endblock %}
+
+
+			</div>
+
+		</div>
+	{% endblock %}

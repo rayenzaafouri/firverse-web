@@ -1,0 +1,19 @@
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
+
+{% block title %}Edit Exercice{% endblock %}
+
+{% block header %}
+Edit Exercice
+{% endblock %}
+
+{% block info %}
+This section allows you to manage all aspects of the exercises included in the workout module.
+{% endblock %}
+
+
+
+
+
+{% block content %}
+            {{ include('/back/exercise/_form.html.twig', {'button_label': 'Update'}) }}
+{% endblock %}

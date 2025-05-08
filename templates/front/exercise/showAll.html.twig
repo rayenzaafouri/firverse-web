@@ -1,0 +1,369 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Exercise - Fitverse
+{% endblock %}
+
+
+{% block javascripts %}
+	{{ parent() }}
+
+ <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('title-input');
+    const resultsContainer = document.querySelector(".search-query > .results");
+
+    // Debounce delay (e.g., 300ms after the last keystroke)
+    let debounceTimeout;
+
+    if (searchInput && resultsContainer) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+
+            // Clear previous results
+            resultsContainer.innerHTML = '';
+
+            // Only make request if query is not empty
+            if (query.length > 0) {
+                // Clear the previous timeout to reset debounce
+                clearTimeout(debounceTimeout);
+
+                // Set a new timeout to trigger search after a short delay
+                debounceTimeout = setTimeout(() => {
+                    fetch(`/exercise/api/search/${encodeURIComponent(query)}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(exercises => {
+                            console.log('Found exercises:', exercises);
+
+                            if (exercises.length === 0) {
+                                const noResultsMsg = document.createElement('div');
+                                noResultsMsg.textContent = 'No exercises found.';
+                                noResultsMsg.classList.add('no-results'); // Optional: style this
+                                resultsContainer.appendChild(noResultsMsg);
+                                return;
+                            }
+
+                            exercises.forEach((ex) => {
+                                resultsContainer.appendChild(
+                                    createExerciseElement("null", getYouTubeThumbnail(ex.video_url), ex.title, ex.difficulty)
+                                );
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching exercises:', error);
+                        });
+                }, 300); // 300ms debounce delay
+            } else {
+                console.log('Query is empty - not making request');
+            }
+        });
+    }
+});
+ 
+
+
+function getYouTubeThumbnail(embedUrl) {
+  const match = embedUrl.match(/(?:\/embed\/|v=)([a-zA-Z0-9_-]{11})/);
+  if (match && match[1]) {
+    const videoId = match[1];
+    return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  }
+  return null; // Invalid embed URL
+}
+
+
+
+
+</script>
+
+
+	 <script>
+		const dialog = document.querySelector("dialog");
+		const closeButton = document.querySelector("dialog button");
+		closeButton.addEventListener("click", () => {
+		dialog.close();
+		});
+	</script>
+
+
+	 <script>
+	
+function createExerciseElement(href, imgSrc, titleText, badgeText) {
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `
+    <a href="${href}" class="btn btn-primary">
+      <div class="card" style="width: 14rem;">
+        <img src="${imgSrc}" class="card-img-top" alt="Card image">
+        <div class="card-body">
+          <h5 class="card-title">${titleText}</h5>
+          <span class="badge text-bg-dark">${badgeText}</span>
+        </div>
+      </div>
+    </a>
+  `;
+  return wrapper.firstElementChild;
+}
+
+	</script>
+
+
+{% endblock %}
+
+
+{% block stylesheets %}
+	{{ parent() }}
+	{# Your CSS goes here #}
+
+
+	<style>
+		dialog {
+
+			background-image: url('/overlay.png');
+			border: none;
+			color: white;
+			.branding {
+				display: flex;
+				align-items: center;
+				justify-content: start;
+
+
+				img {
+					height: 2rem;
+				}
+			}
+
+			p {
+				font-size: 1.3rem;
+			}
+
+			button {
+				position: absolute;
+				top: 0;
+				right: 0;
+				margin: 0.5rem;
+			}
+		}
+
+		dialog::backdrop {
+			background-image: linear-gradient(45deg, #000000, /* black */ #1a1a1a, /* very dark gray */ #2e2e2e, /* dark gray */ #444444, /* medium-dark gray */ #5c5c5c, /* medium gray */ #a6a6a6, /* light gray */ #ffffff /* white */);
+			opacity: 0.75;
+		}
+
+
+		.results > a {
+			all: unset !important;
+			cursor: pointer !important;
+
+		}
+
+		.results {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1rem;
+		}
+
+		.body-map-ad{
+			border-radius: 0.875rem;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 1rem;
+			background-color: #B3F66F;
+			padding: 3rem;
+
+			.body-maps-preview{
+				width: 10rem;
+				svg{
+					color: white;
+				}
+			}
+		}
+
+
+		.search-section{
+			background-color: #bdc3c7;
+			padding: 3rem;
+			border-radius: 0.875rem;
+
+			color: white;
+			background-image: url(/overlay.png);
+		}
+
+
+		.discover-section{
+		
+			background-color: #2f3542;
+			padding: 4rem;
+			border-radius: 0.875rem;
+			color: white;
+		}
+	</style>
+
+{% endblock %}
+
+
+{% block body %}
+	{% include 'navbar.html.twig' %}
+
+
+
+
+
+	<div class="container body-map-ad">
+		<div>
+			
+			<h1>Looking to focus on a specific muscle? </h1>
+			<p>Discover targeted exercises to strengthen and tone specific muscle groups. Easily search by muscle area to find exercises tailored to your fitness goals.</p>
+			<a  class="btn btn-primary" href="{{ path('user_exercice_searchByMuscle') }}">Firverse muscle tool</a>
+		</div>
+
+		<div class="body-maps-preview">
+			{% include '/front/exercise/front-map.html.twig' %}
+		</div>
+	</div>
+
+	<div class="container search-section mt-3">
+		<form
+			method="get" class="p-4">
+
+			<h1><i class="fa-solid fa-magnifying-glass"></i>  Find Exercise</h1>
+
+			<!-- Title Search (Always Visible) -->
+			<div class="mb-3">
+				<input type="text" class="form-control" id="title-input" name="title" placeholder="Search by exercise title">
+			</div>
+
+			<!-- Toggle Button for Advanced Search -->
+			<div class="mb-3">
+				<button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch" aria-expanded="false" aria-controls="advancedSearch">
+					Advanced Search
+				</button>
+			</div>
+
+			<!-- Advanced Filters -->
+			<div
+				class="collapse" id="advancedSearch">
+				<!-- Sets and Reps -->
+				<div class="row mb-3">
+					<div class="col-md-6">
+						<label for="sets" class="form-label">Sets</label>
+						<input type="number" class="form-control" id="sets" name="sets" min="1">
+					</div>
+					<div class="col-md-6">
+						<label for="reps" class="form-label">Reps</label>
+						<input type="number" class="form-control" id="reps" name="reps" min="1">
+					</div>
+				</div>
+
+				<!-- Grips -->
+				<div class="mb-3">
+					<label for="grip" class="form-label">Grip</label>
+					<select class="form-select" id="grip" name="grip">
+						<option value="">Any</option>
+						<option value="abdominals">Abdominals</option>
+						<option value="biceps">Biceps</option>
+						<option value="calves">Calves</option>
+						<option value="chest">Chest</option>
+						<option value="forearms">Forearms</option>
+						<option value="front-shoulders">Front Shoulders</option>
+						<option value="glutes">Glutes</option>
+						<option value="hamstrings">Hamstrings</option>
+						<option value="hands">Hands</option>
+						<option value="lats">Lats</option>
+						<option value="lowerback">Lower Back</option>
+						<option value="obliques">Obliques</option>
+						<option value="quads">Quads</option>
+						<option value="rear-shoulders">Rear Shoulders</option>
+						<option value="traps">Traps</option>
+						<option value="traps-middle">Middle Traps</option>
+						<option value="triceps">Triceps</option>
+					</select>
+				</div>
+
+				<!-- Difficulty -->
+				<div class="mb-3">
+					<label for="difficulty" class="form-label">Difficulty</label>
+					<select class="form-select" id="difficulty" name="difficulty">
+						<option value="">Any</option>
+						<option value="novice">Novice</option>
+						<option value="beginner">Beginner</option>
+						<option value="intermediate">Intermediate</option>
+						<option value="advanced">Advanced</option>
+					</select>
+				</div>
+
+				<!-- Muscle Group Booleans -->
+				<div class="mb-3">
+					<label class="form-label d-block">Muscle Group Level</label>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="m_primary" name="m_primary">
+						<label class="form-check-label" for="m_primary">Primary</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="m_secondary" name="m_secondary">
+						<label class="form-check-label" for="m_secondary">Secondary</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="m_tertiary" name="m_tertiary">
+						<label class="form-check-label" for="m_tertiary">Tertiary</label>
+					</div>
+				</div>
+
+				<!-- Push / Pull -->
+				<div class="mb-3">
+					<label class="form-label d-block">Exercise Type</label>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="push" name="push">
+						<label class="form-check-label" for="push">Push</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="pull" name="pull">
+						<label class="form-check-label" for="pull">Pull</label>
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<div class="container search-query">
+			<div class="results">
+	
+			</div>
+		</div>
+	
+
+	</div>
+
+	<div class="container discover-section mt-3">
+		<h1><i class="fa-solid fa-fire"></i> Discover</h1>
+		<div class="results mt-3">
+			{% for exercice in recommended %}
+				<a href="{{ path('user_exercice_show', { id: exercice.id }) }}" class="btn btn-primary">
+					<div class="card" style="width: 14rem;">
+						{% set videoId = exercice.video_url|split('/')|last|split('?')|first %}
+						<img src="https://img.youtube.com/vi/{{ videoId }}/maxresdefault.jpg" class="card-img-top" alt="Card image">
+						<div class="card-body">
+							<h5 class="card-title">{{ exercice.title }}</h5>
+							<span class="badge text-bg-dark">{{ exercice.difficulty | capitalize }}</span>
+						</div>
+					</div>
+				</a>
+			{% endfor %}
+		</div>
+
+
+		<dialog class="shadow">
+			<div class="branding">
+				<img src="/fitverse-white.png">
+				<span>| Tip of the day ⚡</span>
+			</div>
+			<p>{{ tip }}</p>
+			<button class="btn btn-secondary" autofocus>x</button>
+		</dialog>
+	</div>
+{% endblock %}

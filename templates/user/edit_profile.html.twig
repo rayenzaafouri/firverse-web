@@ -1,0 +1,40 @@
+{# templates/user/edit_profile.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block body %}
+  <style>
+    .profile-card { max-width: 600px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .profile-card h2 { color: #2d3e50; margin-bottom: 1.5rem; font-size: 1.6rem; text-align: center; }
+    .form-field { display: flex; flex-direction: column; margin-bottom: 1rem; }
+    .form-field label { font-weight: 600; color: #2d3e50; margin-bottom: 0.5rem; }
+    .form-field input,
+    .form-field select { padding: 0.6rem 1rem; border: 1px solid #ccc; border-radius: 0.3rem; font-size: 1rem; }
+    .form-field .text-danger { color: #e74c3c; font-size: 0.9rem; margin-top: 0.3rem; }
+    .form-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+    .btn-back { padding: 0.6rem 1.2rem; background: #95a5a6; color: #fff; border-radius: 0.3rem; text-decoration: none; }
+    .btn-save { padding: 0.6rem 1.2rem; background: #1abc9c; color: #fff; border: none; border-radius: 0.3rem; cursor: pointer; transition: background 0.3s; }
+    .btn-save:hover { background: #16a085; }
+  </style>
+
+  <div class="profile-card">
+    <h2>Edit Your Profile</h2>
+
+    {{ form_start(form, { 'attr': { 'style': 'display: grid; gap: 1rem;' }, multipart: true }) }}
+
+    {% for field in [form.first_name, form.last_name, form.email, form.address, form.phone, form.password, form.gender, form.birth_date, form.image] %}
+      <div class="form-field">
+        {{ form_label(field) }}
+        {{ form_widget(field) }}
+        {{ form_errors(field) }}
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn-save">{{ button_label|default('Save Changes') }}</button>
+    </div>
+
+    {{ form_end(form) }}
+  </div>
+{% endblock %}

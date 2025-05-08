@@ -1,0 +1,512 @@
+{{ form_start(form) }}
+{{ form_errors(form) }}
+
+<fieldset>
+	<legend>Main properties</legend>
+	{{ form_label(form.title) }}
+	{{ form_widget(form.title) }}
+	{{ form_errors(form.title) }}
+
+	{{ form_label(form.difficulty) }}
+	{{ form_widget(form.difficulty) }}
+	{{ form_errors(form.difficulty) }}
+
+</fieldset>
+
+<fieldset class="muscle-group">
+	<legend>Muscle group</legend>
+
+
+	<div>
+		<div class="muscle-class">
+			{{ form_widget(form.m_primary) }}
+			{{ form_label(form.m_primary) }}
+			{{ form_errors(form.m_primary) }}
+
+			{{ form_widget(form.m_secondary) }}
+			{{ form_label(form.m_secondary) }}
+			{{ form_errors(form.m_secondary) }}
+
+			{{ form_widget(form.m_tertiary) }}
+			{{ form_label(form.m_tertiary) }}
+			{{ form_errors(form.m_tertiary) }}
+		</div>
+
+
+		<div class="image-preview">
+			<div class="fields">
+
+				{{ form_label(form.body_map_front) }}
+				{{ form_widget(form.body_map_front) }}
+				{{ form_errors(form.body_map_front) }}
+			</div>
+
+			<img src="/placeholder.png" alt="">
+
+		</div>
+
+
+		<div class="image-preview">
+			<div class="fields">
+				{{ form_label(form.body_map_back) }}
+				{{ form_widget(form.body_map_back) }}
+				{{ form_errors(form.body_map_back) }}
+			</div>
+
+			<img src="/placeholder.png" alt="">
+
+		</div>
+	</div>
+
+
+</fieldset>
+
+<fieldset class="execution">
+	<legend>Execution</legend>
+	<div>
+
+		<div>
+			{{ form_label(form.reps) }}
+			{{ form_widget(form.reps) }}
+			{{ form_errors(form.reps) }}
+		</div>
+
+
+		<div>
+			{{ form_label(form.sets) }}
+			{{ form_widget(form.sets) }}
+			{{ form_errors(form.sets) }}
+
+
+		</div>
+
+
+		<div>
+
+			{{ form_label(form.grips) }}
+			{{ form_widget(form.grips) }}
+			{{ form_errors(form.grips) }}
+
+
+		</div>
+
+		<div>
+			{{ form_label(form.push) }}
+			{{ form_widget(form.push) }}
+			{{ form_errors(form.push) }}
+
+			{{ form_label(form.pull) }}
+			{{ form_widget(form.pull) }}
+			{{ form_errors(form.pull) }}
+
+		</div>
+
+
+	</div>
+
+</fieldset>
+
+<fieldset>
+	<legend>Guide</legend>
+
+	{{ form_label(form.steps) }}
+	{{ form_widget(form.steps) }}
+	{{ form_errors(form.steps) }}
+
+	<div class="steps-container"></div>
+	<span class="add-step btn btn-secondary">+ Step</span>
+	<br>
+
+
+	<div class="video-url-preview">
+		<div>
+			{{ form_label(form.video_url) }}
+			{{ form_widget(form.video_url) }}
+			{{ form_errors(form.video_url) }}
+
+			<div class="alert alert-primary my-sm-3">
+				Please make sure to use embed URLs instead of full links, as full links will display the entire page.
+				This helps keep the content clean and focused.
+			</div>
+		</div>
+		<iframe src=""></iframe>
+
+	</div>
+
+	{{ form_label(form.equipment) }}
+	{{ form_widget(form.equipment) }}
+	{{ form_errors(form.equipment) }}
+
+
+	<fieldset></fieldset>
+
+	<div class="equipment-list">
+		<label><input type="checkbox" id="barbell" value="1">
+			Barbell</label><br>
+		<label><input type="checkbox" id="dumbbells" value="2">
+			Dumbbells</label><br>
+		<label><input type="checkbox" id="bodyweight" value="3">
+			Bodyweight</label><br>
+		<label><input type="checkbox" id="machine" value="4">
+			Machine</label><br>
+		<label><input type="checkbox" id="medicine-ball" value="5">
+			Medicine-Ball</label><br>
+		<label><input type="checkbox" id="kettlebells" value="6">
+			Kettlebells</label><br>
+		<label><input type="checkbox" id="stretches" value="7">
+			Stretches</label><br>
+		<label><input type="checkbox" id="cables" value="8">
+			Cables</label><br>
+		<label><input type="checkbox" id="band" value="9">
+			Band</label><br>
+		<label><input type="checkbox" id="plate" value="10">
+			Plate</label><br>
+		<label><input type="checkbox" id="trx" value="11">
+			TRX</label><br>
+		<label><input type="checkbox" id="yoga" value="12">
+			Yoga</label><br>
+		<label><input type="checkbox" id="bosu-ball" value="13">
+			Bosu-Ball</label><br>
+		<label><input type="checkbox" id="vitruvian" value="14">
+			Vitruvian</label><br>
+		<label><input type="checkbox" id="cardio" value="15">
+			Cardio</label><br>
+		<label><input type="checkbox" id="smith-machine" value="16">
+			Smith-Machine</label><br>
+		<label><input type="checkbox" id="recovery" value="17">
+			Recovery</label><br>
+	</div>
+
+
+	<div class="json-assist clonable">
+		<div>
+			<textarea class="form-control" placeholder="Step title"></textarea>
+			<input type="text" class="form-control" placeholder="Video link">
+		</div>
+		<span class="remove btn btn-danger">
+			<i class="fa-solid fa-delete-left"></i>
+		</span>
+	</div>
+</fieldset>
+
+
+{{ form_end(form) }}
+
+
+<div class="action-area">
+	<a class="btn btn-secondary" href="{{ path('app_exercice_index_admin') }}">Back to list</a>
+	{{ include('/back/exercise/_delete_form.html.twig') }}
+	<button id="custom-submit" class="btn btn-primary ">
+		<i class="fa-solid fa-floppy-disk"></i>
+		{{ button_label|default('Save') }}</button>
+
+
+</div>
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		initStepsUI();
+		initBodyMapPreviews();
+		initEquipmentUI();
+		initVideoPreview();
+
+
+		const addStepButton = document.querySelector(".add-step");
+		if (addStepButton) {
+			addStepButton.addEventListener("click", insertEmptyStep);
+		}
+
+		const formElement = document.forms["exercice"];
+		const submitButton = document.getElementById("custom-submit");
+
+		if (submitButton && formElement) {
+			submitButton.addEventListener("click", function (e) {
+				e.preventDefault(); // prevent default form submit
+				formElement.noValidate = true;
+
+				const stepsInput = formElement.elements["exercice_steps"];
+				const equipmentInput = formElement.elements["exercice_equipment"];
+
+				if (stepsInput)
+					stepsInput.removeAttribute("required");
+
+
+
+				if (equipmentInput)
+					equipmentInput.removeAttribute("required");
+
+
+
+				if (stepsInput)
+					stepsInput.value = collectSteps();
+
+
+
+				if (equipmentInput)
+					equipmentInput.value = collectEquipment();
+
+
+
+				formElement.submit();
+			});
+		}
+	});
+
+
+	function initVideoPreview() {
+		const urlInput = document.querySelector("#exercice_video_url")
+		const iframe = document.querySelector(".video-url-preview > iframe")
+
+		if (urlInput.value && iframe) {
+			iframe.src = urlInput.value
+		}
+
+		// Iframe preview on input update
+		urlInput.addEventListener("change", () => {
+			iframe.src = urlInput.value
+		})
+	}
+
+	function insertEmptyStep() {
+		const clonable = document.querySelector("div.json-assist.clonable");
+		const stepsContainer = document.querySelector(".steps-container");
+		if (!clonable || !stepsContainer)
+			return;
+
+
+
+		const newClonable = clonable.cloneNode(true);
+		newClonable.classList.remove("json-assist");
+
+		const removeBtn = newClonable.querySelector("span.remove");
+		if (removeBtn) {
+			removeBtn.addEventListener("click", () => {
+				newClonable.remove();
+			});
+		}
+
+		stepsContainer.appendChild(newClonable);
+	}
+
+	function insertStep(text, video) {
+		const clonable = document.querySelector("div.json-assist.clonable");
+		const stepsContainer = document.querySelector(".steps-container");
+		if (!clonable || !stepsContainer)
+			return;
+
+
+
+		const newClonable = clonable.cloneNode(true);
+		newClonable.querySelector("textarea").value = text;
+		newClonable.querySelector("input").value = video;
+
+		newClonable.classList.remove("json-assist");
+
+		const removeBtn = newClonable.querySelector("span.remove");
+		if (removeBtn) {
+			removeBtn.addEventListener("click", () => {
+				newClonable.remove();
+			});
+		}
+
+		stepsContainer.appendChild(newClonable);
+	}
+
+	function collectSteps() {
+		const targets = document.querySelectorAll(".steps-container > .clonable > div");
+		const steps = Array.from(targets).map(target => {
+			const text = target.querySelector("textarea").value || "";
+			const video = target.querySelector("input").value || "";
+			return { text, video };
+		});
+		return JSON.stringify(steps);
+	}
+
+	function collectEquipment() {
+		const checked = document.querySelectorAll('.equipment-list input[type="checkbox"]:checked');
+		const selected = Array.from(checked).map(cb => cb.value);
+		return JSON.stringify(selected);
+	}
+
+	function initStepsUI() {
+		const stepsInput = document.querySelector("#exercice_steps");
+		if (!stepsInput || !stepsInput.value)
+			return;
+
+
+
+		try {
+			const steps = JSON.parse(stepsInput.value);
+			steps.forEach(step => insertStep(step.text, step.video));
+		} catch (e) {
+			console.error("Invalid JSON in steps field", e);
+		}
+	}
+
+	function initEquipmentUI() {
+		const equipmentInput = document.querySelector("#exercice_equipment");
+		if (!equipmentInput || !equipmentInput.value)
+			return;
+
+
+
+		try {
+			const equipment = JSON.parse(equipmentInput.value);
+			const checkboxes = document.querySelectorAll(".equipment-list input");
+			equipment.forEach(id => {
+				const checkbox = [...checkboxes].find(cb => cb.value === id.toString());
+				if (checkbox)
+					checkbox.checked = true;
+
+
+
+			});
+		} catch (e) {
+			console.error("Invalid JSON in equipment field", e);
+		}
+	}
+
+	function initBodyMapPreviews() {
+		const frontInput = document.querySelector("#exercice_body_map_front");
+		const backInput = document.querySelector("#exercice_body_map_back");
+		const frontImg = document.querySelectorAll(".image-preview img")[0];
+		const backImg = document.querySelectorAll(".image-preview img")[1];
+
+		const placeholderUrl = `${window.location.origin
+			}/placeholder-error.png`;
+
+		if (frontInput && frontImg) {
+			if (frontInput.value)
+				frontImg.src = frontInput.value;
+
+
+
+			frontInput.addEventListener("change", () => {
+				frontImg.src = frontInput.value;
+			});
+			frontImg.addEventListener("error", () => {
+				frontImg.src = placeholderUrl;
+				showErrorToast('Invalid front body map image.');
+			});
+		}
+
+		if (backInput && backImg) {
+			if (backInput.value)
+				backImg.src = backInput.value;
+
+
+
+			backInput.addEventListener("change", () => {
+				backImg.src = backInput.value;
+			});
+			backImg.addEventListener("error", () => {
+				backImg.src = placeholderUrl;
+				showErrorToast('Invalid back body map image.');
+			});
+		}
+	}
+
+	function showErrorToast(message) {
+		if (typeof Notyf !== 'undefined') {
+			const notyf = new Notyf();
+			notyf.error(message);
+		} else {
+			alert(message);
+		}
+	}
+</script>
+
+<style>
+	.json-assist {
+		display: none;
+	}
+
+	fieldset.muscle-group>div {
+		display: grid;
+		grid-template-columns: 1fr 2fr 2fr;
+		gap: 1rem;
+
+		.fields {
+			width: 100%;
+		}
+
+		.image-preview {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			flex-direction: column;
+
+			img {
+				width: 10rem;
+				height: auto;
+				object-fit: contain;
+			}
+		}
+	}
+
+	fieldset.execution>div {
+		display: flex;
+		gap: 1rem;
+
+	}
+
+	div.muscle-class {
+		display: grid;
+		grid-template-columns: 1rem auto;
+		grid-template-rows: auto auto auto;
+		height: fit-content;
+		gap: 0.5rem;
+	}
+
+	div.steps-container {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+
+		.clonable {
+			padding: 0 20%;
+			display: grid;
+			grid-template-columns: 50rem auto;
+			grid-template-rows: auto;
+			gap: 1rem;
+			align-items: start;
+		}
+	}
+
+	.add-step {
+		position: relative;
+		transform: translateX(37lvw);
+		margin: 0.5rem 0 0;
+	}
+
+
+	.equipment-list {
+		display: grid;
+		grid-template-columns: repeat(8, auto);
+		gap: 0.5rem;
+		margin: 1rem 0;
+	}
+
+	.video-url-preview {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+
+		iframe,
+		div {
+			width: 100%;
+			padding: 0 0.5rem;
+		}
+
+		iframe {
+			aspect-ratio: 16 / 9;
+			margin: 1.5rem 2rem 0 0;
+			background-image: url('/iframe-broken.png');
+			background-size: contain;
+			border: 1px solid #ebebeb;
+			border-radius: 0.375rem;
+			padding: 1rem;
+
+		}
+
+	}
+</style>

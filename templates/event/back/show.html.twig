@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event Details{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+<style>
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.6em 0.9em;
+    }
+
+    .event-image {
+        width: 100%;
+        height: auto;
+        border-radius: 6px;
+        object-fit: cover;
+        max-height: 250px;
+    }
+
+    .participation-table th {
+        background-color: #f8f9fa;
+    }
+
+    .participation-section {
+        margin-top: 40px;
+    }
+
+    .card h5 {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .card p {
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Event Details</h1>
+
+    <div class="card shadow p-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Name</h5>
+                <p>{{ event.name }}</p>
+
+                <h5>Location</h5>
+                <p>{{ event.location }}</p>
+
+                <h5>Date & Time</h5>
+                <p>{{ event.date ? event.date|date('Y-m-d') : '' }} at {{ event.time ? event.time|date('H:i') : '' }}</p>
+
+                <h5>Price</h5>
+                <span class="badge bg-success">{{ event.price }} DT</span>
+            </div>
+            <div class="col-md-6">
+                {% if event.photo %}
+                    <h5>Photo</h5>
+                    <img src="{{ asset('uploads/events/' ~ event.photo) }}" alt="Event photo" class="event-image mb-3">
+                {% endif %}
+            </div>
+        </div>
+
+        <h5>Description</h5>
+        <p>{{ event.description }}</p>
+
+        <div class="mt-4">
+            <a href="{{ path('app_event_edit', {'id': event.id}) }}" class="btn btn-warning me-2">Edit</a>
+            <a href="{{ path('app_event_index') }}" class="btn btn-secondary">Back to list</a>
+        </div>
+    </div>
+
+    <div class="participation-section">
+        <h3 class="mt-5 mb-3">Participations</h3>
+
+        {% if event.participations|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped participation-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Gender</th>
+                            <th>Participant Type</th>
+                            <th>Number of Participants</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participation in event.participations %}
+                            <tr>
+                                <td>
+                                    {% if participation.user %}
+                                        {{ participation.user.username }}
+                                    {% else %}
+                                        Guest
+                                    {% endif %}
+                                </td>
+                                <td>{{ participation.email }}</td>
+                                <td>{{ participation.phoneNumber }}</td>
+                                <td>{{ participation.gender }}</td>
+                                <td>{{ participation.participantType }}</td>
+                                <td>{{ participation.numberOfParticipants }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No participations for this event yet.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% block stylesheets %}
+<style>
+    /* Custom styles can go here */
+</style>
+{% endblock %}
+
+{% if product_discounts and product_discounts.id is defined %}
+    <!-- Delete Button (opens Modal) -->
+    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ product_discounts.id }}">
+        Delete
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal{{ product_discounts.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ product_discounts.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel{{ product_discounts.id }}">Confirm Deletion</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    Are you sure you want to delete this discount?
+                </div>
+
+                <div class="modal-footer">
+                    <form method="post" action="{{ path('app_product_discount_delete', {'id': product_discounts.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product_discounts.id) }}">
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

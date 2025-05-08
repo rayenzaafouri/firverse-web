@@ -1,0 +1,196 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Participations{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+<style>
+.transparent-container img {
+    mix-blend-mode: multiply;
+}
+.action-buttons {
+    display: flex;
+    gap: 0.3rem;
+    justify-content: center;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">All Participations</h1>
+
+        <div class="mb-3 d-flex align-items-center">
+            <button id="showStatsBtn" class="btn btn-sm btn-success">
+                <i class="fas fa-chart-pie"></i> Show Stats
+            </button>
+
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <button id="exportExcelBtn" class="btn btn-sm btn-primary">
+                    <i class="fas fa-file-excel"></i> Export to Excel
+                </button>
+                <button id="exportPdfBtn" class="btn btn-sm btn-danger">
+                    <i class="fas fa-file-pdf"></i> Export to PDF
+                </button>
+                <button id="printBtn" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped text-center align-middle">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Gender</th>
+                        <th>Birth Date</th>
+                        <th>Type</th>
+                        <th>Participants</th>
+                        <th>Terms</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for participation in participations %}
+                    <tr>
+                        <td>{{ participation.participationID }}</td>
+                        <td>{{ participation.email }}</td>
+                        <td>{{ participation.phoneNumber }}</td>
+                        <td>{{ participation.gender }}</td>
+                        <td>{{ participation.dateOfBirth ? participation.dateOfBirth|date('Y-m-d') : '' }}</td>
+                        <td>{{ participation.participantType }}</td>
+                        <td>{{ participation.numberOfParticipants }}</td>
+                        <td>
+                            <span class="badge {{ participation.termsAccepted ? 'bg-success' : 'bg-danger' }}">
+                                {{ participation.termsAccepted ? 'Yes' : 'No' }}
+                            </span>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-muted">No participations found.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="genderChart" class="mt-5" style="height: 400px;"></div>
+        <div id="typeChart" class="mt-5" style="height: 400px;"></div>
+        <p class="mt-4"><strong>Total Participants:</strong> <span id="totalParticipantsCount">0</span></p>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script>
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(drawGenderChart);
+    google.charts.setOnLoadCallback(drawTypeChart);
+
+    function drawTypeChart() {
+        const rows = document.querySelectorAll('tbody tr');
+        const typeCounts = {};
+        let totalParticipants = 0;
+
+        rows.forEach(row => {
+            const type = row.children[5]?.textContent.trim();
+            const num = parseInt(row.children[6]?.textContent.trim()) || 0;
+            if (type) typeCounts[type] = (typeCounts[type] || 0) + 1;
+            totalParticipants += num;
+        });
+
+        document.getElementById('totalParticipantsCount').textContent = totalParticipants;
+        const dataArray = [['Type', 'Count']];
+        for (const [type, count] of Object.entries(typeCounts)) {
+            dataArray.push([type, count]);
+        }
+        if (dataArray.length <= 1) return;
+        const data = google.visualization.arrayToDataTable(dataArray);
+
+        const options = {
+            title: 'Participant Type Distribution',
+            pieHole: 0.4,
+            backgroundColor: 'transparent',
+            legend: { position: 'right' },
+            chartArea: { width: '80%', height: '80%' },
+        };
+
+        new google.visualization.PieChart(document.getElementById('typeChart')).draw(data, options);
+    }
+
+    function drawGenderChart() {
+        const rows = document.querySelectorAll('tbody tr');
+        let male = 0, female = 0, other = 0, totalParticipants = 0;
+
+        rows.forEach(row => {
+            const gender = row.children[3]?.textContent.trim().toLowerCase();
+            const num = parseInt(row.children[6]?.textContent.trim()) || 0;
+            totalParticipants += num;
+            if (gender === 'male') male++;
+            else if (gender === 'female') female++;
+            else other++;
+        });
+
+        document.getElementById('totalParticipantsCount').textContent = totalParticipants;
+        const data = google.visualization.arrayToDataTable([
+            ['Gender', 'Count'],
+            ['Male', male],
+            ['Female', female],
+            ['Other', other],
+        ]);
+
+        const options = {
+            title: 'Gender Distribution',
+            pieHole: 0.3,
+            backgroundColor: 'transparent',
+            legend: { position: 'right' },
+        };
+
+        new google.visualization.PieChart(document.getElementById('genderChart')).draw(data, options);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('exportExcelBtn')?.addEventListener('click', () => {
+            const table = document.querySelector('table');
+            const wb = XLSX.utils.table_to_book(table, { sheet: 'Participations' });
+            XLSX.writeFile(wb, 'participations.xlsx');
+        });
+
+        document.getElementById('exportPdfBtn')?.addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const table = document.querySelector('table');
+            const headers = [...table.querySelectorAll('thead th')].map(th => th.innerText);
+            const body = [...table.querySelectorAll('tbody tr')].map(row =>
+                [...row.querySelectorAll('td')].map(cell => cell.innerText)
+            );
+
+            doc.text('Participation List', 105, 15, { align: 'center' });
+            doc.autoTable({ head: [headers], body });
+            doc.save('participations.pdf');
+        });
+
+        document.getElementById('printBtn')?.addEventListener('click', () => {
+            window.print();
+        });
+
+        document.getElementById('showStatsBtn')?.addEventListener('click', () => {
+            const charts = [document.getElementById('genderChart'), document.getElementById('typeChart')];
+            charts.forEach(chart => chart.style.display = chart.style.display === 'none' ? 'block' : 'none');
+        });
+
+        document.getElementById('genderChart').style.display = 'none';
+        document.getElementById('typeChart').style.display = 'none';
+    });
+</script>
+{% endblock %}

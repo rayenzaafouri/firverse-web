@@ -1,0 +1,59 @@
+{{ form_start(form) }}
+
+{{ form_label(form.label) }}
+{{ form_errors(form.label) }}
+{{ form_widget(form.label) }}
+
+{{ form_label(form.description) }}
+{{ form_errors(form.description) }}
+{{ form_widget(form.description) }}
+
+{{ form_label(form.img) }}
+{{ form_errors(form.img) }}
+{{ form_widget(form.img) }}
+
+{{ form_label(form.featured) }}
+{{ form_errors(form.featured) }}
+{{ form_widget(form.featured) }}
+
+{{ form_label(form.enabled) }}
+{{ form_errors(form.enabled) }}
+{{ form_widget(form.enabled) }}
+
+<br>
+<div class="collectAllExercises">
+    {{ form_label(form.exercises) }}
+    {{ form_errors(form.exercises) }}
+    {{ form_widget(form.exercises) }}
+</div>
+
+<br>
+<span>Included Exercises</span>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exerciseModal">
+    + Add exercise
+</button>
+<div class="exercises-container"></div><br>
+
+
+
+
+
+
+
+
+
+
+<style>
+exercises-container{
+    display: flex;
+    gap:.5rem;
+    margin:10rem 0;
+
+}    
+
+#workout_exercises{
+    position: absolute;
+    left: -9999px; 
+    visibility: hidden;
+}
+</style>
