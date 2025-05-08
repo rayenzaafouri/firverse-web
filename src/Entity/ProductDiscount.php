@@ -6,6 +6,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 use App\Repository\ProductDiscountRepository;
 
@@ -29,6 +31,7 @@ class ProductDiscount
         return $this;
     }
 
+    #[Assert\NotNull(message: 'Please select a product.')]
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'productDiscounts')]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')]
     private ?Product $product = null;
@@ -45,6 +48,11 @@ class ProductDiscount
     }
 
     #[ORM\Column(type: 'decimal', nullable: false)]
+    #[Assert\NotBlank(message: 'Discount % is required.')]
+    #[Assert\Range(
+        min: 1, max: 100,
+        notInRangeMessage: 'Discount must be between {{ min }}% and {{ max }}%.'
+    )]
     private ?float $discount_percentage = null;
 
     public function getDiscount_percentage(): ?float
@@ -59,6 +67,8 @@ class ProductDiscount
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Type(\DateTimeInterface::class)]
     private ?\DateTimeInterface $valid_from = null;
 
     public function getValid_from(): ?\DateTimeInterface
@@ -73,6 +83,12 @@ class ProductDiscount
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Type(\DateTimeInterface::class)]
+    #[Assert\GreaterThan(
+        propertyPath: 'valid_from',
+        message: 'End date must be after start date.'
+    )]
     private ?\DateTimeInterface $valid_until = null;
 
     public function getValid_until(): ?\DateTimeInterface

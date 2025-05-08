@@ -1,0 +1,159 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} | FitVerse{% endblock %}
+
+{% block stylesheets %}
+<style>
+.btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+</style>
+{% endblock %}
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container py-5">
+
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="mb-3">{{ product.name }}</h1>
+            
+            <div class="d-flex align-items-center mb-3">
+                <span class="text-warning">
+                    {% for i in 1..5 %}
+                        {% if i <= 4 %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                <span class="ms-2">(141 reviews)</span>
+                <span class="ms-3">100+ bought in past month</span>
+            </div>
+            
+            <hr>
+            
+            {% set discount = 0 %}
+            {% set now = 'now'|date('U') %}
+            {% if product.productDiscounts|length > 0 %}
+                {% for discountEntity in product.productDiscounts %}
+                    {% if discountEntity.validFrom|date('U') <= now and discountEntity.validUntil|date('U') >= now %}
+                        {% set discount = discountEntity.discountPercentage %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            {% if discount > 0 %}
+                <div class="alert alert-danger d-inline-block mb-3">
+                    <strong>Limited time deal</strong>
+                </div>
+                <div class="mb-3">
+                    <span class="text-danger fs-1 fw-bold">{{ (product.price * (1 - discount/100))|number_format(2) }} TND</span>
+                    <del class="text-muted ms-2">{{ product.price|number_format(2) }} TND</del>
+                    <span class="text-white badge bg-danger ms-2">{{ discount }}% OFF</span>
+                </div>
+            {% else %}
+                <p class="text-dark fs-4 fw-bold mb-3">{{ product.price|number_format(2) }} TND</p>
+            {% endif %}
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">About this item</h5>
+                    <ul class="list-unstyled">
+                        {% for feature in product.description|split('\n') %}
+                            {% if feature|trim %}
+                                <li class="mb-2">• {{ feature|trim }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <form method="POST" action="{{ path('cart_add', {'id': product.id}) }}" class="d-inline add-to-cart-form">
+                    <input type="hidden" name="_token" value="{{ csrf_token('add' ~ product.id) }}">
+                    <button type="submit" class="btn btn-success btn-sm w-120">
+                        <i class="bi bi-cart-plus me-1"></i> Add to cart
+                    </button>
+                </form>
+            </div>
+            {{ include('recommendation/carousel.html.twig', { product: product }) }}
+            <div id="cart-notification" class="position-fixed top-0 end-0 p-3" style="z-index: 11; display: none;">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Product added to cart!
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="position-relative">
+                    {% if discount > 0 %}
+                        <span class="badge bg-danger position-absolute text-white" style="top: 10px; left: 10px;">SALE</span>
+                    {% endif %}
+                    
+                    <img src="{{ product.imageUrl }}" class="card-img-top p-4" style="height: 300px; object-fit: contain;" alt="{{ product.name }}">
+                </div>
+                
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Name</span>
+                        <span class="fw-bold">{{ product.name }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">brand</span>
+                        <span class="fw-bold">{{ product.brand }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const carousels = document.querySelectorAll('.recommend-carousel');
+      console.log('Found carousels:', carousels.length);
+
+      carousels.forEach(el => {
+        const baseId = el.dataset.baseProduct;
+        console.log('Fetching recommendations for product', baseId);
+
+        fetch(`/api/recommend/product/${baseId}`)
+          .then(r => {
+            console.log('Fetch response status:', r.status);
+            return r.json();
+          })
+          .then(items => {
+            console.log('Received items:', items);
+            const container = el.querySelector('.d-flex');
+            if (!container) {
+              console.error('No inner container found for', el);
+              return;
+            }
+            items.forEach(i => {
+                const price = parseFloat(i.price);
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.minWidth = '180px';
+                card.innerHTML = `
+                    <a href="${i.url}" class="text-decoration-none">
+                        <img src="${i.image}" class="card-img-top"
+                            style="height:120px;object-fit:contain">
+                        <div class="card-body p-2">
+                            <p class="mb-1 small">${i.name}</p>
+                            <p class="mb-0 fw-bold">${price.toFixed(2)} TND</p>
+                        </div>
+                    </a>`;
+                container.appendChild(card);
+            });
+          })
+          .catch(err => console.error('Error in recommendation fetch:', err));
+      });
+    });
+  </script>
+{% endblock %}

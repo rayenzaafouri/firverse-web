@@ -1,0 +1,57 @@
+
+<table class="table" style="width:100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      {% set cols = {
+        'id':'#',
+        'first_name':'Name',
+        'email':'Email',
+        'phone':'Phone',
+        'role':'Role',
+        'birth_date':'Birth Date'
+      } %}
+      {% for field,label in cols %}
+        {% set dir = sortField == field and sortDir == 'asc' ? 'desc' : 'asc' %}
+        <th class="sortable {{ sortField == field ? 'sorted-'~sortDir }}" >
+          <a href="{{ path('app_user_list_html', {
+            search: search,
+            sortField: field,
+            sortDir: dir,
+            page: pagination.currentPageNumber
+          }) }}">{{ label }}</a>
+        </th>
+      {% endfor %}
+      <th>Avatar</th><th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in pagination %}
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.first_name }} {{ user.last_name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.birthDate ? user.birthDate|date('Y-m-d') : '—' }}</td>
+        <td>
+          {% if user.image %}
+            <img src="{{ asset('profile_images/'~user.image) }}" style="width:32px;height:32px;border-radius:50%;">
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ path('app_user_show',{id:user.id}) }}">🔍</a>
+          <a href="{{ path('app_user_edit',{id:user.id}) }}">✏️</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="pagination">
+  {{ knp_pagination_render(pagination, '@KnpPaginator/Pagination/sliding.html.twig', {
+    route: 'app_user_list_html',
+    routeParams: { search: search, sortField: sortField, sortDir: sortDir }
+  }) }}
+</div>

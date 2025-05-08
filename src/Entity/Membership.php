@@ -4,10 +4,8 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use App\Repository\MembershipRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MembershipRepository::class)]
 #[ORM\Table(name: 'membership')]
@@ -17,6 +15,41 @@ class Membership
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Gym::class, inversedBy: 'memberships')]
+    #[ORM\JoinColumn(name: 'gymId', referencedColumnName: 'id')]
+    #[Assert\NotNull(message: "Le gymnase est requis.")]
+    private ?Gym $gym = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'memberships')]
+    #[ORM\JoinColumn(name: 'userId', referencedColumnName: 'id')]
+    #[Assert\NotNull(message: "L'utilisateur est requis.")]
+    private ?User $user = null;
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    #[Assert\NotNull(message: "La date de début est requise.")]
+    #[Assert\LessThan(propertyPath: "end_date", message: "La date de début doit être avant la date de fin.")]
+    private ?\DateTimeInterface $start_date = null;
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    #[Assert\NotNull(message: "La date de fin est requise.")]
+    #[Assert\GreaterThan(propertyPath: "start_date", message: "La date de fin doit être après la date de début.")]
+    private ?\DateTimeInterface $end_date = null;
+
+    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[Assert\NotNull(message: "Le prix est requis.")]
+    #[Assert\Positive(message: "Le prix doit être positif.")]
+    private ?float $price = null;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[Assert\NotNull(message: "Veuillez indiquer si le coaching est inclus.")]
+    private ?bool $coaching = null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Le statut est requis.")]
+    #[Assert\Choice(choices: ["Active", "Inactive", "Expired"], message: "Le statut doit être 'Active', 'Inactive' ou 'Expired'.")]
+    private ?string $status = null;
+
 
     public function getId(): ?int
     {
@@ -29,10 +62,6 @@ class Membership
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: Gym::class, inversedBy: 'memberships')]
-    #[ORM\JoinColumn(name: 'gymId', referencedColumnName: 'id')]
-    private ?Gym $gym = null;
-
     public function getGym(): ?Gym
     {
         return $this->gym;
@@ -43,10 +72,6 @@ class Membership
         $this->gym = $gym;
         return $this;
     }
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'memberships')]
-    #[ORM\JoinColumn(name: 'userId', referencedColumnName: 'id')]
-    private ?User $user = null;
 
     public function getUser(): ?User
     {
@@ -59,9 +84,6 @@ class Membership
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: true)]
-    private ?\DateTimeInterface $start_date = null;
-
     public function getStart_date(): ?\DateTimeInterface
     {
         return $this->start_date;
@@ -72,9 +94,6 @@ class Membership
         $this->start_date = $start_date;
         return $this;
     }
-
-    #[ORM\Column(type: 'date', nullable: true)]
-    private ?\DateTimeInterface $end_date = null;
 
     public function getEnd_date(): ?\DateTimeInterface
     {
@@ -87,9 +106,6 @@ class Membership
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $price = null;
-
     public function getPrice(): ?float
     {
         return $this->price;
@@ -100,9 +116,6 @@ class Membership
         $this->price = $price;
         return $this;
     }
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $coaching = null;
 
     public function isCoaching(): ?bool
     {
@@ -115,9 +128,6 @@ class Membership
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $status = null;
-
     public function getStatus(): ?string
     {
         return $this->status;
@@ -129,6 +139,7 @@ class Membership
         return $this;
     }
 
+    // Alias pour noms en camelCase
     public function getStartDate(): ?\DateTimeInterface
     {
         return $this->start_date;
@@ -137,7 +148,6 @@ class Membership
     public function setStartDate(?\DateTimeInterface $start_date): static
     {
         $this->start_date = $start_date;
-
         return $this;
     }
 
@@ -149,8 +159,6 @@ class Membership
     public function setEndDate(?\DateTimeInterface $end_date): static
     {
         $this->end_date = $end_date;
-
         return $this;
     }
-
 }

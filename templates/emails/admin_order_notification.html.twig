@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .container { max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; }
+        .header { background-color: #ffa500; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; }
+        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; }
+        .order-details { margin: 20px 0; }
+        .product-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .product-table th, .product-table td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+        .total { margin-top: 20px; text-align: right; font-weight: bold; }
+        .customer-info { margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Order Received</h1>
+            <p>Order #{{ order.id }}</p>
+        </div>
+        
+        <div class="content">
+            <div class="customer-info">
+                <h3>Customer Information:</h3>
+                <p>Name: {{ user.firstName }} {{ user.lastName }}</p>
+                <p>Email: {{ user.email }}</p>
+                <p>Phone: {{ user.phone }}</p>
+                <p>Address: {{ user.address }}</p>
+            </div>
+            
+            <div class="order-details">
+                <h3>Order Details:</h3>
+                <p>Date: {{ order.orderDate|date('F j, Y, g:i a') }}</p>
+                
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in orderDetails %}
+                            <tr>
+                                <td>{{ detail.product.name }}</td>
+                                <td>{{ detail.quantity }}</td>
+                                <td>{{ detail.priceAtPurchase|number_format(2) }} TND</td>
+                                <td>{{ (detail.priceAtPurchase * detail.quantity)|number_format(2) }} TND</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <div class="total">
+                    <p>Total Amount: {{ order.totalPrice|number_format(2) }} TND</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated notification from your FitVerse store system.</p>
+            <p>© {{ "now"|date("Y") }} FitVerse. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

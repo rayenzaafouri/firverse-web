@@ -1,0 +1,81 @@
+{# templates/user/stats.html.twig #}
+{% extends 'base.html.twig' %}
+{% block body_attributes %}data-context="user"{% endblock %}
+{% block title %}User Role Statistics{% endblock %}
+
+{% block stylesheets %}
+<style>
+  .stats-container {
+    width: 80%;
+    max-width: 700px;
+    margin: 3rem auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .stats-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #2d3e50;
+  }
+  .btn-return {
+    background: #3498db;
+    color: #fff;
+    padding: 0.6rem 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+  .btn-return:hover {
+    background: #2980b9;
+  }
+  .chart-container {
+    position: relative;
+    height: 400px;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+  <div class="stats-container">
+    <div class="stats-header">
+      <h1>User Role Statistics</h1>
+      <a href="{{ path('app_user_index') }}" class="btn-return">Return to List</a>
+    </div>
+    <div class="chart-container">
+      <canvas id="roleChart"></canvas>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('roleChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: {{ labels|raw }},
+        datasets: [{
+          data: {{ data|raw }},
+          backgroundColor: ['#1abc9c','#3498db','#e74c3c','#9b59b6','#f1c40f']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  });
+</script>
+{% endblock %}

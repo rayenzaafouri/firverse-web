@@ -1,0 +1,77 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="bg-dark p-4 mb-4 rounded text-white">
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                {{ form_label(form.start_date, 'Date de début') }}
+            </div>
+            <div class="col-sm-8">
+                {{ form_widget(form.start_date, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.start_date) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                {{ form_label(form.end_date, 'Date de fin') }}
+            </div>
+            <div class="col-sm-8">
+                {{ form_widget(form.end_date, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.end_date) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                {{ form_label(form.price, 'Prix') }}
+            </div>
+            <div class="col-sm-8">
+                {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.price) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                {{ form_label(form.coaching, 'Coaching') }}
+            </div>
+            <div class="col-sm-8">
+                {{ form_widget(form.coaching, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.coaching) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                {{ form_label(form.status, 'Statut') }}
+            </div>
+            <div class="col-sm-8">
+                {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.status) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                {{ form_label(form.user, 'ID Utilisateur') }}
+            </div>
+            <div class="col-sm-8">
+                {{ form_widget(form.user, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.user) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                {{ form_label(form.gym, 'ID Salle de sport') }}
+            </div>
+            <div class="col-sm-8">
+                {{ form_widget(form.gym, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.gym) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <button type="submit" class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
+    </div>
+{{ form_end(form) }}

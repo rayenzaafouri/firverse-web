@@ -6,6 +6,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
 
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -19,7 +23,7 @@ use App\Repository\UserRepository;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
@@ -35,6 +39,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'First name is required')]
+    #[Assert\Length(min: 2, max: 50, minMessage: 'First name must be at least 2 characters long.', maxMessage: 'First name cannot exceed 50 characters.')]
+
     private ?string $first_name = null;
 
     public function getFirst_name(): ?string
@@ -49,6 +56,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Last name cannot be blank.')]
+    #[Assert\Length(min: 2, max: 50, minMessage: 'Last name must be at least 2 characters long.', maxMessage: 'Last name cannot exceed 50 characters.')]
+
     private ?string $last_name = null;
 
     public function getLast_name(): ?string
@@ -63,6 +73,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Email cannot be blank.')]
+    #[Assert\Email(message: 'The email is not a valid email.')]
+
     private ?string $email = null;
 
     public function getEmail(): ?string
@@ -77,6 +90,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Address cannot be blank.')]
+    #[Assert\Length(min: 2, max: 100, minMessage: 'Address must be at least 2 characters long.', maxMessage: 'Address cannot exceed 100 characters.')]
+
     private ?string $address = null;
 
     public function getAddress(): ?string
@@ -91,6 +107,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Phone cannot be blank.')]
+    #[Assert\Length(min: 8, max: 8, minMessage: 'Phone must be 8 digits long.', maxMessage: 'Phone must be 8 digits long.')]
+
     private ?string $phone = null;
 
     public function getPhone(): ?string
@@ -105,6 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+
     private ?string $password = null;
 
     public function getPassword(): ?string
@@ -147,20 +167,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotNull(message: 'Birth date cannot be null.')]
+    #[Assert\LessThanOrEqual(value: 'today', message: 'Birth date cannot be in the future.')]
+    #[Assert\Type(type: \DateTimeInterface::class, message: 'The value is not a valid date.')]
     private ?\DateTimeInterface $birth_date = null;
 
-    public function getBirth_date(): ?\DateTimeInterface
+    public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birth_date;
     }
 
-    public function setBirth_date(\DateTimeInterface $birth_date): self
+
+    public function setBirthDate(?\DateTimeInterface $birth_date): static
     {
         $this->birth_date = $birth_date;
         return $this;
     }
 
+
     #[ORM\Column(type: 'string', nullable: false)]
+
     private ?string $image = null;
 
     public function getImage(): ?string
@@ -398,17 +424,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'user')]
     #[ORM\JoinTable(
         name: 'wishlist',
         joinColumns: [
-            new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')
         ],
         inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')
+            new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')
         ]
     )]
     private Collection $products;
+
+    /**
+     * @var Collection<int, Wishlist>
+     */
+    #[ORM\OneToMany(targetEntity: Wishlist::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $wishlists;
 
     public function __construct()
     {
@@ -421,6 +453,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reclamations = new ArrayCollection();
         $this->waterconsumptions = new ArrayCollection();
         $this->products = new ArrayCollection();
+        $this->wishlists = new ArrayCollection();
     }
 
     /**
@@ -472,14 +505,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBirthDate(): ?\DateTimeInterface
+
+    /**
+     * @return Collection<int, Wishlist>
+     */
+    public function getWishlists(): Collection
     {
-        return $this->birth_date;
+        return $this->wishlists;
     }
 
-    public function setBirthDate(\DateTimeInterface $birth_date): static
+    public function addWishlist(Wishlist $wishlist): static
     {
-        $this->birth_date = $birth_date;
+        if (!$this->wishlists->contains($wishlist)) {
+            $this->wishlists->add($wishlist);
+            $wishlist->setUserId($this);
+        }
 
         return $this;
     }

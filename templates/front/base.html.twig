@@ -1,0 +1,45 @@
+{# templates/base_front.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Website{% endblock %}</title>
+    <style>
+        /* Base resets */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9fafb; }
+        a { text-decoration: none; color: inherit; }
+
+        /* Navbar */
+        .navbar { display: flex; align-items: center; justify-content: space-between; background: #34495e; padding: 0.5rem 1rem; color: #ecf0f1; }
+        .profile-container { display: flex; align-items: center; cursor: pointer; }
+        .profile-container img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 0.75rem; border: 2px solid #ecf0f1; }
+        .profile-container .name { font-size: 1rem; font-weight: 500; }
+        .nav-links { display: flex; }
+        .nav-links a { margin-left: 1rem; padding: 0.5rem 1rem; background: #1abc9c; color: #fff; border-radius: 0.25rem; transition: background 0.3s; }
+        .nav-links a:hover { background: #16a085; }
+
+        /* Content wrapper */
+        .container { padding: 2rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="profile-container" onclick="location.href='{{ path('app_user_profile_edit') }}'">
+            <img src="{{ asset('profile_images/' ~ app.user.image) }}" alt="{{ app.user.username }}">
+            <span class="name">{{ app.user.username }}</span>
+        </div>
+        <div class="nav-links">
+            <a href="{{ path('app_admin_reclamation_index') }}">Reclamations</a>
+            <a href="{{ path('app_logout') }}">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block body %}
+        <!-- Page content -->
+        {% endblock %}
+    </div>
+</body>
+</html>

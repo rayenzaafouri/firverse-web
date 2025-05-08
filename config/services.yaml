@@ -2,25 +2,44 @@
 
 parameters:
     tips_api_base_url: '%env(resolve:TIPS_API_BASE_URL)%'
+    # Always use environment variables for sensitive data
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe_public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    images_directory: "%kernel.project_dir%/public/profile_images"
+
 
     events_directory: '%kernel.project_dir%/public/uploads/events'
 services:
-    # default configuration for services in *this* file
+    # Default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+    # Makes classes in src/ available to be used as services
+    # This creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Tests/'
 
 
     # Explicitly configure your LoginSuccessHandler
+    # Stripe Checkout controller with injected API keys
+    App\Controller\Front\Shop\CheckoutController:
+        arguments:
+            $stripeSecretKey: '%stripe_secret_key%'
+            $stripePublicKey: '%stripe_public_key%'
+        tags: ['controller.service_arguments']
+
+    # Optional Stripe helper service
+    App\Service\StripeService:
+        arguments:
+            $secretKey: '%stripe_secret_key%'
+
+    # Authentication success handler
     App\Security\LoginSuccessHandler:
         tags:
             - { name: 'security.authentication.success_handler' }
@@ -29,3 +48,8 @@ services:
     # please note that last definitions always *replace* previous ones
     # please note that last definitions always *replace* previous ones
    
+    # Recommendation Bundle services
+    App\RecommendationBundle\Service\RecommendationEngine: ~
+
+    App\RecommendationBundle\Controller\RecommendationController:
+        tags: ['controller.service_arguments']

@@ -1,0 +1,196 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Salles de Sport{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Style général de la page */
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2d2d2d;
+            margin-bottom: 0.5rem;
+        }
+        .card-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        /* Image des salles */
+        .gym-img {
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .gym-img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Styles des cartes */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+            background: #fff;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Boutons */
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-outline-primary {
+            border-color: #007bff;
+            color: #007bff;
+            padding: 0.75rem 1.5rem;
+            font-weight: bold;
+            border-radius: 30px;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            color: white;
+            background-color: #007bff;
+        }
+
+        /* Style des containers */
+        .container {
+            max-width: 1200px;
+        }
+
+        /* En-tête */
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 40px;
+        }
+
+        /* Style des cartes de salles de sport */
+        .gym-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: #f7f7f7;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .gym-card .card-body {
+            flex-grow: 1;
+        }
+
+        .gym-card .card-title {
+            font-size: 1.25rem;
+            color: #333;
+        }
+
+        .gym-card .btn {
+            margin-top: auto;
+        }
+
+        .no-gyms {
+            text-align: center;
+            font-size: 1.25rem;
+            color: #6c757d;
+        }
+
+        /* Style de la barre de recherche */
+        .search-bar {
+            margin-bottom: 30px;
+            padding: 10px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            border: 2px solid #28a745;
+            transition: border-color 0.3s ease;
+        }
+        .search-bar:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* Responsivité */
+        @media (max-width: 768px) {
+            .gym-img {
+                height: 200px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% include 'navbar.html.twig' %}
+
+    <div class="container py-5">
+        <h2 class="text-center">Nos Salles de Sport</h2>
+
+        <!-- Barre de recherche -->
+        <input type="text" id="searchInput" class="form-control search-bar" placeholder="Rechercher par nom de salle de sport" oninput="searchGyms()">
+
+        <div class="row" id="gymList">
+            {% for gym in gyms %}
+                <div class="col-md-6 col-lg-4 mb-4 gym-card" data-name="{{ gym.name|lower }}">
+                    <div class="card shadow-sm">
+                        <img src="{{ gym.image }}" alt="{{ gym.name }}" class="card-img-top gym-img">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ gym.name }}</h5>
+                            <a href="https://www.openstreetmap.org/?mlat={{ gym.latitude }}&mlon={{ gym.longitude }}&zoom=15"
+                               target="_blank"
+                               class="btn btn-outline-primary mb-2">📍 Voir sur Maps</a>
+                            <a href="{{ path('gym_front_detail', {'id': gym.id}) }}" class="btn btn-primary">Détails</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center">
+                    <p class="no-gyms">Aucune salle de sport trouvée.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function searchGyms() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const gymCards = document.querySelectorAll('.gym-card');
+
+            gymCards.forEach(gym => {
+                const name = gym.getAttribute('data-name');
+                if (name.includes(filter)) {
+                    gym.style.display = ''; // Afficher la salle de sport
+                } else {
+                    gym.style.display = 'none'; // Cacher la salle de sport
+                }
+            });
+        }
+    </script>
+{% endblock %}
