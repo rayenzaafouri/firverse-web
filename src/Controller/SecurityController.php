@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
 
-    #[Route('/auth', name: 'app_auth', methods: ['GET'])]
+    #[Route('/register', name: 'app_auth', methods: ['GET'])]
     public function loginPage(AuthenticationUtils $authUtils): Response
     {
         $error        = $authUtils->getLastAuthenticationError();
@@ -59,7 +59,7 @@ class SecurityController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            return $this->redirectToRoute('app_auth');
+            return $this->redirectToRoute('app_user_profile_edit');
         }
 
         return $this->render('authentification/index.html.twig', [
@@ -71,7 +71,9 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/auth/login_check', name: 'app_auth_login', methods: ['POST'])]
-    public function loginCheck(): void {}
+    public function loginCheck(): void {
+
+    }
 
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void

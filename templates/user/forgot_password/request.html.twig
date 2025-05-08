@@ -3,15 +3,38 @@
 
 {% block title %}Mot de passe oublié{% endblock %}
 {% block body %}
+
+
+<style>
+.submit-enhance{
+  display:flex;
+  alig-items:center;
+  position:absolute;
+  left:0;
+  width:100lvw;
+
+}
+
+</style>
+
+
 <div class="container py-5">
-  <h2>Mot de passe oublié</h2>
-  <p>Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.</p>
+
+  <img src="{{asset('images/landing/fitverse-logo.png')}}" alt="Fitverse logo" style="height:4rem;"><br>
+
+
+  <h2>Password reset</h2>
+  <p>Please enter the email adress associated with your account in order to recieve a password reset email.</p>
   {{ form_start(requestForm) }}
-    <div class="form-group">
+    <div class="form-group" style="width:25rem;">
       {{ form_widget(requestForm.email, {attr:{class:'form-control'}}) }}
       {{ form_errors(requestForm.email) }}
     </div>
-    <button class="btn btn-primary">Envoyer</button>
+
+    
+      <button class="btn btn-primary mt-2">Send</button>
+
+
   {{ form_end(requestForm) }}
 </div>
 {% endblock %}

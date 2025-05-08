@@ -17,7 +17,12 @@
             background-image: url("{{ asset('images/login/background.png') }}");
             background-repeat: no-repeat;
             background-size: cover;
-            padding: 1rem;
+        }
+        .branding{
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          flex-direction:column;
         }
         .branding > img {
             width: 10rem;
@@ -28,18 +33,20 @@
             align-items: center;
             justify-content: center;
             padding-top: 10lvh;
+            margin:0 25lvw;
         }
         .auth-container {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
+            align-items:center;
             flex-wrap: nowrap;
             gap: 3rem;
+            width:100%;
             justify-content: center;
             border-radius: 1rem;
-            width: fit-content;
-            padding: 2rem;
             background-color: white;
-            border: 4px solid #7cb64c;
+            background:#ffffffdb;
+
         }
         .nav {
             font-size: .75rem;
@@ -66,82 +73,88 @@
         .nav-link:not(.active) {
             color: rgb(74,72,72);
         }
+
+        .tab-content{
+          display:flex;
+        }
+
+
+        form{
+          width:100%;
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:1rem;
+        }
+
+
+        .register-enhance{
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          width:100lvw;
+          position:absolute;
+          left:0; 
+        }
+
+
+        #registration_form_gender {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+
+        .captcha_image{
+          margin-left: 3rem;
+          border-radius:0.875rem;
+          margin-bottom:.5rem;
+        }
+
+
+        video{
+          position: absolute;
+            top: 0;
+            left: 0;
+            aspect-ratio: 16 / 9;
+            width: 100lvw;
+        }
+
+        body{
+          overflow:hidden;
+        }
+
+        video{
+          z-index:-1;
+        }
+
+        
     </style>
 {% endblock %}
 
 {% block body %}
-<div id="switchable-auth" class="auth mt-5">
+
+	<video src="/teaser.mp4" autoplay muted></video>
+
+
+
+
+<div id="switchable-auth" class="auth">
   <div class="auth-container shadow p-3 mb-5">
 
     <div class="branding text-center">
       <img src="{{ asset('images/landing/fitverse-logo.png') }}" alt="Fitverse logo">
-      <p>Enter your credentials to continue.</p>
-
-      <ul class="nav nav-pills">
-        <li class="nav-item">
-          <button
-            class="nav-link nav-link-left"
-            :class="{ active: activeTab==='login' }"
-            @click="activeTab='login'"
-          >Login</button>
-        </li>
-        <li class="nav-item">
-          <button
-            class="nav-link nav-link-right"
-            :class="{ active: activeTab==='register' }"
-            @click="activeTab='register'"
-          >Register</button>
-        </li>
-      </ul>
+      Join
     </div>
 
-    <div class="tab-content mt-3 bg-body rounded">
-
-      {# —— LOGIN —— #}
-      <div v-show="activeTab==='login'">
-        <form action="{{ path('app_auth_login') }}" method="post">
-          <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-          <div class="mb-3">
-            <label for="loginEmail" class="form-label">Email</label>
-            <input
-              type="email"
-              id="loginEmail"
-              name="_username"
-              class="form-control"
-              value="{{ last_username|default('') }}"
-              required autofocus
-            >
-          </div>
-
-          <div class="mb-3">
-            <label for="loginPassword" class="form-label">Password</label>
-            <input
-              type="password"
-              id="loginPassword"
-              name="_password"
-              class="form-control"
-              required
-            >
-          </div>
-
-          <button type="submit" class="btn btn-fitverse">Login</button>
-          <div class="mt-2 text-end">
-            <a href="{{ path('app_forgot_password') }}">Forgot password?</a>
-          </div>
-
-          
-        </form>
-      </div>
-
-      {# —— REGISTER —— #}
-      <div v-show="activeTab==='register'">
         {{ form_start(registrationForm, {
             action: path('app_register'),
             method: 'POST',
             attr: { novalidate: 'novalidate', enctype: 'multipart/form-data' }
         }) }}
 
+
+        <div>
+        
           <div class="mb-3">
             {{ form_label(registrationForm.first_name, null, { 'label_attr': { 'class': 'form-label' } }) }}
             {{ form_widget(registrationForm.first_name, { 'attr': { 'class': 'form-control' } }) }}
@@ -160,23 +173,30 @@
             <div class="text-danger">{{ form_errors(registrationForm.email) }}</div>
           </div>
 
-          <div class="mb-3">
-            {{ form_label(registrationForm.address, null, { 'label_attr': { 'class': 'form-label' } }) }}
-            {{ form_widget(registrationForm.address, { 'attr': { 'class': 'form-control' } }) }}
-            <div class="text-danger">{{ form_errors(registrationForm.address) }}</div>
-          </div>
-
-          <div class="mb-3">
-            {{ form_label(registrationForm.phone, null, { 'label_attr': { 'class': 'form-label' } }) }}
-            {{ form_widget(registrationForm.phone, { 'attr': { 'class': 'form-control' } }) }}
-            <div class="text-danger">{{ form_errors(registrationForm.phone) }}</div>
-          </div>
 
           <div class="mb-3">
             {{ form_label(registrationForm.plainPassword, null, { 'label_attr': { 'class': 'form-label' } }) }}
             {{ form_widget(registrationForm.plainPassword, { 'attr': { 'class': 'form-control' } }) }}
             <div class="text-danger">{{ form_errors(registrationForm.plainPassword) }}</div>
           </div>
+
+
+          <div class="mb-3">
+            {{ form_label(registrationForm.address, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.address, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.address) }}</div>
+          </div>
+
+
+
+        </div>
+
+        <div>
+
+        
+
+
+
 
           <div class="mb-3">
             {{ form_label(registrationForm.gender, null, { 'label_attr': { 'class': 'form-label' } }) }}
@@ -201,23 +221,25 @@
             <div class="text-danger">{{ form_errors(registrationForm.captcha) }}</div>
           </div>
 
-          <button type="submit" class="btn btn-fitverse">Register</button>
+
+          
+          <div class="mb-3">
+            {{ form_label(registrationForm.phone, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(registrationForm.phone, { 'attr': { 'class': 'form-control' } }) }}
+            <div class="text-danger">{{ form_errors(registrationForm.phone) }}</div>
+          </div>
+
+
+          <div class="register-enhance">
+            <button type="submit" class="btn btn-fitverse">Register</button>
+          </div>
 
         {{ form_end(registrationForm) }}
-      </div>
 
-    </div>
-  </div>
+        </div>
+
+        
+      </div>
 </div>
 
-<script>
-  const { createApp } = Vue;
-  createApp({
-    data() {
-      return {
-        activeTab: '{{ activeTab|default("login") }}'
-      };
-    }
-  }).mount('#switchable-auth');
-</script>
 {% endblock %}
