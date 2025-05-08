@@ -17,7 +17,7 @@ class EventsController extends AbstractController
 {
     
 
-    #[Route('/events/new', name: 'app_event_new', methods: ['GET', 'POST'])]
+    #[Route('admin/events/new', name: 'app_event_new', methods: ['GET', 'POST'])]
 public function new(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
 {
     $event = new Event();
@@ -67,7 +67,7 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
     ]);
 }
 
-    #[Route('/events', name: 'app_event_index', methods: ['GET'])]
+    #[Route('admin/events', name: 'app_event_index', methods: ['GET'])]
     public function indexback(EventRepository $eventRepository): Response
     {
         $events = $eventRepository->findBy([], ['date' => 'ASC']);
@@ -77,7 +77,7 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
         ]);
     }
 
-    #[Route('event/{id}', name: 'app_event_show', methods: ['GET'])]
+    #[Route('admin/event/{id}', name: 'app_event_show', methods: ['GET'])]
     public function show(Event $event): Response
     {
         return $this->render('event/back/show.html.twig', [
@@ -85,7 +85,7 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
         ]);
     }
 
-    #[Route('/events/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
+    #[Route('admin/events/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
     public function edit(
         Request $request,
         Event $event,
@@ -140,7 +140,7 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
         ]);
     }
 
-    #[Route('event/{id}', name: 'app_event_delete', methods: ['POST'])]
+    #[Route('admin/event/{id}', name: 'app_event_delete', methods: ['POST'])]
     public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$event->getId(), $request->request->get('_token'))) {
