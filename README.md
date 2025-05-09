@@ -7,7 +7,7 @@
 
 FitVerse est une plateforme connectée qui optimise la performance et le bien-être des sportifs grâce à un suivi personnalisé, des recommandations intelligentes et une communauté interactive.
 
-## 📄 Description du Projet
+##  Description du Projet
 
 FitVerse a pour objectif de centraliser les services de gestion sportive dans un même environnement digital. La plateforme permet aux utilisateurs de suivre leur progression, participer à des événements, suivre des conseils nutritionnels, planifier des exercices, et bien plus encore.
 
@@ -19,7 +19,7 @@ FitVerse a pour objectif de centraliser les services de gestion sportive dans un
 - Programmes d'entraînement (workout)
 - Gestion des utilisateurs
 
-## 🚀 Technologies Utilisées
+##  Technologies Utilisées
 - Symfony (PHP Framework)
 - PHP > 8
 - Twig
@@ -131,7 +131,7 @@ symfony check:requirements
  ```
  Note : Le champ `data-context` peut être "exercise", "gym", "events", "shop", "nutrition" ou "user" selon le module.
 
-## ✨ Remerciements
+##  Remerciements
 
 Merci à toute l'équipe FitVerse pour leur contribution exceptionnelle :
 - **Hamza Boutar** : Gestion shop
