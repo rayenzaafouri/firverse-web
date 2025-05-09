@@ -2,14 +2,25 @@
 
 {% block title %}Edit Order{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
+
 {% block body %}
-{% include 'navbar.html.twig' %}
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
 
-    <h1>Edit Order</h1>
+    <div class="container py-5">
+        <h1 class="mb-4">Edit Order</h1>
 
-    {{ include('order/_form.html.twig', {'button_label': 'Update'}) }}
+        {{ include('order/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_order_index') }}">back to list</a>
+        <a href="{{ path('app_order_index') }}" class="btn btn-secondary mt-3">Back to list</a>
 
-    {{ include('order/_delete_form.html.twig') }}
+        {{ include('order/_delete_form.html.twig') }}
+    </div>
+</div>
 {% endblock %}

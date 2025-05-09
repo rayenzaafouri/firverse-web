@@ -44,7 +44,7 @@ class Waterconsumption
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: false)]
+    #[ORM\Column(name: 'ConsumptionDate', type: 'date', nullable: false)]
     private ?\DateTimeInterface $ConsumptionDate = null;
 
     public function getConsumptionDate(): ?\DateTimeInterface
@@ -58,7 +58,7 @@ class Waterconsumption
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(name: 'AmountConsumed', type: 'decimal', nullable: true)]
     private ?float $AmountConsumed = null;
 
     public function getAmountConsumed(): ?float

@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nutrition Preferences{% endblock %}
+
+{% block body %}
+{% include 'navbar.html.twig' %}
+<div class="container-fluid content-container" data-context="nutrition">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow" style="margin-top: 48px;">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0">Select Your Nutrition Preferences</h1>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                        <div class="mb-4">
+                            {{ form_label(form.diet, 'Diet Type', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.diet, {'attr': {'class': 'form-select'}}) }}
+                            <div class="form-text">Choose your preferred diet type</div>
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_label(form.dislikes, 'Food Dislikes', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.dislikes, {'attr': {'class': 'form-control', 'placeholder': 'e.g. broccoli, mushrooms, tofu'}}) }}
+                            <div class="form-text">Enter foods you dislike, separated by commas</div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                {{ form_label(form.proteinPct, 'Protein %', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.proteinPct, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form_label(form.fatPct, 'Fat %', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.fatPct, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form_label(form.carbPct, 'Carbs %', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.carbPct, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+
+                        {# Submit button is rendered by the form type #}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

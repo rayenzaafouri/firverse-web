@@ -1,0 +1,91 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.name, 'Name', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.name, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.measure, 'Measure', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.measure, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.measure, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.grams, 'Grams', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.grams, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.grams, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.calories, 'Calories', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.calories, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.calories, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.protein, 'Protein', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.protein, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.protein, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.fats, 'Fats', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.fats, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.fats, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.saturatedFats, 'Saturated Fats', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.saturatedFats, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.saturatedFats, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.fibre, 'Fibre', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.fibre, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.fibre, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.carbohydrate, 'Carbohydrate', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.carbohydrate, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.carbohydrate, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.sugar, 'Sugar', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.sugar, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.sugar, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.cholesterol, 'Cholesterol', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.cholesterol, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.cholesterol, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.sodium, 'Sodium', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.sodium, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.sodium, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.magnesium, 'Magnesium', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.magnesium, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.magnesium, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.times_used, 'Times Used', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.times_used, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.times_used, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+        <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+    </div>
+{{ form_end(form) }}

@@ -1,61 +1,59 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Orders{% endblock %}
+{% block title %}Orders{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
 
 {% block body %}
-  {% include 'navbar.html.twig' %}
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
 
-  <div class="container py-5">
-    <h1 class="mb-4">All Orders</h1>
+    <div class="container py-5">
+        <h1 class="mb-4">All Orders</h1>
 
-    {% if orders is not empty %}
-      <table class="table table-striped text-center">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Total (TND)</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {# track the last user we printed #}
-          {% set lastUserId = null %}
+        {% if orders is not empty %}
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total (TND)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set lastUserId = null %}
+                    {% for order in orders %}
+                        {% if order.user.id != lastUserId %}
+                            <tr class="table-secondary">
+                                <td colspan="5" class="text-start">
+                                    <strong>{{ order.user.firstName ~ ' ' ~ order.user.lastName }}</strong>
+                                </td>
+                            </tr>
+                            {% set lastUserId = order.user.id %}
+                        {% endif %}
 
-          {% for order in orders %}
-            {# when we hit a new user, print a full‑width header row #}
-            {% if order.user.id != lastUserId %}
-              <tr class="table-secondary">
-                <td colspan="5" class="text-start">
-                  <strong>
-                    {{ order.user.firstName ~ ' ' ~ order.user.lastName }}
-                  </strong>
-                </td>
-              </tr>
-              {% set lastUserId = order.user.id %}
-            {% endif %}
-
-            {# now print each order line, with the User column left blank #}
-            <tr>
-              <td></td>
-              <td>{{ order.orderDate ? order.orderDate|date('Y‑m‑d H:i') : '-' }}</td>
-              <td>{{ order.status|capitalize }}</td>
-              <td>{{ order.totalPrice|number_format(2) }}</td>
-              <td>
-                <a href="{{ path('app_order_show', {'id': order.id}) }}"
-                   class="btn btn-sm btn-primary">
-                  View
-                </a>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p class="text-muted text-center">
-        You haven't placed any orders yet.
-      </p>
-    {% endif %}
-  </div>
+                        <tr>
+                            <td></td>
+                            <td>{{ order.orderDate ? order.orderDate|date('Y‑m‑d H:i') : '-' }}</td>
+                            <td>{{ order.status|capitalize }}</td>
+                            <td>{{ order.totalPrice|number_format(2) }}</td>
+                            <td>
+                                <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn btn-sm btn-primary">View</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-muted text-center">You haven't placed any orders yet.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -1,181 +1,156 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="turbo-visit-control" content="reload">
+        <meta name="turbo-visit-control" content="reload">
+        <title>{% block title %}Fitverse{% endblock %}</title>
+        <link rel="icon" href="/favicon.ico">
+        <link rel="icon" href="/favicon.ico">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="turbo-visit-control" content="reload">
-	<noscript>
-	Firverse dashboard requires Javascript to run properly. <br>
-	Please re-enable javascript or use a compatible browser.
-	</noscript>
-	<title>
-		{% block title %}Fitverse{% endblock %}
-	</title>
-	<link rel="icon" href="/favicon.ico">
+        {% block javascripts %}
+            <!-- jQuery first -->
+            <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+            
+            <!-- Then Popper.js -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+            
+            <!-- Then Bootstrap -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-	{% block javascripts %}
-	<!-- Google fonts -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
-		rel="stylesheet">
-	<link
-		href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Train+One&display=swap"
-		rel="stylesheet">
+            <!-- Google fonts -->
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">   
+            <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Train+One&display=swap" rel="stylesheet">
 
+            <!-- Material Symbols outlined -->
+            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=all" rel="stylesheet">
 
-	<!-- Material Symbols outlined -->
-	<link
-		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=all"
-		rel="stylesheet">
+            <!-- Less CSS pre-processor -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/4.2.2/less.min.js"></script>
 
-	<!-- Less CSS pre-processor -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/4.2.2/less.min.js"
-		integrity="sha512-RvWSOL32duQKqvfcdl2aKktT2VHgL1Nst/cO7EzPhuuVSMKDu86eXkAEi9AUJjSzcpA4XZfK8EaPNNzIP7MlBw=="
-		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <!-- Bootstrap CSS -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
-	<!-- Bootstrap -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
-
-	<!-- Font awesome -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-		crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <!-- Font awesome -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        {% endblock %}
 
 
-	<!-- Notyf -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/notyf/3.10.0/notyf.min.js"
-		integrity="sha512-467grL09I/ffq86LVdwDzi86uaxuAhFZyjC99D6CC1vghMp1YAs+DqCgRvhEtZIKX+o9lR0F2bro6qniyeCMEQ=="
-		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/notyf/3.10.0/notyf.min.css"
-		integrity="sha512-ZX18S8AwqoIm9QCd1EYun82IryFikdJt7lxj6583zx5Rvr5HoreO9tWY6f2VhSxvK+48vYFSf4zFtX/t2ge62g=="
-		crossorigin="anonymous" referrerpolicy="no-referrer" />
+        {% block stylesheets %}
+        <style>
+            * {
+                font-family: "Mulish", sans-serif;
+                font-optical-sizing: auto;
+                font-style: normal;
+            }
 
+            body {
+                background-color: #f8f9fa;
+                color: #212529;
+                min-height: 100vh;
+            }
 
-	<!-- SimpleBar -->
+            /* Form styles */
+            .form-control,
+            .form-select,
+            .form-check-input {
+                background-color: white;
+                color: #495057;
+                border: 1px solid #ced4da;
+            }
 
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css"/>
-	<script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
+            .form-control:focus,
+            .form-select:focus,
+            .form-check-input:focus {
+                background-color: white;
+                border-color: #80bdff;
+                color: #495057;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
 
+            .form-check-input:checked {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
 
+            .form-label {
+                color: #495057;
+                font-weight: 500;
+            }
 
+            /* Button styles */
+            .btn-fitverse {
+                background-color: #89b55a;
+                border-color: #89b55a;
+                color: white;
+                transition: all 0.3s ease;
+            }
 
-	<script>
-		function showToast(type, message, duration = 3000) {
-			if (typeof Notyf !== 'undefined') {
-				const notyf = new Notyf({
-					duration: duration,
-					types: [
-						{
-							type: 'info',
-							background: '#2f86eb',
-							icon: {
-								className: 'material-symbols-outlined text-white',
-								tagName: 'span',
-								text: 'info',
-							}
-						}
-					]
-				});
+            .btn-fitverse:hover {
+                background-color: #7aa84d;
+                border-color: #7aa84d;
+                transform: translateY(-1px);
+            }
 
-				switch (type) {
-					case 'error': notyf.error(message);
-						break;
-					case 'success': notyf.success(message);
-						break;
-					case 'info': notyf.open({ type: 'info', message });
-						break;
-					default: notyf.open({ type: 'info', message }); // fallback
-				}
-			} else {
-				alert(`${type.toUpperCase()
-					}: ${message}`);
-			}
-		}
-	</script>
-	{% endblock %}
-	{% block stylesheets %}
-	<style>
-		* {
-			font-family: "Mulish", sans-serif;
-			font-optical-sizing: auto;
-			font-style: normal;
-		}
+            /* Card styles */
+            .card {
+                background-color: white;
+                border-color: #dee2e6;
+                color: #212529;
+            }
 
-		button>a {
-			all: unset;
-		}
+            /* Table styles */
+            .table {
+                color: #212529;
+            }
 
+            .table th {
+                background-color: #f8f9fa;
+                border-color: #dee2e6;
+            }
 
-		.form-control:focus,
-		.form-select:focus,
-		.form-check-input:focus {
-			border-color: transparent !important;
-			outline: 0 !important;
-			box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25) !important;
-		}
+            .table td {
+                border-color: #dee2e6;
+            }
 
+            .table-striped tbody tr:nth-of-type(odd) {
+                background-color: rgba(0, 0, 0, 0.02);
+            }
 
-		.btn-fitverse {
-			background-color: #89b55a !important;
-			border-color: #eeeeee !important;
-			color: white;
-		}
-	</style>
+            .table-hover tbody tr:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
 
-	{% endblock %}
-</head>
+            /* Alert styles */
+            .alert {
+                background-color: white;
+                border-color: #dee2e6;
+                color: #212529;
+            }
 
-{% for message in app.flashes('error_message') %}
-        <script>
-		//Toast system
-        document.addEventListener("DOMContentLoaded",(event)=>{
-            showToast("error","{{ message }}")
-        })
-    	</script>
+            .text-muted {
+                color: #6c757d !important;
+            }
 
-
-		<script>
-		//Bootstrap tooltips initialization
-		const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-		const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-		</script>
-
-
-
-
-{% endfor %}
-
-
-{% for message in app.flashes('success_message') %}
-        <script>
-        document.addEventListener("DOMContentLoaded",(event)=>{
-            showToast("success","{{ message }}")
-        })
+            /* Custom container for forms */
+            .form-container {
+                background-color: white;
+                border-radius: 0.5rem;
+                padding: 2rem;
+                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+                margin: 2rem auto;
+                max-width: 800px;
+            }
+        </style>
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+        <!-- Chatbase Widget Script -->
+    <script>
+    (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="lDVMeMV1kpf9TvvUkKUDk";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
     </script>
-{% endfor %}
-
-
-{% for message in app.flashes('info_message') %}
-        <script>
-        document.addEventListener("DOMContentLoaded",(event)=>{
-            showToast("info","{{ message }}")
-        })
-    </script>
-{% endfor %}
-
-
-
-<body>
-	<span class="nav-safe"></span>
-	{% block body %}
-		
-	{% endblock %}
 </body>
-
-</html>
-</head>
-
 </html>
