@@ -11,7 +11,7 @@
 
 <div class="navbar-enhance">
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fitverse-navbar shadow" data-controller="navbar">
-		<a class="navbar-brand" href="/"><img src="/fitverse-white.png"></a>
+		<a class="navbar-brand" href="path('user-dashboard')"><img src="/fitverse-white.png"></a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
 			aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -19,7 +19,7 @@
 		<div class="collapse navbar-collapse" id="navbarText">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item exercise" data-context="exercise">
-					<a class="nav-link" href="/exercise">
+					<a class="nav-link" href="{{path('app_exercice_index')}}">
 						<span class="material-symbols-outlined">sports_gymnastics</span>
 						Train
 						<span class="sr-only">(current)</span>
@@ -59,7 +59,7 @@
 
 			<div class="user-nav-menu navbar-text">
 				<div class="user-display">
-					<span>{{ app.user.first_name ~ " " ~ app.user.first_name }}</span>
+					<span>{{ app.user.first_name ~ " " ~ app.user.last_name }}</span>
 				</div>
 				<div class="user-badge">
 					<span>{{ app.user.first_name|slice(0, 1) }}</span>
@@ -135,13 +135,6 @@
 				<li><a href="{{path('user_exercice_searchByMuscle')}}">Muscle explorer</a></li>
 				<li><a href="{{path('app_exercice_index')}}">Explore workouts</a></li>
 				<li><a href="{{ path('gym_front_list')}}">Explore Gyms</a></li>
-
-
-
-
-
-
-
 			</ul>
 		</div>
 
