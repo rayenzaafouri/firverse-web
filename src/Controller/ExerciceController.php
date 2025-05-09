@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+use App\Repository\WorkoutRepository;
+
+
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
@@ -73,7 +76,7 @@ final class ExerciceController extends AbstractController
 
 
     #[Route('/exercises', name: 'app_exercice_index', methods: ['GET'])]
-    public function userIndex(ExerciceRepository $exerciceRepository): Response
+    public function userIndex(ExerciceRepository $exerciceRepository , WorkoutRepository $workout_repository): Response
     {
         $client = new Client();
         $response = $client->get('http://127.0.0.1:3000');
@@ -86,10 +89,16 @@ final class ExerciceController extends AbstractController
         $recommended = $allExercises;
         shuffle($recommended);
         $recommended = array_slice($recommended, 0, 5);
+
+
+        $recommended_workouts = $workout_repository->findBy(['enabled' => true]);
+
+
     
         return $this->render('front/exercise/showAll.html.twig', [
             'exercices' => $allExercises,
             'recommended' => $recommended,
+            'recommended_workouts' => $recommended_workouts,
             'tip' => $data["tip"],
         ]);
     }
@@ -180,6 +189,16 @@ final class ExerciceController extends AbstractController
 
 
     }
+
+
+
+
+
+    
+
+
+
+
 
     #[Route('/admin/exercise/{id}/delete', name: 'app_exercice_delete', methods: ['POST'])]
     public function delete(Request $request, Exercice $exercice, EntityManagerInterface $entityManager): Response

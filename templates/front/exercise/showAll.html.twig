@@ -339,8 +339,8 @@ function createExerciseElement(href, imgSrc, titleText, badgeText) {
 
 	</div>
 
-	<div class="container discover-section mt-3">
-		<h1><i class="fa-solid fa-fire"></i> Discover</h1>
+	<div class="container discover-section mt-3" >
+		<h1>⚡ Discover</h1>
 		<div class="results mt-3">
 			{% for exercice in recommended %}
 				<a href="{{ path('user_exercice_show', { id: exercice.id }) }}" class="btn btn-primary">
@@ -350,6 +350,35 @@ function createExerciseElement(href, imgSrc, titleText, badgeText) {
 						<div class="card-body">
 							<h5 class="card-title">{{ exercice.title }}</h5>
 							<span class="badge text-bg-dark">{{ exercice.difficulty | capitalize }}</span>
+						</div>
+					</div>
+				</a>
+			{% endfor %}
+		</div>
+
+
+		<dialog class="shadow">
+			<div class="branding">
+				<img src="/fitverse-white.png">
+				<span>| Tip of the day ⚡</span>
+			</div>
+			<p>{{ tip }}</p>
+			<button class="btn btn-secondary" autofocus>x</button>
+		</dialog>
+	</div>
+
+
+
+		<div class="container discover-section mt-3" style="background:url('/overlay-blue.png')">
+		<h1>💪 Workout plans</h1>
+		<div class="results mt-3">
+			{% for workout in recommended_workouts %}
+				<a href="{{ path('app_workout_show', {'id': workout.id}) }}" class="btn btn-primary">
+					<div class="card" style="width: 14rem;">
+						
+						<img src="{{ workout.img }}" class="card-img-top" alt="Card image">
+						<div class="card-body">
+							<h5 class="card-title">{{ workout.label }}</h5>
 						</div>
 					</div>
 				</a>
