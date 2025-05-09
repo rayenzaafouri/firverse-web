@@ -1,55 +1,83 @@
-{% extends 'base.html.twig' %}
-{% block body %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
 
-{% include 'navbar.html.twig' %}
-    <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 1.5rem;">
-        <h2 style="color: #2d3e50;">All Reclamations</h2>
-        <a href="{{ path('app_reclamation_stats') }}" class="btn btn-info">View Status Stats</a>
-        <a href="{{ path('app_admin_reclamation_export_csv') }}" class="btn btn-primary">Export to CSV</a>
+{% block title %}Reclamations{% endblock %}
 
-    </div>
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_dashboard') }}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_admin_reclamation_index') }}">Complaint management</a>
+        </li>
+    </ol>
+</nav>
+{% endblock %}
 
-    <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: separate; border-spacing: 0 0.5rem;">
-            <thead>
-                <tr>
-                    {% set cols = ['#', 'Title', 'Description', 'Date', 'Status', 'Action'] %}
-                    {% for c in cols %}
-                        <th style="background: #34495e; color: #ecf0f1; padding: 0.8rem 1rem; text-align:left;">{{ c }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for reclamation in reclamations %}
-                    <tr style="background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s;">
-                        <td style="padding: 0.8rem 1rem;">{{ reclamation.id }}</td>
-                        <td style="padding: 0.8rem 1rem; font-weight: 500;">{{ reclamation.title }}</td>
-                        <td style="padding: 0.8rem 1rem;">{{ reclamation.description|length > 50 ? reclamation.description|slice(0,50) ~ '…' : reclamation.description }}</td>
-                        <td style="padding: 0.8rem 1rem;">{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d') : '—' }}</td>
-                        <td style="padding: 0.8rem 1rem;">
-                            {% if reclamation.status %}
-                                <span style="background: #27ae60; color: #ecf0f1; padding: 0.3rem 0.6rem; border-radius: 0.3rem; font-size: 0.9rem;">✅ Traité</span>
-                            {% else %}
-                                <span style="background: #f39c12; color: #fff; padding: 0.3rem 0.6rem; border-radius: 0.3rem; font-size: 0.9rem;">⏳ En attente</span>
-                            {% endif %}
-                        </td>
-                        <td style="padding: 0.8rem 1rem;">
-                            <form action="{{ path('app_reclamation_traiter', {'id': reclamation.id}) }}" method="post" style="display:inline;">
-                                <input type="hidden" name="_token" value="{{ csrf_token('traiter' ~ reclamation.id) }}">
-                                <button type="submit" style="padding:0.5rem 1rem; border:none; border-radius:0.3rem; font-size:0.9rem; cursor:pointer; transition: background 0.3s;"
-                                        {{ reclamation.status ? 'disabled' : '' }}
-                                        {% if reclamation.status %} style="background:#95a5a6; color:#fff;" {% else %} style="background:#3498db; color:#fff;" {% endif %}>
-                                    {{ reclamation.status ? 'Traité' : 'Traiter' }}
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="6" style="text-align:center; padding:1rem; color:#7f8c8d;">No reclamations found.</td>
-                    </tr>
+{% block javascripts %}
+{{ parent() }}
+<script></script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .table {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+
+    <a href="{{ path('app_reclamation_stats') }}" class="btn btn-info">View Status Stats</a>
+    <a href="{{ path('app_admin_reclamation_export_csv') }}" class="btn btn-primary">Export to CSV</a>
+</div>
+
+<div style="overflow-x: auto;">
+    <table class="table">
+        <thead>
+            <tr>
+                {% set cols = ['#', 'Title', 'Description', 'Date', 'Status', 'Action'] %}
+                {% for c in cols %}
+                    <th style="background: #34495e; color: #ecf0f1; padding: 0.8rem 1rem; text-align:left;">{{ c }}</th>
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reclamation in reclamations %}
+                <tr style="background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); transition: transform 0.2s;">
+                    <td style="padding: 0.8rem 1rem;">{{ reclamation.id }}</td>
+                    <td style="padding: 0.8rem 1rem; font-weight: 500;">{{ reclamation.title }}</td>
+                    <td style="padding: 0.8rem 1rem;">{{ reclamation.description|length > 50 ? reclamation.description|slice(0,50) ~ '…' : reclamation.description }}</td>
+                    <td style="padding: 0.8rem 1rem;">{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d') : '—' }}</td>
+                    <td style="padding: 0.8rem 1rem;">
+                        {% if reclamation.status %}
+                            <span style="background: #27ae60; color: #ecf0f1; padding: 0.3rem 0.6rem; border-radius: 0.3rem; font-size: 0.9rem;">✅ Traité</span>
+                        {% else %}
+                            <span style="background: #f39c12; color: #fff; padding: 0.3rem 0.6rem; border-radius: 0.3rem; font-size: 0.9rem;">⏳ En attente</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.8rem 1rem;">
+                        <form action="{{ path('app_reclamation_traiter', {'id': reclamation.id}) }}" method="post" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('traiter' ~ reclamation.id) }}">
+                            <button type="submit" style="padding:0.5rem 1rem; border:none; border-radius:0.3rem; font-size:0.9rem; cursor:pointer; transition: background 0.3s;"
+                                    {{ reclamation.status ? 'disabled' : '' }}
+                                    {% if reclamation.status %} style="background:#95a5a6; color:#fff;" {% else %} style="background:#3498db; color:#fff;" {% endif %}>
+                                {{ reclamation.status ? 'Traité' : 'Traiter' }}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:1rem; color:#7f8c8d;">No reclamations found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

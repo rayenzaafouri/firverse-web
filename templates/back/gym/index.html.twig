@@ -1,6 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
 
 {% block title %}Admin - Gyms{% endblock %}
+
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Gyms</li>
+    </ol>
+</nav>
+{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
@@ -26,147 +35,9 @@
 </style>
 {% endblock %}
 
-{% block body %}
-    {% include 'navbar.html.twig' %}
-
-    <div class="container py-5">
-        <h1 class="mb-4">Manage Gyms</h1>
-
-        <div class="mb-3 d-flex justify-content-between">
-            <a href="{{ path('app_gym_new') }}" class="btn btn-success">+ Add New Gym</a>
-            <a href="{{ path('app_membership_index') }}" class="btn btn-info">Go to Memberships</a>
-            <a href="{{ path('app_gym_stats') }}" class="btn btn-outline-dark">📊 Gym Stats</a>
-
-        </div>
-
-
-        <!-- Search and Filter Section -->
-        <div class="filter-section mb-4">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <input id="searchInput" type="text" class="form-control" placeholder="Search gyms by name or address...">
-                </div>
-                <div class="col-md-6">
-                    <div class="rating-filter">
-                        <label class="form-label">Filter by Rating:</label>
-                        <div class="d-flex flex-wrap">
-                            {% for i in 5..1 %}
-                                <div class="form-check me-3">
-                                    <input class="form-check-input rating-check" type="checkbox" value="{{ i }}" id="rating{{ i }}">
-                                    <label class="form-check-label" for="rating{{ i }}">
-                                        {% for j in 1..i %}
-                                            <span class="star">★</span>
-                                        {% endfor %}
-                                        {% if i < 5 %}
-                                            {% for j in 1..(5-i) %}
-                                                <span>☆</span>
-                                            {% endfor %}
-                                        {% endif %}
-                                    </label>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered text-center" id="gymsTable">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Actions</th>
-                        <th>ID</th>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Address</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Capacity</th>
-                        <th>Rating</th>
-                    </tr>
-                </thead>
-                <tbody id="gymsTableBody">
-                    {% for gym in gyms %}
-                        <tr class="gym-row" data-name="{{ gym.name|lower }}" data-address="{{ gym.adresse|lower }}" data-rating="{{ gym.rating }}">
-                            <td>
-                                <div class="d-flex flex-column align-items-center gap-2">
-                                    <a href="{{ path('app_gym_show', {'id': gym.id}) }}" class="btn btn-sm btn-primary w-75">View</a>
-                                    <a href="{{ path('app_gym_edit', {'id': gym.id}) }}" class="btn btn-sm btn-warning w-75">Edit</a>
-                                    <button class="btn btn-sm btn-danger w-75"
-                                        onclick="openDeleteModal('{{ path('app_gym_delete', {'id': gym.id}) }}', '{{ csrf_token('delete' ~ gym.id) }}')">
-                                        Delete
-                                    </button>
-                                </div>
-                            </td>
-                            <td>{{ gym.id }}</td>
-                            <td>
-                                {% if gym.image %}
-                                    <img src="{{ gym.image }}" alt="{{ gym.name }}" class="img-fluid rounded" style="width: 120px; height: 80px; object-fit: cover;">
-                                {% else %}
-                                    <div class="bg-light d-flex align-items-center justify-content-center" style="width: 120px; height: 80px;">
-                                        <span class="text-muted">No image</span>
-                                    </div>
-                                {% endif %}
-                            </td>
-                            <td>{{ gym.name }}</td>
-                            <td>{{ gym.adresse }}</td>
-                            <td>{{ gym.phone }}</td>
-                            <td>{{ gym.email }}</td>
-                            <td>{{ gym.capacity }}</td>
-                            <td>
-                                {% if gym.rating %}
-                                    {% for i in 1..5 %}
-                                        {% if i <= gym.rating %}
-                                            <span class="star">★</span>
-                                        {% else %}
-                                            <span>☆</span>
-                                        {% endif %}
-                                    {% endfor %}
-                                    ({{ gym.rating }})
-                                {% else %}
-                                    <span class="text-muted">No rating</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div id="noResults" class="no-results">
-                <i class="bi bi-exclamation-circle fs-1"></i>
-                <h4 class="mt-3">No gyms found matching your criteria</h4>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Deletion</h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete this gym?
-                </div>
-                <div class="modal-footer">
-                    <form id="deleteGymForm" method="post">
-                        <input type="hidden" name="_token" id="deleteGymToken" value="">
-                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
 {% block javascripts %}
-    {{ parent() }}
-    <script>
+{{ parent() }}
+<script>
     function openDeleteModal(actionUrl, csrfToken) {
         const form = document.getElementById('deleteGymForm');
         form.action = actionUrl;
@@ -174,23 +45,15 @@
         $('#deleteConfirmModal').modal('show');
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('searchInput');
         const ratingChecks = document.querySelectorAll('.rating-check');
         const gymRows = document.querySelectorAll('.gym-row');
         const noResults = document.getElementById('noResults');
 
-        // Search functionality - real-time filtering
-        searchInput.addEventListener('input', function() {
-            filterGyms();
-        });
+        searchInput.addEventListener('input', filterGyms);
+        ratingChecks.forEach(check => check.addEventListener('change', filterGyms));
 
-        // Filter by rating
-        ratingChecks.forEach(check => {
-            check.addEventListener('change', filterGyms);
-        });
-
-        // Combined filter function
         function filterGyms() {
             const searchQuery = searchInput.value.toLowerCase();
             const selectedRatings = Array.from(ratingChecks)
@@ -204,31 +67,141 @@
                 const address = row.dataset.address;
                 const rating = parseFloat(row.dataset.rating);
 
-                const matchesSearch = searchQuery === '' ||
-                    name.includes(searchQuery) ||
-                    address.includes(searchQuery);
+                const matchesSearch = !searchQuery || name.includes(searchQuery) || address.includes(searchQuery);
+                const matchesRating = selectedRatings.length === 0 || (rating && selectedRatings.includes(Math.floor(rating)));
 
-                const matchesRating = selectedRatings.length === 0 ||
-                    (rating && selectedRatings.includes(Math.floor(rating)));
-
-                if (matchesSearch && matchesRating) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
+                row.style.display = matchesSearch && matchesRating ? '' : 'none';
+                if (matchesSearch && matchesRating) visibleCount++;
             });
 
-            // Show/hide no results message
-            if (visibleCount === 0) {
-                noResults.style.display = 'block';
-            } else {
-                noResults.style.display = 'none';
-            }
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
         }
 
-        // Initial filter to hide no results message
         filterGyms();
     });
-    </script>
+</script>
+{% endblock %}
+
+{% block content %}
+<a href="{{ path('app_gym_new') }}" class="btn btn-success mb-3">+ Add New Gym</a>
+<a href="{{ path('app_membership_index') }}" class="btn btn-info mb-3 ms-2">Go to Memberships</a>
+<a href="{{ path('app_gym_stats') }}" class="btn btn-outline-dark mb-3 ms-2">📊 Gym Stats</a>
+
+<div class="filter-section mb-4">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <input id="searchInput" type="text" class="form-control" placeholder="Search gyms by name or address...">
+        </div>
+        <div class="col-md-6">
+            <div class="rating-filter">
+                <label class="form-label">Filter by Rating:</label>
+                <div class="d-flex flex-wrap">
+                    {% for i in 5..1 %}
+                        <div class="form-check me-3">
+                            <input class="form-check-input rating-check" type="checkbox" value="{{ i }}" id="rating{{ i }}">
+                            <label class="form-check-label" for="rating{{ i }}">
+                                {% for j in 1..5 %}
+                                    {% if j <= i %}
+                                        <span class="star">★</span>
+                                    {% else %}
+                                        <span>☆</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered text-center" id="gymsTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Actions</th>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Capacity</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody id="gymsTableBody">
+            {% for gym in gyms %}
+                <tr class="gym-row" data-name="{{ gym.name|lower }}" data-address="{{ gym.adresse|lower }}" data-rating="{{ gym.rating }}">
+                    <td>
+                        <div class="d-flex flex-column align-items-center gap-2">
+                            <a href="{{ path('app_gym_show', {'id': gym.id}) }}" class="btn btn-sm btn-primary w-75">View</a>
+                            <a href="{{ path('app_gym_edit', {'id': gym.id}) }}" class="btn btn-sm btn-warning w-75">Edit</a>
+                            <button class="btn btn-sm btn-danger w-75"
+                                    onclick="openDeleteModal('{{ path('app_gym_delete', {'id': gym.id}) }}', '{{ csrf_token('delete' ~ gym.id) }}')">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                    <td>{{ gym.id }}</td>
+                    <td>
+                        {% if gym.image %}
+                            <img src="{{ gym.image }}" alt="{{ gym.name }}" class="img-fluid rounded" style="width: 120px; height: 80px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="width: 120px; height: 80px;">
+                                <span class="text-muted">No image</span>
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td>{{ gym.name }}</td>
+                    <td>{{ gym.adresse }}</td>
+                    <td>{{ gym.phone }}</td>
+                    <td>{{ gym.email }}</td>
+                    <td>{{ gym.capacity }}</td>
+                    <td>
+                        {% if gym.rating %}
+                            {% for i in 1..5 %}
+                                {% if i <= gym.rating %}
+                                    <span class="star">★</span>
+                                {% else %}
+                                    <span>☆</span>
+                                {% endif %}
+                            {% endfor %}
+                            ({{ gym.rating }})
+                        {% else %}
+                            <span class="text-muted">No rating</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="noResults" class="no-results">
+        <i class="bi bi-exclamation-circle fs-1"></i>
+        <h4 class="mt-3">No gyms found matching your criteria</h4>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">Are you sure you want to delete this gym?</div>
+            <div class="modal-footer">
+                <form id="deleteGymForm" method="post">
+                    <input type="hidden" name="_token" id="deleteGymToken" value="">
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

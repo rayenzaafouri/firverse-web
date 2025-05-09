@@ -1,16 +1,19 @@
-{% extends 'base.html.twig' %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
 
 {% block title %}Gym Rating Stats{% endblock %}
 
-{% block body %}
-<div class="container py-5">
-    <h1 class="mb-4">📊 Gym Statistics by Rating</h1>
-
-    <!-- Graphique Google Chart -->
-    <div id="chart_div" style="width: 100%; height: 500px;"></div>
-
-    <a href="{{ path('app_gym_index') }}" class="btn btn-secondary mt-3">← Back to Gym Management</a>
-</div>
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_dashboard') }}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_gym_index') }}">Gyms</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Gym Rating Stats</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block javascripts %}
@@ -21,7 +24,6 @@
       google.charts.setOnLoadCallback(drawChart);
 
       function drawChart() {
-        // Données pour le graphique (distribuer les données selon les ratings)
         const data = google.visualization.arrayToDataTable([
           ['Rating', 'Number of Gyms'],
           {% for rating, count in ratingStats %}
@@ -29,21 +31,42 @@
           {% endfor %}
         ]);
 
-        // Options du graphique (titre, couleurs, etc.)
         const options = {
-          title: 'Distribution des salles selon leur rating',
-          pieHole: 0.4,  // Pour faire un graphique en anneau (donut chart)
+          title: 'Distribution of Gyms by Rating',
+          pieHole: 0.4,
           colors: ['#ff6384', '#36a2eb', '#ffcd56', '#4bc0c0', '#9966ff'],
           legend: { position: 'labeled' },
           chartArea: { width: '100%', height: '80%' },
         };
 
-        // Création et affichage du graphique
         const chart = new google.visualization.PieChart(document.getElementById('chart_div'));
         chart.draw(data, options);
       }
-  google.charts.setOnLoadCallback(drawChart);
-  document.addEventListener('turbo:load', drawChart);     // pour Symfony UX Turbo
-  document.addEventListener('DOMContentLoaded', drawChart);
+
+      google.charts.setOnLoadCallback(drawChart);
+      document.addEventListener('turbo:load', drawChart);
+      document.addEventListener('DOMContentLoaded', drawChart);
     </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .container {
+            text-align: center;
+        }
+        .breadcrumb {
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">📊 Gym Statistics by Rating</h1>
+
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
+
+    <a href="{{ path('app_gym_index') }}" class="btn btn-secondary mt-3">← Back to Gym Management</a>
+</div>
 {% endblock %}

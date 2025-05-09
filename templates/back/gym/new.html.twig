@@ -1,83 +1,89 @@
-{% extends 'base.html.twig' %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
 
 {% block title %}New Gym{% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <style>
-        .form-section {
-            background-color: #f1f8f2;
-            padding: 30px;
-            border-radius: 15px;
-            color: #343a40;
-            border: 2px solid #28a745;
-        }
+{{ parent() }}
+<style>
+    .form-section {
+        background-color: #f1f8f2;
+        padding: 30px;
+        border-radius: 15px;
+        color: #343a40;
+        border: 2px solid #28a745;
+    }
 
-        .form-section h1 {
-            color: #28a745;
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    .form-section h1 {
+        color: #28a745;
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-        .form-label {
-            font-weight: bold;
-            color: #333;
-        }
+    .form-label {
+        font-weight: bold;
+        color: #333;
+    }
 
-        .form-control {
-            background-color: #ffffff;
-            color: #495057;
-            border: 1px solid #28a745;
-            border-radius: 5px;
-        }
+    .form-control {
+        background-color: #ffffff;
+        color: #495057;
+        border: 1px solid #28a745;
+        border-radius: 5px;
+    }
 
-        .form-control::placeholder {
-            color: #6c757d;
-        }
+    .form-control::placeholder {
+        color: #6c757d;
+    }
 
-        .btn-primary {
-            background-color: #28a745;
-            border-color: #28a745;
-            color: white;
-        }
+    .btn-primary {
+        background-color: #28a745;
+        border-color: #28a745;
+        color: white;
+    }
 
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-        }
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
 
-        .btn:hover {
-            opacity: 0.8;
-        }
+    .btn:hover {
+        opacity: 0.8;
+    }
 
-        .form-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
 
-        .form-row {
-            display: flex;
-            justify-content: space-between;
-        }
+    .form-row {
+        display: flex;
+        justify-content: space-between;
+    }
 
-        .form-row .col {
-            width: 48%;
-        }
+    .form-row .col {
+        width: 48%;
+    }
 
-        .alert {
-            border-radius: 5px;
-        }
+    .alert {
+        border-radius: 5px;
+    }
 
-        .form-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-    </style>
+    .form-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+</style>
 {% endblock %}
 
-{% block body %}
-    {% include 'navbar.html.twig' %}
+{% block javascripts %}
+{{ parent() }}
+<script>
+// You can add any JavaScript here, if needed.
+</script>
+{% endblock %}
+
+{% block content %}
 
     {% for label, messages in app.flashes %}
         {% for message in messages %}
@@ -94,13 +100,11 @@
 
             {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-            <!-- Boutons au-dessus du formulaire -->
             <div class="form-buttons">
                 <button type="submit" class="btn btn-primary">Add</button>
                 <a href="{{ path('app_gym_index') }}" class="btn btn-secondary">Back</a>
             </div>
 
-            <!-- Formulaire -->
             <div class="form-row">
                 <div class="col">
                     <div class="mb-3">

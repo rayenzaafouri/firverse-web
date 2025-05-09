@@ -1,67 +1,24 @@
-{% extends 'base.html.twig' %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
 
 {% block title %}Edit Event{% endblock %}
 
-{% block body %}
-{% include 'navbar.html.twig' %}
-<div class="container event-container" style="text-align: center; background-color: #1e1e1e; color: #e0e0e0;">
-    <h2 style="color: #92ff44;">Edit Event</h2>
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_dashboard') }}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_event_index') }}">Events</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Event</li>
+    </ol>
+</nav>
+{% endblock %}
 
-    <div class="event-form-container" style="max-width: 800px; margin: 0 auto;">
-        {{ form_start(form, {'attr': {'class': 'event-form', 'enctype': 'multipart/form-data'}}) }}
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    {{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.name, {'attr': {'class': 'form-control dark-input'}}) }}
-                </div>
-                <div class="col-md-6">
-                    {{ form_label(form.location, null, {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.location, {'attr': {'class': 'form-control dark-input'}}) }}
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    {{ form_label(form.date, null, {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.date, {'attr': {'class': 'form-control dark-input'}}) }}
-                </div>
-                <div class="col-md-4">
-                    {{ form_label(form.time, null, {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.time, {'attr': {'class': 'form-control dark-input'}}) }}
-                </div>
-                <div class="col-md-4">
-                    {{ form_label(form.price, null, {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.price, {'attr': {'class': 'form-control dark-input'}}) }}
-                </div>
-            </div>
-
-            <div class="mb-3">
-                {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.description, {'attr': {'class': 'form-control dark-input', 'rows': 5}}) }}
-            </div>
-
-            <div class="mb-3">
-                {{ form_label(form.photo, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.photo, {'attr': {'class': 'form-control dark-input'}}) }}
-                {% if event.photo %}
-                    <div class="mt-2">
-                        <small>Current photo:</small>
-                        <img src="{{ asset('uploads/events/' ~ event.photo) }}" alt="Event photo" style="max-width: 100px; max-height: 100px;" class="mt-1">
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                <a href="{{ path('app_event_index') }}" class="btn btn-outline-secondary me-md-2" style="border-color: #92ff44; color: #92ff44;">
-                    Back to list
-                </a>
-                <button type="submit" class="btn" style="background-color: #92ff44; color: #1a1a1a;">
-                    <i class="fas fa-save"></i> Update
-                </button>
-            </div>
-        {{ form_end(form) }}
-    </div>
-</div>
+{% block javascripts %}
+{{ parent() }}
+<script></script>
 {% endblock %}
 
 {% block stylesheets %}
@@ -74,6 +31,8 @@
         padding: 30px;
         border-radius: 8px;
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        background-color: #1e1e1e;
+        color: #e0e0e0;
     }
 
     .dark-input {
@@ -109,4 +68,68 @@
         }
     }
 </style>
+{% endblock %}
+
+{% block content %}
+<a class="btn btn-secondary" href="{{ path('app_event_index') }}">
+    <i class="fa-solid fa-arrow-left"></i> Back to list
+</a>
+
+<div class="event-container">
+    <h2 style="color: #92ff44;">Edit Event</h2>
+    
+    <div class="event-form-container" style="max-width: 800px; margin: 0 auto;">
+        {{ form_start(form, {'attr': {'class': 'event-form', 'enctype': 'multipart/form-data'}}) }}
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                {{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form-control dark-input'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_label(form.location, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.location, {'attr': {'class': 'form-control dark-input'}}) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                {{ form_label(form.date, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.date, {'attr': {'class': 'form-control dark-input'}}) }}
+            </div>
+            <div class="col-md-4">
+                {{ form_label(form.time, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.time, {'attr': {'class': 'form-control dark-input'}}) }}
+            </div>
+            <div class="col-md-4">
+                {{ form_label(form.price, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.price, {'attr': {'class': 'form-control dark-input'}}) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control dark-input', 'rows': 5}}) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.photo, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.photo, {'attr': {'class': 'form-control dark-input'}}) }}
+            {% if event.photo %}
+                <div class="mt-2">
+                    <small>Current photo:</small>
+                    <img src="{{ asset('uploads/events/' ~ event.photo) }}" alt="Event photo" style="max-width: 100px; max-height: 100px;" class="mt-1">
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <button type="submit" class="btn" style="background-color: #92ff44; color: #1a1a1a;">
+                <i class="fas fa-save"></i> Update
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
 {% endblock %}

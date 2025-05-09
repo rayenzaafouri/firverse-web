@@ -1,9 +1,23 @@
-{# templates/user/stats.html.twig #}
-{% extends 'base.html.twig' %}
-{% block body_attributes %}data-context="user"{% endblock %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
+
 {% block title %}User Role Statistics{% endblock %}
 
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_dashboard') }}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_user_index') }}">Users</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Role Statistics</li>
+    </ol>
+</nav>
+{% endblock %}
+
 {% block stylesheets %}
+{{ parent() }}
 <style>
   .stats-container {
     width: 80%;
@@ -43,7 +57,7 @@
 </style>
 {% endblock %}
 
-{% block body %}
+{% block content %}
   <div class="stats-container">
     <div class="stats-header">
       <h1>User Role Statistics</h1>
@@ -56,6 +70,7 @@
 {% endblock %}
 
 {% block javascripts %}
+{{ parent() }}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {

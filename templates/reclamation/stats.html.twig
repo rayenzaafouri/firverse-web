@@ -1,28 +1,22 @@
-{# templates/reclamation/stats.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
+
 {% block title %}Reclamation Status Statistics{% endblock %}
-{% block stylesheets %}
-<style>
-  .stats-container { width:80%;max-width:700px;margin:3rem auto;background:#fff;padding:2rem;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-  .stats-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem; }
-  .stats-header h1 { margin:0;font-size:1.8rem;color:#2d3e50; }
-  .btn-return { background:#3498db;color:#fff;padding:.6rem 1rem;text-decoration:none;border-radius:4px;transition:background .2s; }
-  .btn-return:hover { background:#2980b9; }
-  .chart-container { position:relative;height:400px; }
-</style>
+
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_dashboard') }}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_admin_reclamation_index') }}">Reclamations</a>
+        </li>
+    </ol>
+</nav>
 {% endblock %}
-{% block body %}
-<div class="stats-container">
-  <div class="stats-header">
-    <h1>Reclamation Status</h1>
-    <a href="{{ path('app_admin_reclamation_index') }}" class="btn-return">Return to List</a>
-  </div>
-  <div class="chart-container">
-    <canvas id="recChart"></canvas>
-  </div>
-</div>
-{% endblock %}
+
 {% block javascripts %}
+{{ parent() }}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
@@ -37,4 +31,62 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 });
 </script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .stats-container {
+        width: 80%;
+        max-width: 700px;
+        margin: 3rem auto;
+        background: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .stats-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        color: #2d3e50;
+    }
+
+    .btn-return {
+        background: #3498db;
+        color: #fff;
+        padding: .6rem 1rem;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background .2s;
+    }
+
+    .btn-return:hover {
+        background: #2980b9;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 400px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stats-container">
+    <div class="stats-header">
+        <h1>Reclamation Status</h1>
+        <a href="{{ path('app_admin_reclamation_index') }}" class="btn-return">Return to List</a>
+    </div>
+    <div class="chart-container">
+        <canvas id="recChart"></canvas>
+    </div>
+</div>
 {% endblock %}
