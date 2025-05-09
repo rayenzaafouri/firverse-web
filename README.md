@@ -135,11 +135,11 @@ symfony check:requirements
 
 Merci à toute l'équipe FitVerse pour leur contribution exceptionnelle :
 - **Hamza Boutar** : (https://github.com/hamzaboutar22) Gestion shop
-- **Khalil Kammessi** () : Gestion nutrition
-- **Rayen Zaafouri** : Gestion workout
-- **Ali Tlili** : Gestion gym
-- **Ines Jelassi** : Gestion user
-- **Chaima Miled** : Gestion event
+- **Khalil Kammessi** (https://github.com/MedKhalilKm) : Gestion nutrition
+- **Rayen Zaafouri** (https://github.com/rayenzaafouri): Gestion workout
+- **Ali Tlili** (https://github.com/medalitlili): Gestion gym
+- **Ines Jelassi** (https://github.com/jlines111): Gestion user
+- **Chaima Miled** (https://github.com/chaimamiled): Gestion event
 
 ---
 
