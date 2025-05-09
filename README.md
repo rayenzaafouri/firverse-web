@@ -131,11 +131,11 @@ symfony check:requirements
  ```
  Note : Le champ `data-context` peut être "exercise", "gym", "events", "shop", "nutrition" ou "user" selon le module.
 
-##  Remerciements
+##  Contribution
 
 Merci à toute l'équipe FitVerse pour leur contribution exceptionnelle :
-- **Hamza Boutar** : Gestion shop
-- **Khalil Kammessi** : Gestion nutrition
+- **Hamza Boutar** : (https://github.com/hamzaboutar22) Gestion shop
+- **Khalil Kammessi** () : Gestion nutrition
 - **Rayen Zaafouri** : Gestion workout
 - **Ali Tlili** : Gestion gym
 - **Ines Jelassi** : Gestion user
