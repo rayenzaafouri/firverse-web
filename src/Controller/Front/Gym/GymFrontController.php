@@ -13,23 +13,24 @@ use Knp\Component\Pager\PaginatorInterface;
 
 class GymFrontController extends AbstractController
 {
-    #[Route('/gyms', name: 'gym_front_list')]
-    public function list(GymRepository $gymRepository, PaginatorInterface $paginator, Request $request): Response
+    #[Route('/gyms', name: 'gym_front')]
+    public function index(Request $request, GymRepository $gymRepository, PaginatorInterface $paginator): Response
     {
-        // On prépare la requête (QueryBuilder ou DQL)
-        $query = $gymRepository->createQueryBuilder('g')->getQuery();
+        // Get the query builder for gyms
+        $queryBuilder = $gymRepository->createQueryBuilder('g');
 
-        // On applique la pagination (6 gyms par page ici)
+        // Paginate the result
         $gyms = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            6
+            $queryBuilder, // Pass the query builder directly here
+            $request->query->getInt('page', 1), // Get the current page from the query params
+            6 // The number of items per page
         );
 
         return $this->render('front/gym/front.html.twig', [
-            'gyms' => $gyms,
+            'gyms' => $gyms, // Pass paginated gyms object to Twig
         ]);
     }
+
 
     #[Route('/gyms/{id}', name: 'gym_front_detail')]
     public function detail(int $id, GymRepository $gymRepository): Response
