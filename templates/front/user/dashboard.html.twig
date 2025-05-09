@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Admin Dashboard - Fitverse{% endblock %}
+{% block title %}Welocome  - Fitverse{% endblock %}
 
 {% block javascripts %}
 {{ parent() }} 
@@ -16,7 +16,12 @@
 {{ parent() }} 
 {# Your CSS goes here #}
 <style>
-
+.greeting{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
 </style>
 {% endblock %}
 
@@ -27,10 +32,13 @@
 
 <body data-context="default">
 
-<h2>Under construction</h2>
-
-
-
+<div class="greeting">
+<img src="https://cdn3d.iconscout.com/3d/premium/thumb/personal-trainer-3d-icon-download-in-png-blend-fbx-gltf-file-formats--fitness-sport-training-man-lifestyle-avatars-pack-fashion-accessories-icons-7621938.png">
+{% set user = app.user %}
+<h2>Welcome to fitverse! , {{ user.lastName }}</h2>
+<p>We are glad to see you here.</p>
+<p>Choose a task by hovering on the top menu!</p>
+</div>
 </body>
 
 {% endblock %}

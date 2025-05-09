@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/gym')]
+#[Route('/admin/gym')]
 final class GymController extends AbstractController
 {
     #[Route(name: 'app_gym_index', methods: ['GET'])]
@@ -87,5 +87,26 @@ final class GymController extends AbstractController
             $entityManager->flush();
         }
         return $this->redirectToRoute('app_gym_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+
+    #[Route('/stats', name: 'app_gym_stats', methods: ['GET'], priority: 1)]
+    public function stats(GymRepository $gymRepository): Response
+    {
+        $gyms = $gymRepository->findAll();
+        $ratingStats = [];
+
+        foreach ($gyms as $gym) {
+            $rating = floor($gym->getRating());
+            if ($rating) {
+                $ratingStats[$rating] = ($ratingStats[$rating] ?? 0) + 1;
+            }
+        }
+
+        krsort($ratingStats); // Classement décroissant de 5 à 1
+
+        return $this->render('back/gym/stats.html.twig', [
+            'ratingStats' => $ratingStats,
+        ]);
     }
 }

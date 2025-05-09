@@ -17,10 +17,9 @@ use Dompdf\Options;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Notifier\Message\SmsMessage;
 
-#[Route('/membership')]
 final class MembershipController extends AbstractController
 {
-    #[Route(name: 'app_membership_index', methods: ['GET', 'POST'])]
+    #[Route("/admin/memberships",name: 'app_membership_index', methods: ['GET', 'POST'])]
     public function index(Request $request, MembershipRepository $membershipRepository, EntityManagerInterface $entityManager): Response
     {
         $gym = new Gym();
@@ -40,7 +39,7 @@ final class MembershipController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_membership_new', methods: ['GET', 'POST'])]
+    #[Route('/admin/memberships/new', name: 'app_membership_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $membership = new Membership();
@@ -59,7 +58,7 @@ final class MembershipController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_membership_show', methods: ['GET'])]
+    #[Route('/admin/membership/{id}', name: 'app_membership_show', methods: ['GET'])]
     public function show(Membership $membership): Response
     {
         $form = $this->createForm(MembershipType::class, $membership, ['disabled' => true]);
@@ -70,7 +69,7 @@ final class MembershipController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_membership_edit', methods: ['GET', 'POST'])]
+    #[Route('/admin/membership/{id}/edit', name: 'app_membership_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Membership $membership, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(MembershipType::class, $membership);
@@ -87,7 +86,7 @@ final class MembershipController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_membership_delete', methods: ['POST'])]
+    #[Route('/admin/membership/{id}', name: 'app_membership_delete', methods: ['POST'])]
     public function delete(
         Request $request,
         Membership $membership,
@@ -111,7 +110,7 @@ final class MembershipController extends AbstractController
         return $this->redirectToRoute('app_membership_index');
     }
 
-    #[Route('/statsm', name: 'app_membership_stats', methods: ['GET'], priority: 1)]
+    #[Route('/admin/membership/statsm', name: 'app_membership_stats', methods: ['GET'], priority: 1)]
     public function stats(MembershipRepository $membershipRepository): Response
     {
         $memberships = $membershipRepository->findAll();
@@ -129,7 +128,7 @@ final class MembershipController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/pdf', name: 'app_membership_export_pdf', methods: ['GET'])]
+    #[Route('/admin/membership/{id}/pdf', name: 'app_membership_export_pdf', methods: ['GET'])]
     public function exportPdf(Membership $membership): Response
     {
         $options = new Options();

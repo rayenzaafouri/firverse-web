@@ -1,3 +1,10 @@
+body{
+  margin-top: 8rem;
+  padding-bottom: 3rem;
+}
+
+
+
 .nav-safe{
   display: block;
   margin-top: 7rem;
@@ -7,7 +14,7 @@
 
 
 .navbar-enhance{
-  z-index: 99999;
+  z-index: 99999; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -267,6 +274,7 @@
   }
 
   .user-nav-menu-content {
+    color:black;
     position: absolute;
     z-index: 1001;
     width: 15rem;
@@ -275,6 +283,7 @@
     cursor: pointer;
     border-top-right-radius: 0.33rem;
     border-top-left-radius: 0.33rem;
+    transform: translateY(-1rem);
 
     padding: 0 0.5rem 1rem 0.5rem;
 

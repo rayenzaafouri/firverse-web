@@ -14,15 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/gym')]
 final class GymController extends AbstractController
 {
-    #[Route(name: 'app_gym_index', methods: ['GET'])]
-    public function index(GymRepository $gymRepository): Response
-    {
-        return $this->render('back/gym/index.html.twig', [
-            'gyms' => $gymRepository->findAll(),
-        ]);
-    }
-
-
     #[Route('/new', name: 'app_gym_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -88,28 +79,6 @@ final class GymController extends AbstractController
         }
         return $this->redirectToRoute('app_gym_index', [], Response::HTTP_SEE_OTHER);
     }
-
-
-    #[Route('/stats', name: 'app_gym_stats', methods: ['GET'], priority: 1)]
-    public function stats(GymRepository $gymRepository): Response
-    {
-        $gyms = $gymRepository->findAll();
-        $ratingStats = [];
-
-        foreach ($gyms as $gym) {
-            $rating = floor($gym->getRating());
-            if ($rating) {
-                $ratingStats[$rating] = ($ratingStats[$rating] ?? 0) + 1;
-            }
-        }
-
-        krsort($ratingStats); // Classement décroissant de 5 à 1
-
-        return $this->render('back/gym/stats.html.twig', [
-            'ratingStats' => $ratingStats,
-        ]);
-    }
-
 
 
 }
