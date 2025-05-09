@@ -9,7 +9,13 @@
 
 {% block body %}
 <div class="admin-dashboard-layout">
+<<<<<<< HEAD
     {% include 'back/admin/sidenav.html.twig' %}
+=======
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
+>>>>>>> shop
 
     <div class="container">
         <h1>Admin Dashboard</h1>
@@ -81,6 +87,28 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+<<<<<<< HEAD
+=======
+    // Simple toggle for dropdowns
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.dataset.target;
+            const target = document.querySelector(targetId);
+            
+            // Toggle current dropdown
+            this.classList.toggle('active');
+            target.classList.toggle('show');
+            
+            // Update aria-expanded
+            const isExpanded = target.classList.contains('show');
+            this.setAttribute('aria-expanded', isExpanded);
+        });
+    });
+
+    // Charts
+>>>>>>> shop
     const dailySalesData = {{ dailySales|json_encode|raw }};
     const dates = Object.keys(dailySalesData);
     const revenues = Object.values(dailySalesData);
@@ -127,15 +155,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }]
         },
         options: {
+<<<<<<< HEAD
             indexAxis: 'y', // Horizontal bars
+=======
+            indexAxis: 'y',
+>>>>>>> shop
             scales: {
                 x: {
                     beginAtZero: true
                 }
             }
         }
+<<<<<<< HEAD
     }); // <--- this ) and ; is important!!
 });
 
+=======
+    });
+});
+>>>>>>> shop
 </script>
 {% endblock %}

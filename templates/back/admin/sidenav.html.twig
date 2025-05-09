@@ -1,4 +1,5 @@
 <aside>
+<<<<<<< HEAD
 	<img src="/fitverse-white.png" alt="The Fitverse logo" class="logo">
 
 
@@ -6,10 +7,18 @@
 	<ul>
 		<li>
 			<a class="btn text-white" data-toggle="collapse" href="#collapseUser" role="button" aria-expanded="false">
+=======
+	<a href="{{ path('admin_dashboard') }}"><img src="/fitverse-white.png" alt="The Fitverse logo" class="logo"></a>
+
+	<ul>
+		<li>
+			<a class="menu-toggle" data-target="#collapseUser" role="button" aria-expanded="false">
+>>>>>>> shop
 				<img src="{{ asset('images/landing/user.png') }}" alt="User icon">
 				<span>User Management</span>
 			</a>
 			<ul class="collapse" id="collapseUser">
+<<<<<<< HEAD
 				<li>
 					<a class="btn text-white" href="/admin/exercise/add">Create a new user</a>
 				</li>
@@ -19,15 +28,25 @@
 				<li>
 					<a class="btn text-white" href="/admin/">Edit default preferences</a>
 				</li>
+=======
+				<li><a href="/admin/exercise/add">Create a new user</a></li>
+				<li><a href="/admin/exercise/">Manage users</a></li>
+				<li><a href="/admin/">Edit default preferences</a></li>
+>>>>>>> shop
 			</ul>
 		</li>
 
 		<li>
+<<<<<<< HEAD
 			<a class="btn text-white" data-toggle="collapse" href="#collapseExercise" role="button" aria-expanded="false">
+=======
+			<a class="menu-toggle" data-target="#collapseExercise" role="button" aria-expanded="false">
+>>>>>>> shop
 				<img src="{{ asset('images/landing/exercice.png') }}" alt="Exercise icon">
 				<span>Exercise Management</span>
 			</a>
 			<ul class="collapse" id="collapseExercise">
+<<<<<<< HEAD
 				<li>
 					<a class="btn text-white" href="/admin/exercise/add">Add exercise</a>
 				</li>
@@ -37,45 +56,83 @@
 				<li>
 					<a class="btn text-white" href="/admin/workout/add">Add new workout</a>
 				</li>
+=======
+				<li><a href="/admin/exercise/add">Add exercise</a></li>
+				<li><a href="/admin/exercise/">Manage exercises</a></li>
+				<li><a href="/admin/workout/add">Add new workout</a></li>
+			</ul>
+		</li>
+		<li>
+			<a class="menu-toggle" data-target="#collapseNutrition" role="button" aria-expanded="false">
+				<img src="{{ asset('images/landing/meals.png') }}" alt="Meals icon">
+				<span>Nutrition Management</span>
+			</a>
+			<ul class="collapse" id="collapseNutrition">
+				<li><a href="{{ path('app_food_index')}}">Manage food</a></li>
+				<li><a href="{{ path('app_admin_recipe_index')}}">Manage recipes</a></li>
+>>>>>>> shop
 			</ul>
 		</li>
 
 		<li>
+<<<<<<< HEAD
 			<a class="btn text-white" data-bs-toggle="collapse" href="#collapseGym" role="button" aria-expanded="false">
+=======
+			<a class="menu-toggle" data-target="#collapseGym" role="button" aria-expanded="false">
+>>>>>>> shop
 				<img src="{{ asset('images/landing/gyms.png') }}" alt="Workout icon">
 				<span>Gym Management</span>
 			</a>
 			<ul class="collapse" id="collapseGym">
+<<<<<<< HEAD
 				<li>
 					<a class="btn text-white" href="{{ path('app_gym_index')}}">Manage gyms</a>
 				</li>
 				<li>
 					<a class="btn text-white" href="{{ path('app_membership_index')}}">Manage memberships</a>
 				</li>
+=======
+				<li><a href="{{ path('app_gym_index')}}">Manage gyms</a></li>
+				<li><a href="{{ path('app_membership_index')}}">Manage memberships</a></li>
+>>>>>>> shop
 			</ul>
 		</li>
 
 		<li>
+<<<<<<< HEAD
 			<a class="btn text-white" data-toggle="collapse" href="#collapsedEvents" role="button" aria-expanded="false">
+=======
+			<a class="menu-toggle" data-target="#collapsedEvents" role="button" aria-expanded="false">
+>>>>>>> shop
 				<img src="{{ asset('images/landing/events.png') }}" alt="Events icon">
 				<span>Events Management</span>
 			</a>
 			<ul class="collapse" id="collapsedEvents">
+<<<<<<< HEAD
 				<li>
 					<a class="btn text-white" href="/admin/event/add">Create a new event</a>
 				</li>
 				<li>
 					<a class="btn text-white" href="/admin/events/">Manage events</a>
 				</li>
+=======
+				<li><a href="/admin/event/add">Create a new event</a></li>
+				<li><a href="/admin/events/">Manage events</a></li>
+>>>>>>> shop
 			</ul>
 		</li>
 
 		<li>
+<<<<<<< HEAD
 			<a class="btn text-white" data-bs-toggle="collapse" href="#collapsedMarketplace" role="button" aria-expanded="false">
+=======
+			<a class="menu-toggle" data-target="#collapsedMarketplace" role="button" aria-expanded="false">
+>>>>>>> shop
 				<img src="{{ asset('images/landing/shop.png') }}" alt="Marketplace icon">
 				<span>Marketplace Management</span>
 			</a>
 			<ul class="collapse" id="collapsedMarketplace">
+<<<<<<< HEAD
 				<li>
 					<a class="btn text-white" href="{{ path('app_product_index')}}">Manage products</a>
 				</li>
@@ -94,10 +151,19 @@
 				<li>
 					<a class="btn text-white" href="{{ path('admin_wishlist_index')}}">Manage wishlists</a>
 				</li>
+=======
+				<li><a href="{{ path('app_product_index')}}">Manage products</a></li>
+				<li><a href="{{ path('app_category_index')}}">Manage categories</a></li>
+				<li><a href="{{ path('app_coupon_index')}}">Manage coupons</a></li>
+				<li><a href="{{ path('app_product_discount_index')}}">Manage discounts</a></li>
+				<li><a href="{{ path('app_order_index')}}">Manage orders</a></li>
+				<li><a href="{{ path('admin_wishlist_index')}}">Manage wishlists</a></li>
+>>>>>>> shop
 			</ul>
 		</li>
 	</ul>
 
+<<<<<<< HEAD
 
 	
 
@@ -113,4 +179,53 @@
 		</a>
 	</div>
 </aside>
+=======
+	<div class="aside-bottom">
+		<span class="material-symbols-outlined">shield_person</span>
+		<span>{{  app.user.first_name ~ " " ~  app.user.last_name  }}</span>		
+		<a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link d-flex align-items-center text-white">
+    <span class="material-symbols-outlined me-2">logout</span>
+</a>
+
+<form id="logout-form" action="{{ path('app_logout') }}" method="post" style="display: none;"></form>
+
+	</div>
+</aside>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggles = document.querySelectorAll('.menu-toggle');
+    
+    menuToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Close all other dropdowns
+            menuToggles.forEach(otherToggle => {
+                if (otherToggle !== this) {
+                    otherToggle.classList.remove('active');
+                    const otherId = otherToggle.dataset.target;
+                    const otherTarget = document.querySelector(otherId);
+                    if (otherTarget) {
+                        otherTarget.classList.remove('show');
+                    }
+                }
+            });
+            
+            // Toggle current dropdown
+            const targetId = this.dataset.target;
+            const target = document.querySelector(targetId);
+            if (target) {
+                this.classList.toggle('active');
+                target.classList.toggle('show');
+                
+                // Update aria-expanded
+                const isExpanded = target.classList.contains('show');
+                this.setAttribute('aria-expanded', isExpanded);
+            }
+        });
+    });
+});
+</script>
+<!-- Bootstrap JS -->
+>>>>>>> shop
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

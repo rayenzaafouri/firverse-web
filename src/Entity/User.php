@@ -11,6 +11,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
+
 use App\Repository\UserRepository;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -520,6 +524,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * @return Collection<int, Wishlist>
+     */
+    public function getWishlists(): Collection
+    {
+        return $this->wishlists;
+    }
+
+    public function addWishlist(Wishlist $wishlist): static
+    {
+        if (!$this->wishlists->contains($wishlist)) {
+            $this->wishlists->add($wishlist);
+            $wishlist->setUserId($this);
+        }
+
+        return $this;
+    }
+
+>>>>>>> shop
     public function removeWishlist(Wishlist $wishlist): static
     {
         if ($this->wishlists->removeElement($wishlist)) {
@@ -536,10 +561,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     //Interface specific methods ---------
 
     public function getRoles(): array
+<<<<<<< HEAD
     {
         return ['ROLE_' . $this->role];
     }
 
+=======
+{
+    $validRoles = [
+        'user' => 'ROLE_USER',
+        'admin' => 'ROLE_ADMIN',
+    ];
+
+    $rolesFromDb = [$this->role ?? ''];
+
+    $mappedRoles = [];
+
+    foreach ($rolesFromDb as $role) {
+        if (isset($validRoles[$role])) {
+            $mappedRoles[] = $validRoles[$role];
+        }
+    }
+
+    if (!in_array('ROLE_USER', $mappedRoles)) {
+        $mappedRoles[] = 'ROLE_USER';
+    }
+
+    return array_unique($mappedRoles);
+}
+
+>>>>>>> shop
 
 
 

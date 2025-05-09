@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -27,10 +28,11 @@ class Food
     {
         $this->id = $id;
         return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $name = null;
+    } 
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
+#[Assert\NotBlank]
+#[Assert\Regex(pattern: '/^[\p{L} ]+$/u', message: 'The name should contain only letters and spaces.')]
+private ?string $name = null;
 
     public function getName(): ?string
     {
@@ -72,7 +74,9 @@ class Food
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $calories = null;
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Calories must be a number.')]
+private ?float $calories = null;
 
     public function getCalories(): ?float
     {
@@ -86,7 +90,9 @@ class Food
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $protein = null;
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Protein must be a number.')]
+private ?float $protein = null;
 
     public function getProtein(): ?float
     {
@@ -100,7 +106,9 @@ class Food
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $fats = null;
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Fats must be a number.')]
+private ?float $fats = null;
 
     public function getFats(): ?float
     {
@@ -113,8 +121,10 @@ class Food
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $saturatedFats = null;
+    #[ORM\Column(type: 'decimal', nullable: true, name: 'saturatedFats')]
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Saturated Fats must be a number.')]
+private ?float $saturatedFats = null;
 
     public function getSaturatedFats(): ?float
     {
@@ -128,7 +138,9 @@ class Food
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $fibre = null;
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Fibre must be a number.')]
+private ?float $fibre = null;
 
     public function getFibre(): ?float
     {
@@ -142,7 +154,9 @@ class Food
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $carbohydrate = null;
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Carbohydrate must be a number.')]
+private ?float $carbohydrate = null;
 
     public function getCarbohydrate(): ?float
     {
@@ -156,7 +170,9 @@ class Food
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $sugar = null;
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Sugar must be a number.')]
+private ?float $sugar = null;
 
     public function getSugar(): ?float
     {
@@ -170,7 +186,9 @@ class Food
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $cholesterol = null;
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Cholesterol must be a number.')]
+private ?float $cholesterol = null;
 
     public function getCholesterol(): ?float
     {
@@ -184,7 +202,9 @@ class Food
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $sodium = null;
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Sodium must be a number.')]
+private ?float $sodium = null;
 
     public function getSodium(): ?float
     {
@@ -198,7 +218,9 @@ class Food
     }
 
     #[ORM\Column(type: 'decimal', nullable: true)]
-    private ?float $magnesium = null;
+#[Assert\NotBlank]
+#[Assert\Type(type: 'numeric', message: 'Magnesium must be a number.')]
+private ?float $magnesium = null;
 
     public function getMagnesium(): ?float
     {

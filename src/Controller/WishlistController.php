@@ -14,19 +14,42 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+<<<<<<< HEAD
 
+=======
+use Knp\Component\Pager\PaginatorInterface;
+>>>>>>> shop
 
 #[Route('/wishlist')]
 final class WishlistController extends AbstractController{
     #[Route(name: 'app_wishlist_index', methods: ['GET'])]
+<<<<<<< HEAD
     public function index(WishlistRepository $repo, CategoryRepository $categoryRepository, ProductRepository $productRepository): Response
+=======
+    public function index(WishlistRepository $repo, CategoryRepository $categoryRepository, ProductRepository $productRepository,PaginatorInterface $paginator,Request $request): Response
+>>>>>>> shop
     {
         $user = $this->getUser();
         $wishlists = $repo->findBy(['user' => $user]);
 
         // Get products from wishlist to display (optional but better UX)
+<<<<<<< HEAD
         $products = array_map(fn($w) => $w->getProduct(), $wishlists);
 
+=======
+        $productsQuery = $productRepository->createQueryBuilder('p')
+        ->join('p.wishlists', 'w')
+        ->andWhere('w.user = :user')
+        ->setParameter('user', $user)
+        ->getQuery();
+    
+    $products = $paginator->paginate(
+        $productsQuery,
+        $request->query->getInt('page', 1),
+        8
+    );
+    
+>>>>>>> shop
         return $this->render('front/shop/index.html.twig', [
             'wishlists' => $wishlists,
             'products' => $products,

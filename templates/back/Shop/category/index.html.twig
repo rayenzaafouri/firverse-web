@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Admin - Categories{% endblock %}
+<<<<<<< HEAD
 
 {% block body %}
 {% include 'navbar.html.twig' %}
@@ -16,6 +17,25 @@
         <a href="{{ path('app_category_new') }}" class="btn btn-success">+ Create New Category</a>
     </div>
 
+=======
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
+{% block body %}
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
+
+    <div class="container">
+        <h1 class="mb-4">Manage Categories</h1>
+
+        <div class="mb-3">
+            <a href="{{ path('app_category_new') }}" class="btn btn-success">+ Create New Category</a>
+        </div>
+
+>>>>>>> shop
         <table class="table table-striped text-center align-middle">
             <thead class="thead-dark">
                 <tr>
@@ -44,5 +64,11 @@
             {% endfor %}
             </tbody>
         </table>
+<<<<<<< HEAD
 </div>
 {% endblock %}
+=======
+    </div>
+</div>
+{% endblock %}
+>>>>>>> shop

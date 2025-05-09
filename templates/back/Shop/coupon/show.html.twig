@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}View Coupon{% endblock %}
+<<<<<<< HEAD
 {% block stylesheets %}
 <style>
 
@@ -32,6 +33,43 @@
         <div class="mt-4">
             <a href="{{ path('app_coupon_edit', {'id': coupon.id}) }}" class="btn btn-warning mr-2">Edit</a>
             <a href="{{ path('app_coupon_index') }}" class="btn btn-secondary">Back to list</a>
+=======
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
+
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Coupon Details</h1>
+
+        <div class="card shadow p-4">
+            <h3>Code: {{ coupon.code }}</h3>
+
+            <p><strong>Discount:</strong> {{ coupon.discount_percentage }}%</p>
+            <p><strong>Valid From:</strong> {{ coupon.valid_from|date('Y-m-d H:i') }}</p>
+            <p><strong>Valid Until:</strong> {{ coupon.valid_until|date('Y-m-d H:i') }}</p>
+
+            <div class="my-3">
+                <strong>Status:</strong>
+                {% if coupon.is_active %}
+                    <span class="badge bg-primary">Active</span>
+                {% else %}
+                    <span class="badge bg-danger">Inactive</span>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                <a href="{{ path('app_coupon_edit', {'id': coupon.id}) }}" class="btn btn-warning mr-2">Edit</a>
+                <a href="{{ path('app_coupon_index') }}" class="btn btn-secondary">Back to list</a>
+            </div>
+>>>>>>> shop
         </div>
     </div>
 </div>

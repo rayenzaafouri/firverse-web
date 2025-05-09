@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -29,6 +30,8 @@ class Recipe
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 40, minMessage: 'Recipe name must be at least {{ limit }} characters', maxMessage: 'Recipe name cannot be longer than {{ limit }} characters')]
     private ?string $name = null;
 
     public function getName(): ?string
@@ -122,16 +125,10 @@ class Recipe
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Food::class, inversedBy: 'recipes')]
-    #[ORM\JoinTable(
-        name: 'recipe_food',
-        joinColumns: [
-            new ORM\JoinColumn(name: 'recipe_id', referencedColumnName: 'id')
-        ],
-        inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'food_id', referencedColumnName: 'id')
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Food::class)]
+    #[ORM\JoinTable(name: 'recipe_food')]
+    #[ORM\JoinColumn(name: 'recipe_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'food_id', referencedColumnName: 'id')]
     private Collection $foods;
 
     public function __construct()
@@ -145,13 +142,10 @@ class Recipe
      */
     public function getFoods(): Collection
     {
-        if (!$this->foods instanceof Collection) {
-            $this->foods = new ArrayCollection();
-        }
         return $this->foods;
     }
 
-    public function addFood(Food $food): self
+    public function addFood(Food $food, int $servings = 1): self
     {
         if (!$this->getFoods()->contains($food)) {
             $this->getFoods()->add($food);
@@ -163,6 +157,12 @@ class Recipe
     {
         $this->getFoods()->removeElement($food);
         return $this;
+    }
+
+    public function getServingSize(Food $food): int
+    {
+        // This should be implemented in the repository
+        return 1;
     }
 
     public function getTimesUsed(): ?int
@@ -189,4 +189,57 @@ class Recipe
         return $this;
     }
 
+    /**
+     * Get the serving size for a specific food in this recipe
+     * 
+     * @param Food $food The food to get the serving size for
+     * @return float The serving size for the food
+     */
+    public function getFoodServingSize(Food $food): float
+    {
+        // This is a placeholder implementation
+        // In a real implementation, this would query the recipe_food table
+        // For now, we'll return a default value of 1
+        return 1.0;
+    }
+
+    public function getTotalCalories(): float
+    {
+        $total = 0;
+        foreach ($this->getFoods() as $food) {
+            $servingSize = $this->getFoodServingSize($food);
+            $total += $food->getCalories() * $servingSize;
+        }
+        return $total;
+    }
+
+    public function getTotalProtein(): float
+    {
+        $total = 0;
+        foreach ($this->getFoods() as $food) {
+            $servingSize = $this->getFoodServingSize($food);
+            $total += $food->getProtein() * $servingSize;
+        }
+        return $total;
+    }
+
+    public function getTotalCarbohydrate(): float
+    {
+        $total = 0;
+        foreach ($this->getFoods() as $food) {
+            $servingSize = $this->getFoodServingSize($food);
+            $total += $food->getCarbohydrate() * $servingSize;
+        }
+        return $total;
+    }
+
+    public function getTotalFats(): float
+    {
+        $total = 0;
+        foreach ($this->getFoods() as $food) {
+            $servingSize = $this->getFoodServingSize($food);
+            $total += $food->getFats() * $servingSize;
+        }
+        return $total;
+    }
 }

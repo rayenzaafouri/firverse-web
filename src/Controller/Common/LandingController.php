@@ -13,4 +13,8 @@ final class LandingController extends AbstractController
     {
         return $this->render('/common/landing.html.twig');
     }   
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> shop

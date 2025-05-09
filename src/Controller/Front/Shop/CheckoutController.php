@@ -178,6 +178,7 @@ class CheckoutController extends AbstractController
                 ->subject('FitVerse - Order Confirmation #' . $order->getId())
                 ->html($emailContent);
 
+<<<<<<< HEAD
             $adminEmail = (new Email())
                 ->from('boutarhamza32@gmail.com')
                 ->to('boutarhamza32@gmail.com')
@@ -187,6 +188,10 @@ class CheckoutController extends AbstractController
             try {
                 $this->mailer->send($customerEmail);
                 $this->mailer->send($adminEmail);
+=======
+            try {
+                $this->mailer->send($customerEmail);
+>>>>>>> shop
             } catch (\Exception $e) {
                 error_log('Email sending failed: ' . $e->getMessage());
             }

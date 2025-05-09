@@ -1,0 +1,39 @@
+{% macro renderPagination(pagination) %}
+    {% import _self as macros %}
+
+    {% if pagination.pageCount > 1 %}
+        <ul class="pagination justify-content-center">
+            {% if pagination.previous is defined %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), pagination|merge({'page': 1})) }}">«</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), pagination|merge({'page': pagination.previous})) }}">‹</a>
+                </li>
+            {% endif %}
+
+            {% for page in pagination.pagesInRange %}
+                {% if page != pagination.current %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path(app.request.attributes.get('_route'), pagination|merge({'page': page})) }}">{{ page }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ page }}</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if pagination.next is defined %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), pagination|merge({'page': pagination.next})) }}">›</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), pagination|merge({'page': pagination.pageCount})) }}">»</a>
+                </li>
+            {% endif %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{{ _self.renderPagination(pagination) }}

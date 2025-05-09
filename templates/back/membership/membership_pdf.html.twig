@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        h1 { color: #28a745; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 8px; text-align: left; border: 1px solid #ccc; }
+        th { background-color: #f1f1f1; }
+    </style>
+</head>
+<body>
+    <h1>Détails de l'abonnement</h1>
+    <table>
+        <tr><th>Date de début</th><td>{{ membership.start_date|date('Y-m-d') }}</td></tr>
+        <tr><th>Date de fin</th><td>{{ membership.end_date|date('Y-m-d') }}</td></tr>
+        <tr><th>Prix</th><td>{{ membership.price }} TND</td></tr>
+        <tr><th>Coaching</th><td>{{ membership.coaching ? 'Oui' : 'Non' }}</td></tr>
+        <tr><th>Statut</th><td>{{ membership.status }}</td></tr>
+        <tr><th>Utilisateur</th><td>{{ membership.user.first_name }}</td></tr>
+        <tr><th>Salle de sport</th><td>{{ membership.gym.name }}</td></tr>
+    </table>
+</body>
+</html>
