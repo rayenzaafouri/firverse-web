@@ -3,8 +3,15 @@
 
 {% block title %}Create User{% endblock %}
 {% block page_title %}Create New User{% endblock %}
-
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
 {% block body %}
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
     <div style="max-width: 700px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
         {{ form_start(form, { 'attr': { novalidate: 'novalidate','style': 'display: grid; gap: 1.5rem;' } }) }}
 
@@ -25,4 +32,5 @@
 
         {{ form_end(form) }}
     </div>
+</div>
 {% endblock %}

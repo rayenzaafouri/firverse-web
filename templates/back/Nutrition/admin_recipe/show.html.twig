@@ -1,10 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Admin - {{ recipe.name }}{% endblock %}
-
+{% block title %}Recipe Details{% endblock %}
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
 {% block body %}
-{% include 'navbar.html.twig' %}
-    <div class="container-fluid">
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
+
+    <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0 text-gray-800">Admin - {{ recipe.name }}</h1>
             <div>
@@ -51,4 +58,5 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock %} 

@@ -2,24 +2,27 @@
 
 {% block title %}Admin Dashboard - Fitverse{% endblock %}
 
-
-
-
-
 {% block stylesheets %}
 {{ parent() }}
 <link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
 <style>
-
-	.table{
-		text-align: center;
+    .table {
+        text-align: center;
         vertical-align: middle;
-	}
+    }
 
+    .overview-stats .card {
+        min-width: 200px;
+        margin-bottom: 1rem;
+    }
 
+    .overview-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
 </style>
 {% endblock %}
-
 
 {% block header %}
 <nav aria-label="breadcrumb">
@@ -32,33 +35,23 @@
 </nav>
 {% endblock %}
 
-
 {% block javascripts %}
 {{ parent() }}
-
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Simple toggle for dropdowns
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
     dropdownToggles.forEach(toggle => {
         toggle.addEventListener('click', function(e) {
             e.preventDefault();
             const targetId = this.dataset.target;
             const target = document.querySelector(targetId);
-            
-            // Toggle current dropdown
             this.classList.toggle('active');
             target.classList.toggle('show');
-            
-            // Update aria-expanded
-            const isExpanded = target.classList.contains('show');
-            this.setAttribute('aria-expanded', isExpanded);
+            this.setAttribute('aria-expanded', target.classList.contains('show'));
         });
     });
 
-    // Charts
     const dailySalesData = {{ dailySales|json_encode|raw }};
     const dates = Object.keys(dailySalesData);
     const revenues = Object.values(dailySalesData);
@@ -67,9 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const topProductNames = topProductsData.map(item => item.product);
     const topProductQuantities = topProductsData.map(item => item.quantity);
 
-    // Sales Chart
-    const salesCtx = document.getElementById('salesChart').getContext('2d');
-    new Chart(salesCtx, {
+    new Chart(document.getElementById('salesChart').getContext('2d'), {
         type: 'line',
         data: {
             labels: dates,
@@ -90,9 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Top Products Chart
-    const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
-    new Chart(topProductsCtx, {
+    new Chart(document.getElementById('topProductsChart').getContext('2d'), {
         type: 'bar',
         data: {
             labels: topProductNames,
@@ -107,9 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             indexAxis: 'y',
             scales: {
-                x: {
-                    beginAtZero: true
-                }
+                x: { beginAtZero: true }
             }
         }
     });
@@ -117,65 +104,59 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 {% endblock %}
 
-
 {% block content %}
-    <div class="container">
+<div class="container-fluid px-4">
+    <figcaption class="blockquote-footer">Statistics</figcaption>
 
-
-
-        <figcaption class="blockquote-footer">
-            Statistics
-        </figcaption>
-
-        <div class="overview-stats">
-            <div class="card">
-                <div class="card-body">
-                    <h3>{{ totalProducts }}</h3>
-                    <h2>Products</h2>
-                </div>
+    <div class="overview-stats">
+        <div class="card">
+            <div class="card-body">
+                <h3>{{ totalProducts }}</h3>
+                <h2>Products</h2>
             </div>
-            <div class="card">
-                <div class="card-body">
-                    <h3>{{ totalOrders }}</h3>
-                    <h2>Orders</h2>
-                </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3>{{ totalOrders }}</h3>
+                <h2>Orders</h2>
             </div>
-            <div class="card">
-                <div class="card-body">
-                    <h3>${{ totalRevenue|number_format(2, '.', ',') }}</h3>
-                    <h2>Total Revenue</h2>
-                </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3>${{ totalRevenue|number_format(2, '.', ',') }}</h3>
+                <h2>Total Revenue</h2>
             </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3>{{ totalProductsSold }}</h3>
+                <h2>Products Sold</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-6">
             <div class="card">
+                <div class="card-header">
+                    Sales Last 30 Days
+                </div>
                 <div class="card-body">
-                    <h3>{{ totalProductsSold }}</h3>
-                    <h2>Products Sold</h2>
+                    <canvas id="salesChart" height="200"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-5">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        Sales Last 30 Days
-                    </div>
-                    <div class="card-body">
-                        <canvas id="salesChart" height="200"></canvas>
-                    </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Top 5 Best-Selling Products
                 </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        Top 5 Best-Selling Products
-                    </div>
-                    <div class="card-body">
-                        <canvas id="topProductsChart" height="200"></canvas>
-                    </div>
+                <div class="card-body">
+                    <canvas id="topProductsChart" height="200"></canvas>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

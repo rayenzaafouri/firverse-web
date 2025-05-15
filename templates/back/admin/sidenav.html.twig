@@ -6,12 +6,12 @@
 </style>
 
 <aside>
-  <img src="/fitverse-white.png" alt="The Fitverse logo" class="logo">
+  <img src="/fitverse-white.png" alt="The Fitverse logo" class="logo" href="{{path('admin_dashboard')}}">
 
   <ul>
 
     <li>
-      <a class="">
+      <a href="{{path('admin_dashboard')}}">
         <img src="{{ asset('images/landing/dashboard.png') }}" alt="User icon">
         <span>Dashboard</span>
       </a>
@@ -88,7 +88,7 @@
 
       <li>
       <a class="" data-bs-toggle="collapse" href="#collapseNutrition" role="button" aria-expanded="false" aria-controls="collapseNutrition">
-        <img src="{{ asset('images/landing/nutrition.png') }}" alt="Nutrition icon">
+        <img src="{{ asset('images/landing/meals.png') }}" alt="Nutrition icon">
         <span>Nutrition Management</span>
       </a>
       <ul class="collapse" id="collapseNutrition">
@@ -96,13 +96,12 @@
 				<li><a href="{{ path('app_admin_recipe_index')}}">Manage recipes</a></li>
       </ul>
 
-      	<li><a href="{{ path('app_food_index')}}">Manage food</a></li>
     </li>
   </ul>
 
   <div class="aside-bottom">
     <span class="material-symbols-outlined">shield_person</span>
-    <span>Testeur Tounsi</span>
+    <span>{{ app.user.first_name ~ " " ~ app.user.last_name }}</span>
     <a href="/logout" class="">
       <span class="material-symbols-outlined">logout</span>
     </a>

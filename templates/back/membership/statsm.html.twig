@@ -1,49 +1,90 @@
-{% extends 'base.html.twig' %}
+{% extends 'back/admin/dashboard-skeleton.html.twig' %}
 
 {% block title %}Membership Status Stats{% endblock %}
 
-{% block body %}
-<div class="container py-5">
-    <h1 class="mb-4">📊 Membership Status Statistics</h1>
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .breadcrumb {
+            margin-bottom: 20px;
+        }
 
-    <!-- Graphique Google Chart -->
-    <div id="membershipStatusChart" style="width: 100%; height: 500px;"></div>
+        .chart-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
 
-    <a href="{{ path('app_membership_index') }}" class="btn btn-secondary mt-3">← Back to Membership Management</a>
-</div>
+        #membershipStatusChart {
+            width: 100%;
+            max-width: 700px;
+            height: 500px;
+        }
+
+        .back-button {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+{% endblock %}
+
+{% block header %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_dashboard') }}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('app_membership_index') }}">Membership</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Membership Status Stats</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
+        google.charts.load('current', { packages: ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
 
-      function drawChart() {
-        // Données pour le graphique (distribuer les données selon les statuts)
-        const data = google.visualization.arrayToDataTable([
-          ['Status', 'Count'],
-          {% for status, count in statusStats %}
-              ['{{ status | capitalize }}', {{ count }}],
-          {% endfor %}
-        ]);
+        function drawChart() {
+            const data = google.visualization.arrayToDataTable([
+                ['Status', 'Count'],
+                {% for status, count in statusStats %}
+                    ['{{ status | capitalize }}', {{ count }}],
+                {% endfor %}
+            ]);
 
-        // Options du graphique (titre, couleurs, etc.)
-        const options = {
-          title: 'Membership Status Distribution',
-          pieHole: 0.4,  // Pour faire un graphique en anneau (donut chart)
-          colors: ['#ff6384', '#36a2eb', '#ffcd56'],
-          legend: { position: 'labeled' },
-          chartArea: { width: '100%', height: '80%' },
-        };
+            const options = {
+                title: 'Membership Status Distribution',
+                pieHole: 0.4,
+                colors: ['#ff6384', '#36a2eb', '#ffcd56'],
+                legend: { position: 'labeled' },
+                chartArea: { width: '100%', height: '80%' },
+            };
 
-        // Création et affichage du graphique
-        const chart = new google.visualization.PieChart(document.getElementById('membershipStatusChart'));
-        chart.draw(data, options);
-      }
-  google.charts.setOnLoadCallback(drawChart);
-  document.addEventListener('turbo:load', drawChart);     // pour Symfony UX Turbo
-  document.addEventListener('DOMContentLoaded', drawChart);
+            const chart = new google.visualization.PieChart(document.getElementById('membershipStatusChart'));
+            chart.draw(data, options);
+        }
+
+        document.addEventListener('turbo:load', drawChart);
+        document.addEventListener('DOMContentLoaded', drawChart);
     </script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <h1 class="text-center mb-4">📊 Membership Status Statistics</h1>
+
+    <div class="chart-wrapper">
+        <div id="membershipStatusChart"></div>
+    </div>
+
+    <div class="back-button">
+        <a href="{{ path('app_membership_index') }}" class="btn btn-secondary">Back to Membership Management</a>
+    </div>
+</div>
 {% endblock %}

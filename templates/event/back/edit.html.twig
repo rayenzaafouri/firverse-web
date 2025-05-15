@@ -30,9 +30,9 @@
         margin: 0 auto;
         padding: 30px;
         border-radius: 8px;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-        background-color: #1e1e1e;
-        color: #e0e0e0;
+        box-shadow: 0 8px 15px rgba(255, 255, 255, 0.3);
+        background-color:rgba(255, 255, 255, 0);
+        color: #e0e0e0; 
     }
 
     .dark-input {
@@ -49,7 +49,7 @@
     }
 
     .form-label {
-        color: #92ff44;
+        color:rgb(0, 0, 0);
         margin-bottom: 0.5rem;
     }
 
@@ -76,7 +76,7 @@
 </a>
 
 <div class="event-container">
-    <h2 style="color: #92ff44;">Edit Event</h2>
+    <h2 style="color:rgb(0, 0, 0);">Edit Event</h2>
     
     <div class="event-form-container" style="max-width: 800px; margin: 0 auto;">
         {{ form_start(form, {'attr': {'class': 'event-form', 'enctype': 'multipart/form-data'}}) }}
@@ -84,37 +84,37 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 {{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.name, {'attr': {'class': 'form-control dark-input'}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form-control '}}) }}
             </div>
             <div class="col-md-6">
                 {{ form_label(form.location, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.location, {'attr': {'class': 'form-control dark-input'}}) }}
+                {{ form_widget(form.location, {'attr': {'class': 'form-control '}}) }}
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-4">
                 {{ form_label(form.date, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.date, {'attr': {'class': 'form-control dark-input'}}) }}
+                {{ form_widget(form.date, {'attr': {'class': 'form-control '}}) }}
             </div>
             <div class="col-md-4">
                 {{ form_label(form.time, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.time, {'attr': {'class': 'form-control dark-input'}}) }}
+                {{ form_widget(form.time, {'attr': {'class': 'form-control '}}) }}
             </div>
             <div class="col-md-4">
                 {{ form_label(form.price, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.price, {'attr': {'class': 'form-control dark-input'}}) }}
+                {{ form_widget(form.price, {'attr': {'class': 'form-control '}}) }}
             </div>
         </div>
 
         <div class="mb-3">
             {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control dark-input', 'rows': 5}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control ', 'rows': 5}}) }}
         </div>
 
         <div class="mb-3">
             {{ form_label(form.photo, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.photo, {'attr': {'class': 'form-control dark-input'}}) }}
+            {{ form_widget(form.photo, {'attr': {'class': 'form-control '}}) }}
             {% if event.photo %}
                 <div class="mt-2">
                     <small>Current photo:</small>
@@ -124,7 +124,7 @@
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-            <button type="submit" class="btn" style="background-color: #92ff44; color: #1a1a1a;">
+            <button type="submit" class="btn" style="background-color:rgb(102, 150, 67); color: #1a1a1a;">
                 <i class="fas fa-save"></i> Update
             </button>
         </div>

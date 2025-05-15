@@ -1,246 +1,89 @@
-{% extends 'back/admin/dashboard-skeleton.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Create New Event{% endblock %}
 
-{% block header %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="{{ path('admin_dashboard') }}">Dashboard</a>
-        </li>
-        <li class="breadcrumb-item">
-            <a href="{{ path('app_event_index') }}">Events</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">Create New Event</li>
-    </ol>
-</nav>
-{% endblock %}
-
-{% block javascripts %}
-{{ parent() }}
-<script></script>
-{% endblock %}
-
 {% block stylesheets %}
 {{ parent() }}
-<style>
-    body {
-        background-color: #1e1e1e;
-        color: #e0e0e0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-
-    .container {
-        max-width: 900px;
-        margin: 50px auto;
-        padding: 40px;
-        border-radius: 12px;
-        background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
-        box-shadow: 20px 20px 60px #1c1c1c, -20px -20px 60px #262626;
-        text-align: center;
-    }
-
-    h2 {
-        color: #92ff44;
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 30px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    .event-form-container {
-        max-width: 100%;
-        margin: 0 auto;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-        text-align: left;
-    }
-
-    .form-label {
-        color: rgb(101, 192, 36);
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 8px;
-        display: block;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 12px 15px;
-        background-color: rgb(255, 255, 255);
-        border: 1px solid #444;
-        border-radius: 6px;
-        color: rgb(150, 149, 149);
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus {
-        border-color: #92ff44;
-        box-shadow: 0 0 8px rgba(146, 255, 68, 0.5);
-        outline: none;
-    }
-
-    .btn {
-        padding: 12px 25px;
-        border: none;
-        border-radius: 6px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .btn-outline-secondary {
-        background-color: transparent;
-        border: 2px solid #92ff44;
-        color: #92ff44;
-    }
-
-    .btn-outline-secondary:hover {
-        background-color: #92ff44;
-        color: #1a1a1a;
-    }
-
-    .btn-primary {
-        background-color: #92ff44;
-        color: #1a1a1a;
-    }
-
-    .btn-primary:hover {
-        background-color: #78e633;
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 15px;
-        margin-top: 30px;
-    }
-
-    @media (max-width: 768px) {
-        .container {
-            padding: 30px;
-        }
-
-        h2 {
-            font-size: 1.75rem;
-        }
-
-        .form-actions {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 10px;
-        }
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
 {% endblock %}
 
-{% block content %}
-<div class="container event-container">
-    <h2>Create New Event</h2>
+{% block body %}
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
 
-    <div class="event-form-container">
-        {{ form_start(form, {'attr': {'class': 'event-form', 'enctype': 'multipart/form-data'}}) }}
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Create New Event</h1>
 
-        {% for error in form.vars.errors %}
-            <div class="alert alert-danger" style="text-align: center; margin-bottom: 20px;">
-                {{ error.message }}
-            </div>
-        {% endfor %}
+        <div class="card shadow p-4">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-        <!-- Name Field -->
-        <div class="form-group">
-            {{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.name, {
-                'attr': {
-                    'class': 'form-control' ~ (form.name.vars.errors ? ' is-invalid' : '')
-                }
-            }) }}
-            {% if form.name.vars.errors %}
-                <div class="invalid-feedback">
+            <div class="form-group">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">
                     {{ form_errors(form.name) }}
                 </div>
-            {% endif %}
-        </div>
+            </div>
 
-        <!-- Location Field -->
-        <div class="form-group">
-            {{ form_label(form.location, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.location, {'attr': {'class': 'form-control' ~ (form.location.vars.errors ? ' is-invalid' : '')}}) }}
-            {% if form.location.vars.errors %}
-                <div class="invalid-feedback">
+            <div class="form-group">
+                {{ form_label(form.location) }}
+                {{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">
                     {{ form_errors(form.location) }}
                 </div>
-            {% endif %}
-        </div>
+            </div>
 
-        <!-- Date, Time, and Price Fields -->
-        <div class="row">
-            <div class="col-md-4 form-group">
-                {{ form_label(form.date, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.date, {'attr': {'class': 'form-control' ~ (form.date.vars.errors ? ' is-invalid' : '')}}) }}
-                {% if form.date.vars.errors %}
-                    <div class="invalid-feedback">
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    {{ form_label(form.date) }}
+                    {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger">
                         {{ form_errors(form.date) }}
                     </div>
-                {% endif %}
-            </div>
-            <div class="col-md-4 form-group">
-                {{ form_label(form.time, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.time, {'attr': {'class': 'form-control' ~ (form.time.vars.errors ? ' is-invalid' : '')}}) }}
-                {% if form.time.vars.errors %}
-                    <div class="invalid-feedback">
+                </div>
+
+                <div class="col-md-4 form-group">
+                    {{ form_label(form.time) }}
+                    {{ form_widget(form.time, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger">
                         {{ form_errors(form.time) }}
                     </div>
-                {% endif %}
-            </div>
-            <div class="col-md-4 form-group">
-                {{ form_label(form.price, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.price, {'attr': {'class': 'form-control' ~ (form.price.vars.errors ? ' is-invalid' : '')}}) }}
-                {% if form.price.vars.errors %}
-                    <div class="invalid-feedback">
+                </div>
+
+                <div class="col-md-4 form-group">
+                    {{ form_label(form.price) }}
+                    {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger">
                         {{ form_errors(form.price) }}
                     </div>
-                {% endif %}
+                </div>
             </div>
-        </div>
 
-        <!-- Description Field -->
-        <div class="form-group">
-            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.errors ? ' is-invalid' : ''), 'rows': 5}}) }}
-            {% if form.description.vars.errors %}
-                <div class="invalid-feedback">
+            <div class="form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                <div class="text-danger">
                     {{ form_errors(form.description) }}
                 </div>
-            {% endif %}
-        </div>
+            </div>
 
-        <!-- Photo Field -->
-        <div class="form-group">
-            {{ form_label(form.photo, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.photo, {'attr': {'class': 'form-control' ~ (form.photo.vars.errors ? ' is-invalid' : '')}}) }}
-            {% if form.photo.vars.errors %}
-                <div class="invalid-feedback">
+            <div class="form-group">
+                {{ form_label(form.photo) }}
+                {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">
                     {{ form_errors(form.photo) }}
                 </div>
-            {% endif %}
-        </div>
+            </div>
 
-        <!-- Submit Buttons -->
-        <div class="form-actions">
-            <a href="{{ path('app_event_index') }}" class="btn btn-outline-secondary">Back to list</a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Save
-            </button>
-        </div>
+            <div class="text-center">
+                <button class="btn btn-success mt-3">Save</button>
+                <a href="{{ path('app_event_index') }}" class="btn btn-secondary mt-3 ms-2">Cancel</a>
+            </div>
 
-        {{ form_end(form) }}
+            {{ form_end(form) }}
+        </div>
     </div>
 </div>
 {% endblock %}

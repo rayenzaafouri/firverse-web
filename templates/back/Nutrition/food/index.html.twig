@@ -2,9 +2,16 @@
 
 {% block title %}Food index{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+</style>
+{% endblock %}
 {% block body %}
-{% include 'navbar.html.twig' %}
-    <div class="container mt-4">
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>    <div class="container mt-4">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h1 class="h3 mb-0">Food List</h1>
@@ -137,4 +144,5 @@
             });
         });
     </script>
+</div>
 {% endblock %}

@@ -1,17 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Edit Recipe{% endblock %}
-
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('/styles/admin.css') }}">
+{% endblock %}
 {% block body %}
-{% include 'navbar.html.twig' %}
-    <div class="container-fluid">
+<div class="admin-dashboard-layout">
+    <div id="sidenavAccordion">
+        {% include 'back/admin/sidenav.html.twig' %}
+    </div>
+
+    <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0 text-gray-800">Edit Recipe</h1>
         </div>
 
-        {{ include('Front/Nutrition/recipe/_form.html.twig', {
+        {{ include('Back/Nutrition/admin_recipe/_form.html.twig', {
             'form': form,
             'button_label': 'Update'
         }) }}
     </div>
+</div>
 {% endblock %} 
