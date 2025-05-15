@@ -143,4 +143,4 @@ Merci à toute l'équipe FitVerse pour leur contribution exceptionnelle :
 
 ---
 
-✅ Ce projet est en constante évolution. N'hésitez pas à explorer, tester et améliorer !
+Ce projet est en constante évolution. N'hésitez pas à explorer, tester et améliorer !
