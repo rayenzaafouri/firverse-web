@@ -14,7 +14,7 @@ use CMEN\GoogleChartsBundle\GoogleCharts\Charts\ColumnChart;
 #[Route('/nutrition/user/dashboard')]
 class DashboardController extends AbstractController
 {
-    private const DEFAULT_USER_ID = 33;
+    private const DEFAULT_USER_ID = 100;
     private const DEFAULT_DAYS = 7;
     private const TWO_WEEKS = 14;
     private const ONE_MONTH = 30;

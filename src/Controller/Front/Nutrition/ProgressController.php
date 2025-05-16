@@ -15,7 +15,7 @@ class ProgressController extends AbstractController
     public function index(UserRepository $userRepository, NutritionRepository $nutritionRepository, EntityManagerInterface $em): Response
     {
         // Hardcode user with id 33
-        $user = $userRepository->find(33);
+        $user = $userRepository->find(100);
         if ($user && method_exists($user, 'getGender')) {
             $gender = $user->getGender();
         } else {

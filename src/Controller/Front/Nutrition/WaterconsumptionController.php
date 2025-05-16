@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/nutrition/waterconsumption')]
 class WaterconsumptionController extends AbstractController
 {
-    private const DEFAULT_USER_ID = 33; // Hardcoded user id as per requirements
+    private const DEFAULT_USER_ID = 100; // Hardcoded user id as per requirements
 
     public function __construct(
         private EntityManagerInterface $entityManager

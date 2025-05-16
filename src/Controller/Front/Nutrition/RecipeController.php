@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\Security;
 class RecipeController extends AbstractController
 {
     // Hardcoded user ID for all recipes
-    private const DEFAULT_USER_ID = 33;
+    private const DEFAULT_USER_ID = 100;
 
     #[Route('/', name: 'app_recipe_index', methods: ['GET'])]
     public function index(RecipeRepository $recipeRepository): Response
