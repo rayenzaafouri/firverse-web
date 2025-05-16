@@ -6,7 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\ReclamationRepository;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
@@ -45,6 +45,13 @@ class Reclamation
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Le titre ne peut pas être vide.')]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'Le titre doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le titre ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $title = null;
 
     public function getTitle(): ?string
@@ -59,7 +66,14 @@ class Reclamation
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Length(
+        min: 10,
+        max: 1000,
+        minMessage: 'La description doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $description = null;
+
 
     public function getDescription(): ?string
     {
@@ -111,5 +125,4 @@ class Reclamation
 
         return $this;
     }
-
 }

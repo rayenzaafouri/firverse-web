@@ -39,6 +39,7 @@ class RegistrationFormType extends AbstractType
             
             ->add('birth_date', DateType::class, [
                 'widget' => 'single_text',
+                'required'=>true,
             ])
             ->add('image', FileType::class, [
                 'label' => 'Image',

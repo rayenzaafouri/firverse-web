@@ -6,7 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -35,6 +35,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'First name is required')]
+    #[Assert\Length(min: 2, max: 50, minMessage: 'First name must be at least 2 characters long.', maxMessage: 'First name cannot exceed 50 characters.')]
+
     private ?string $first_name = null;
 
     public function getFirst_name(): ?string
@@ -49,6 +52,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Last name cannot be blank.')]
+    #[Assert\Length(min: 2, max: 50, minMessage: 'Last name must be at least 2 characters long.', maxMessage: 'Last name cannot exceed 50 characters.')]
+
     private ?string $last_name = null;
 
     public function getLast_name(): ?string
@@ -63,6 +69,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Email cannot be blank.')]
+    #[Assert\Email(message: 'The email is not a valid email.')]
     private ?string $email = null;
 
     public function getEmail(): ?string
@@ -77,6 +85,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Address cannot be blank.')]
+    #[Assert\Length(min: 2, max: 100, minMessage: 'Address must be at least 2 characters long.', maxMessage: 'Address cannot exceed 100 characters.')]
+
     private ?string $address = null;
 
     public function getAddress(): ?string
@@ -91,6 +102,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Phone cannot be blank.')]
+    #[Assert\Length(min: 8, max: 8, minMessage: 'Phone must be 8 digits long.', maxMessage: 'Phone must be 8 digits long.')]
+
     private ?string $phone = null;
 
     public function getPhone(): ?string
@@ -147,14 +161,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotNull(message: 'Birth date cannot be null.')]
+    #[Assert\LessThanOrEqual(value: 'today', message: 'Birth date cannot be in the future.')]
+    #[Assert\Type(type: \DateTimeInterface::class, message: 'The value is not a valid date.')]
     private ?\DateTimeInterface $birth_date = null;
 
-    public function getBirth_date(): ?\DateTimeInterface
+    public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birth_date;
     }
 
-    public function setBirth_date(\DateTimeInterface $birth_date): self
+
+    public function setBirthDate(?\DateTimeInterface $birth_date): static
     {
         $this->birth_date = $birth_date;
         return $this;
@@ -479,17 +497,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBirthDate(): ?\DateTimeInterface
-    {
-        return $this->birth_date;
-    }
 
-    public function setBirthDate(\DateTimeInterface $birth_date): static
-    {
-        $this->birth_date = $birth_date;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Wishlist>
@@ -525,28 +533,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     //Interface specific methods ---------
 
     public function getRoles(): array
-{
-    $validRoles = [
-        'user' => 'ROLE_USER',
-        'admin' => 'ROLE_ADMIN',
-    ];
+    {
+        $validRoles = [
+            'user' => 'ROLE_USER',
+            'admin' => 'ROLE_ADMIN',
+        ];
 
-    $rolesFromDb = [$this->role ?? ''];
+        $rolesFromDb = [$this->role ?? ''];
 
-    $mappedRoles = [];
+        $mappedRoles = [];
 
-    foreach ($rolesFromDb as $role) {
-        if (isset($validRoles[$role])) {
-            $mappedRoles[] = $validRoles[$role];
+        foreach ($rolesFromDb as $role) {
+            if (isset($validRoles[$role])) {
+                $mappedRoles[] = $validRoles[$role];
+            }
         }
-    }
 
-    if (!in_array('ROLE_USER', $mappedRoles)) {
-        $mappedRoles[] = 'ROLE_USER';
-    }
+        if (!in_array('ROLE_USER', $mappedRoles)) {
+            $mappedRoles[] = 'ROLE_USER';
+        }
 
-    return array_unique($mappedRoles);
-}
+        return array_unique($mappedRoles);
+    }
 
 
 
